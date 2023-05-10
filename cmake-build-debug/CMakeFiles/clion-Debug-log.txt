@@ -1,0 +1,69 @@
+/var/lib/snapd/snap/clion/235/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/var/lib/snapd/snap/clion/235/bin/ninja/linux/x64/ninja -G Ninja -S /home/aleslu-0/CLionProjects/rpi_engine -B /home/aleslu-0/CLionProjects/rpi_engine/cmake-build-debug
+-- The C compiler identification is GNU 12.2.1
+-- The CXX compiler identification is GNU 12.2.1
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Using flatc located at /home/aleslu-0/CLionProjects/rpi_engine/exts/flatbuffers/flatc.exe
+GLM: GCC - GNU compiler
+-- Looking for fcntl
+-- Looking for fcntl - found
+-- Looking for poll
+-- Looking for poll - found
+-- Looking for getaddrinfo
+-- Looking for getaddrinfo - found
+-- Looking for getnameinfo
+-- Looking for getnameinfo - found
+-- Looking for gethostbyname_r
+-- Looking for gethostbyname_r - found
+-- Looking for gethostbyaddr_r
+-- Looking for gethostbyaddr_r - found
+-- Looking for inet_pton
+-- Looking for inet_pton - found
+-- Looking for inet_ntop
+-- Looking for inet_ntop - found
+-- Performing Test HAS_MSGHDR_FLAGS
+-- Performing Test HAS_MSGHDR_FLAGS - Success
+-- Check size of socklen_t
+-- Check size of socklen_t - done
+[-] Build dynamic library disabled
+[+] Build static library enabled
+[-] Build demos disabled
+[+] NULL backend enabled
+[-] SDL2 backend disabled
+[-] CoreAudio backend disabled
+[-] OpenSLES backend disabled
+[-] XAudio2 backend disabled
+[-] WINMM backend disabled
+[-] WASAPI backend disabled
+[+] ALSA backend enabled
+-- Found ALSA: /usr/lib/libasound.so (found version "1.2.8") 
+-- Found OpenGL: /usr/lib/libOpenGL.so   
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Found Vulkan: /lib/libvulkan.so  
+-- Using X11 for window creation
+-- Found X11: /usr/include   
+-- Looking for XOpenDisplay in /usr/lib/libX11.so;/usr/lib/libXext.so
+-- Looking for XOpenDisplay in /usr/lib/libX11.so;/usr/lib/libXext.so - found
+-- Looking for gethostbyname
+-- Looking for gethostbyname - found
+-- Looking for connect
+-- Looking for connect - found
+-- Looking for remove
+-- Looking for remove - found
+-- Looking for shmat
+-- Looking for shmat - found
+-- Looking for IceConnectionNumber in ICE
+-- Looking for IceConnectionNumber in ICE - found
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/aleslu-0/CLionProjects/rpi_engine/cmake-build-debug
