@@ -10,5 +10,12 @@ int
 main(int argc, const char** argv)
 {
     std::cout << "Hello World";
+    Game::PodRacerApp app;
+    if (app.Open())
+    {
+        app.Run();
+        app.Close();
+    }
+    app.Exit();
 	
 }
