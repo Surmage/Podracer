@@ -75,6 +75,10 @@ artifacts/
 # StyleCop
 StyleCopReport.xml
 
+#Cmake
+cmake-build-debug/
+cmake-build-release/
+
 # Files built by Visual Studio
 *_i.c
 *_p.c
