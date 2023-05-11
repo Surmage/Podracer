@@ -9,6 +9,14 @@
 int
 main(int argc, const char** argv)
 {
+
+    Game::PodracerApp app;
+    if (app.Open())
+    {
+        app.Run();
+        app.Close();
+    }
     std::cout << "Hello World";
+    app.Exit();
 	
 }
