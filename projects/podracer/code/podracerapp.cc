@@ -16,6 +16,7 @@
 #include "core/cvar.h"
 #include "render/physics.h"
 #include <chrono>
+#include "podracer.h"
 
 using namespace Display;
 using namespace Render;
@@ -68,30 +69,60 @@ namespace Game {
         int h;
         this->window->GetSize(w, h);
         glm::mat4 projection = glm::perspective(glm::radians(90.0f), float(w) / float(h), 0.01f, 1000.f);
-        Camera *cam = CameraManager::GetCamera(CAMERA_MAIN);
+        Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
         cam->projection = projection;
 
         // load all resources
-        ModelId models[1] = {
-                LoadModel("assets/space/Asteroid_1.glb"),
-
+        ModelId models[6] = {
+            LoadModel("assets/space/Asteroid_1.glb"),
+            LoadModel("assets/space/Asteroid_2.glb"),
+            LoadModel("assets/space/Asteroid_3.glb"),
+            LoadModel("assets/space/Asteroid_4.glb"),
+            LoadModel("assets/space/Asteroid_5.glb"),
+            LoadModel("assets/space/Asteroid_6.glb")
         };
-        Physics::ColliderMeshId colliderMeshes[1] = {
-                Physics::LoadColliderMesh("assets/space/Asteroid_1_physics.glb"),
+        Physics::ColliderMeshId colliderMeshes[6] = {
+            Physics::LoadColliderMesh("assets/space/Asteroid_1_physics.glb"),
+            Physics::LoadColliderMesh("assets/space/Asteroid_2_physics.glb"),
+            Physics::LoadColliderMesh("assets/space/Asteroid_3_physics.glb"),
+            Physics::LoadColliderMesh("assets/space/Asteroid_4_physics.glb"),
+            Physics::LoadColliderMesh("assets/space/Asteroid_5_physics.glb"),
+            Physics::LoadColliderMesh("assets/space/Asteroid_6_physics.glb")
         };
 
         std::vector<std::tuple<ModelId, Physics::ColliderId, glm::mat4>> asteroids;
 
         // Setup asteroids near
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 25; i++)
+        {
             std::tuple<ModelId, Physics::ColliderId, glm::mat4> asteroid;
-            size_t resourceIndex = (size_t) (Core::FastRandom() % 6);
+            size_t resourceIndex = (size_t)(Core::FastRandom() % 6);
             std::get<0>(asteroid) = models[resourceIndex];
             float span = 20.0f;
             glm::vec3 translation = glm::vec3(
-                    Core::RandomFloatNTP() * span,
-                    Core::RandomFloatNTP() * span,
-                    Core::RandomFloatNTP() * span
+                Core::RandomFloatNTP() * span,
+                Core::RandomFloatNTP() * span,
+                Core::RandomFloatNTP() * span
+            );
+            glm::vec3 rotationAxis = normalize(translation);
+            float rotation = translation.x;
+            glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
+            std::get<1>(asteroid) = Physics::CreateCollider(colliderMeshes[resourceIndex], transform);
+            std::get<2>(asteroid) = transform;
+            asteroids.push_back(asteroid);
+        }
+
+        // Setup asteroids far
+        for (int i = 0; i < 20; i++)
+        {
+            std::tuple<ModelId, Physics::ColliderId, glm::mat4> asteroid;
+            size_t resourceIndex = (size_t)(Core::FastRandom() % 6);
+            std::get<0>(asteroid) = models[resourceIndex];
+            float span = 80.0f;
+            glm::vec3 translation = glm::vec3(
+                Core::RandomFloatNTP() * span,
+                Core::RandomFloatNTP() * span,
+                Core::RandomFloatNTP() * span
             );
             glm::vec3 rotationAxis = normalize(translation);
             float rotation = translation.x;
@@ -102,46 +133,52 @@ namespace Game {
         }
 
         // Setup skybox
-        std::vector<const char *> skybox
-                {
-                        "assets/space/bg.png",
-                        "assets/space/bg.png",
-                        "assets/space/bg.png",
-                        "assets/space/bg.png",
-                        "assets/space/bg.png",
-                        "assets/space/bg.png"
-                };
+        std::vector<const char*> skybox
+        {
+            "assets/space/bg.png",
+            "assets/space/bg.png",
+            "assets/space/bg.png",
+            "assets/space/bg.png",
+            "assets/space/bg.png",
+            "assets/space/bg.png"
+        };
         TextureResourceId skyboxId = TextureResource::LoadCubemap("skybox", skybox, true);
         RenderDevice::SetSkybox(skyboxId);
 
-        Input::Keyboard *kbd = Input::GetDefaultKeyboard();
+        Input::Keyboard* kbd = Input::GetDefaultKeyboard();
 
         const int numLights = 4;
         Render::PointLightId lights[numLights];
         // Setup lights
-        for (int i = 0; i < numLights; i++) {
+        for (int i = 0; i < numLights; i++)
+        {
             glm::vec3 translation = glm::vec3(
-                    Core::RandomFloatNTP() * 20.0f,
-                    Core::RandomFloatNTP() * 20.0f,
-                    Core::RandomFloatNTP() * 20.0f
+                Core::RandomFloatNTP() * 20.0f,
+                Core::RandomFloatNTP() * 20.0f,
+                Core::RandomFloatNTP() * 20.0f
             );
             glm::vec3 color = glm::vec3(
-                    Core::RandomFloat(),
-                    Core::RandomFloat(),
-                    Core::RandomFloat()
+                Core::RandomFloat(),
+                Core::RandomFloat(),
+                Core::RandomFloat()
             );
-            lights[i] = Render::LightServer::CreatePointLight(translation, color, Core::RandomFloat() * 4.0f,
-                                                              1.0f + (15 + Core::RandomFloat() * 10.0f));
+            lights[i] = Render::LightServer::CreatePointLight(translation, color, Core::RandomFloat() * 4.0f, 1.0f + (15 + Core::RandomFloat() * 10.0f));
         }
 
-        //SpaceShip ship;
-        //ship.model = LoadModel("assets/space/spaceship.glb");
+        SpaceShip ship;
+        ship.model = LoadModel("assets/podracer/craft_racer.glb");
+        glm::vec3 pos = ship.position;
+        glm::quat ori = ship.orientation;
 
         std::clock_t c_start = std::clock();
         double dt = 0.01667f;
 
+        bool collided = false;
+        bool renderCar = true;
+
         // game loop
-        while (this->window->IsOpen()) {
+        while (this->window->IsOpen())
+        {
             auto timeStart = std::chrono::steady_clock::now();
             glClear(GL_DEPTH_BUFFER_BIT);
             glEnable(GL_DEPTH_TEST);
@@ -150,19 +187,31 @@ namespace Game {
 
             this->window->Update();
 
-            if (kbd->pressed[Input::Key::Code::End]) {
+            if (kbd->pressed[Input::Key::Code::End])
+            {
                 ShaderResource::ReloadShaders();
             }
 
-            //ship.Update(dt);
-            //ship.CheckCollisions();
+            if(renderCar)
+                ship.Update(dt);
+
+            collided = ship.CheckCollisions();
 
             // Store all drawcalls in the render device
-            for (auto const &asteroid: asteroids) {
+            for (auto const& asteroid : asteroids)
+            {
                 RenderDevice::Draw(std::get<0>(asteroid), std::get<2>(asteroid));
             }
 
-            RenderDevice::Draw(models[0], glm::mat4(1));
+            if (!collided && renderCar)
+            {
+                RenderDevice::Draw(ship.model, ship.transform);               
+            }
+            else if (collided && renderCar) {
+                //renderCar = false;
+                ship.position = pos;
+                ship.orientation = ori;
+            }
 
             // Execute the entire rendering pipeline
             RenderDevice::Render(this->window, dt);

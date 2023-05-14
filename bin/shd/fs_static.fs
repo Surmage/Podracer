@@ -8,7 +8,6 @@ precision highp int;
 
 layout(location=0) in vec3 in_WorldSpacePos;
 layout(location=1) in vec3 in_Normal;
-layout(location=2) in vec4 in_Tangent;
 layout(location=3) in vec2 in_TexCoords;
 
 layout(location=0) out vec4 out_Color;
@@ -67,12 +66,6 @@ vec3 CalculateGlobalLight(vec3 V, vec3 N, vec3 P, vec4 diffuseColor)
     return shadowFactor * (GlobalLightColor * diffuse * diffuseColor.rgb);
 }
 
-vec3 CalcNormal(in vec4 tangent, in vec3 binormal, in vec3 normal, in vec3 bumpData)
-{
-    mat3 tangentViewMatrix = mat3(tangent.xyz, binormal.xyz, normal.xyz);
-    return tangentViewMatrix * ((bumpData.xyz * 2.0f) - 1.0f);
-}
-
 const vec3 AmbientLight = vec3(0.15f);
 
 void main()
@@ -84,14 +77,12 @@ void main()
 
     vec4 baseColor = texture(BaseColorTexture, in_TexCoords).rgba * BaseColorFactor;
     baseColor = pow(baseColor, vec4(1.0f/2.2f));
-    vec3 normal = texture(NormalTexture, in_TexCoords).xyz;
-	vec2 metallicRoughness = texture(MetallicRoughnessTexture, in_TexCoords).xy;
+    vec2 metallicRoughness = texture(MetallicRoughnessTexture, in_TexCoords).xy;
 	vec3 emissive = texture(EmissiveTexture, in_TexCoords).xyz;
 	vec3 occlusion = texture(OcclusionTexture, in_TexCoords).xyz;
     
     vec3 V = normalize(CameraPosition.xyz - in_WorldSpacePos.xyz);
-    vec3 binormal = cross(in_Normal, in_Tangent.xyz) * in_Tangent.w;
-    vec3 N = (CalcNormal(in_Tangent, binormal, in_Normal, normal.xyz));
+    vec3 N = in_Normal;
 
     vec3 light = AmbientLight;
 
