@@ -90,7 +90,11 @@ namespace Game {
             Physics::LoadColliderMesh("assets/space/Asteroid_6_physics.glb")
         };
 
+        
+
         std::vector<std::tuple<ModelId, Physics::ColliderId, glm::mat4>> asteroids;
+
+
 
         // Setup asteroids near
         for (int i = 0; i < 25; i++)
@@ -130,6 +134,25 @@ namespace Game {
             std::get<1>(asteroid) = Physics::CreateCollider(colliderMeshes[resourceIndex], transform);
             std::get<2>(asteroid) = transform;
             asteroids.push_back(asteroid);
+        }
+
+        ModelId plane = LoadModel("assets/podracer/plane.glb");
+        Physics::ColliderMeshId planeMesh = Physics::LoadColliderMesh("assets/podracer/plane_physics.glb");
+        std::tuple<ModelId, Physics::ColliderId, glm::mat4> groundPlane;
+
+        //Setup plane
+        {
+            std::tuple<ModelId, Physics::ColliderId, glm::mat4> ground;
+            std::get<0>(ground) = plane;
+            glm::vec3 translation = glm::vec3(
+                0.f, 3.f, 0.f
+            );
+            glm::vec3 rotationAxis = normalize(translation);
+            float rotation = translation.x;
+            glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
+            std::get<1>(ground) = Physics::CreateCollider(planeMesh, transform);
+            std::get<2>(ground) = transform;
+            groundPlane = (ground);
         }
 
         // Setup skybox
@@ -202,6 +225,8 @@ namespace Game {
             {
                 RenderDevice::Draw(std::get<0>(asteroid), std::get<2>(asteroid));
             }
+
+            RenderDevice::Draw(std::get<0>(groundPlane), std::get<2>(groundPlane));
 
             if (!collided && renderCar)
             {
