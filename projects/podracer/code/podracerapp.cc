@@ -172,7 +172,7 @@ namespace Game {
 
         PodRacerVehicle ship;
         //ship.model = Render::LoadModel("assets/space/spaceship.glb");
-        ship.model = Render::LoadModel("assets/podracer/kenney_space-kit/Models/OBJ format/craft_speederD.obj");
+        ship.model = Render::LoadModel("assets/podracer/kenney_space-kit/Models/OBJ format/craft_racer.obj");
 
         std::clock_t c_start = std::clock();
         double dt = 0.01667f;
