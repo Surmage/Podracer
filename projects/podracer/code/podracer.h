@@ -13,7 +13,7 @@ struct SpaceShip
 {
     SpaceShip();
     
-    glm::vec3 position = glm::vec3(0);
+    glm::vec3 position = glm::vec3(0.0f, 0.5f, 0.0f);
     glm::quat orientation = glm::identity<glm::quat>();
     glm::vec3 camPos = glm::vec3(0, 1.0f, -2.0f);
     glm::mat4 transform = glm::mat4(1);

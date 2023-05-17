@@ -146,10 +146,9 @@ namespace Game {
             std::tuple<ModelId, Physics::ColliderId, glm::mat4> ground;
             std::get<0>(ground) = plane;
             glm::vec3 translation = glm::vec3(
-                0.f, -3.f, 0.f
+                0.f, 0.f, 0.f
             );
-            glm::vec3 rotationAxis = normalize(translation);
-            float rotation = translation.x;
+
             glm::mat4 transform = glm::translate(translation);
             std::get<1>(ground) = Physics::CreateCollider(planeMesh, transform);
             std::get<2>(ground) = transform;
@@ -191,7 +190,8 @@ namespace Game {
 
         SpaceShip ship;
         ship.model = LoadModel("assets/podracer/craft_racer.glb");
-        glm::vec3 pos = ship.position;
+        glm::vec3 originalPos = ship.position;
+        glm::vec3 prevPos = ship.position;
         glm::quat ori = ship.orientation;
 
         std::clock_t c_start = std::clock();
@@ -199,6 +199,9 @@ namespace Game {
 
         bool collided = false;
         bool renderCar = true;
+
+        std::vector<float>groundPos;
+        groundPos.reserve(10);
 
         // game loop
         while (this->window->IsOpen())
@@ -221,13 +224,27 @@ namespace Game {
 
             collided = ship.CheckCollisions();
 
-            // Store all drawcalls in the render device
-            /*for (auto const& asteroid : asteroids)
-            {
-                RenderDevice::Draw(std::get<0>(asteroid), std::get<2>(asteroid));
-            }*/
 
-            RenderDevice::Draw(std::get<0>(groundPlane), std::get<2>(groundPlane));
+            if(ship.position != prevPos){
+                if(ship.position.z >= groundPos[6])
+                {
+                    prevPos = ship.position;
+                    std::cout << groundPos[8] << std::endl;
+
+                }
+            }
+
+            for (int i=0; i<10; i++) {
+                glm::vec3 translation = glm::vec3(
+                        0.0f, 0.f, prevPos.z + (i * 6)
+                );
+                groundPos[i] = translation.z;
+                glm::mat4 transform = glm::translate(translation);
+                RenderDevice::Draw(std::get<0>(groundPlane), transform);
+            }
+
+
+            //RenderDevice::Draw(std::get<0>(groundPlane), std::get<2>(groundPlane));
 
             if (!collided && renderCar)
             {
@@ -235,7 +252,7 @@ namespace Game {
             }
             else if (collided && renderCar) {
                 //renderCar = false;
-                ship.position = pos;
+                ship.position = originalPos;
                 ship.orientation = ori;
             }
 
