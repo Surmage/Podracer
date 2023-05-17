@@ -146,6 +146,13 @@ namespace Game {
                         "assets/space/bg.png",
                         "assets/space/bg.png",
                         "assets/space/bg.png"
+
+//                        "assets/outrun/bg.png",
+//                        "assets/outrun/bg.png",
+//                        "assets/outrun/bg.png",
+//                        "assets/outrun/bg.png",
+//                        "assets/outrun/bg.png",
+//                        "assets/outrun/bg.png"
                 };
         Render::TextureResourceId skyboxId = Render::TextureResource::LoadCubemap("skybox", skybox, true);
         Render::RenderDevice::SetSkybox(skyboxId);
@@ -172,7 +179,7 @@ namespace Game {
 
         PodRacerVehicle ship;
         //ship.model = Render::LoadModel("assets/space/spaceship.glb");
-        ship.model = Render::LoadModel("assets/podracer/kenney_space-kit/Models/OBJ format/craft_racer.obj");
+        ship.model = Render::LoadModel("assets/podracer/craft_racer.glb");
 
         std::clock_t c_start = std::clock();
         double dt = 0.01667f;
