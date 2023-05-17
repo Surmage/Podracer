@@ -17,6 +17,7 @@
 #include "render/physics.h"
 #include <chrono>
 #include "podracer.h"
+#include <iostream>
 
 using namespace Display;
 using namespace Render;
@@ -72,69 +73,69 @@ namespace Game {
         Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
         cam->projection = projection;
 
-        // load all resources
-        ModelId models[6] = {
-            LoadModel("assets/space/Asteroid_1.glb"),
-            LoadModel("assets/space/Asteroid_2.glb"),
-            LoadModel("assets/space/Asteroid_3.glb"),
-            LoadModel("assets/space/Asteroid_4.glb"),
-            LoadModel("assets/space/Asteroid_5.glb"),
-            LoadModel("assets/space/Asteroid_6.glb")
-        };
-        Physics::ColliderMeshId colliderMeshes[6] = {
-            Physics::LoadColliderMesh("assets/space/Asteroid_1_physics.glb"),
-            Physics::LoadColliderMesh("assets/space/Asteroid_2_physics.glb"),
-            Physics::LoadColliderMesh("assets/space/Asteroid_3_physics.glb"),
-            Physics::LoadColliderMesh("assets/space/Asteroid_4_physics.glb"),
-            Physics::LoadColliderMesh("assets/space/Asteroid_5_physics.glb"),
-            Physics::LoadColliderMesh("assets/space/Asteroid_6_physics.glb")
-        };
+        //// load all resources
+        //ModelId models[6] = {
+        //    LoadModel("assets/space/Asteroid_1.glb"),
+        //    LoadModel("assets/space/Asteroid_2.glb"),
+        //    LoadModel("assets/space/Asteroid_3.glb"),
+        //    LoadModel("assets/space/Asteroid_4.glb"),
+        //    LoadModel("assets/space/Asteroid_5.glb"),
+        //    LoadModel("assets/space/Asteroid_6.glb")
+        //};
+        //Physics::ColliderMeshId colliderMeshes[6] = {
+        //    Physics::LoadColliderMesh("assets/space/Asteroid_1_physics.glb"),
+        //    Physics::LoadColliderMesh("assets/space/Asteroid_2_physics.glb"),
+        //    Physics::LoadColliderMesh("assets/space/Asteroid_3_physics.glb"),
+        //    Physics::LoadColliderMesh("assets/space/Asteroid_4_physics.glb"),
+        //    Physics::LoadColliderMesh("assets/space/Asteroid_5_physics.glb"),
+        //    Physics::LoadColliderMesh("assets/space/Asteroid_6_physics.glb")
+        //};
 
         
 
-        std::vector<std::tuple<ModelId, Physics::ColliderId, glm::mat4>> asteroids;
+        //std::vector<std::tuple<ModelId, Physics::ColliderId, glm::mat4>> asteroids;
 
 
 
-        // Setup asteroids near
-        for (int i = 0; i < 25; i++)
-        {
-            std::tuple<ModelId, Physics::ColliderId, glm::mat4> asteroid;
-            size_t resourceIndex = (size_t)(Core::FastRandom() % 6);
-            std::get<0>(asteroid) = models[resourceIndex];
-            float span = 20.0f;
-            glm::vec3 translation = glm::vec3(
-                Core::RandomFloatNTP() * span,
-                Core::RandomFloatNTP() * span,
-                Core::RandomFloatNTP() * span
-            );
-            glm::vec3 rotationAxis = normalize(translation);
-            float rotation = translation.x;
-            glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
-            std::get<1>(asteroid) = Physics::CreateCollider(colliderMeshes[resourceIndex], transform);
-            std::get<2>(asteroid) = transform;
-            asteroids.push_back(asteroid);
-        }
+        //// Setup asteroids near
+        //for (int i = 0; i < 0; i++)
+        //{
+        //    std::tuple<ModelId, Physics::ColliderId, glm::mat4> asteroid;
+        //    size_t resourceIndex = (size_t)(Core::FastRandom() % 6);
+        //    std::get<0>(asteroid) = models[resourceIndex];
+        //    float span = 20.0f;
+        //    glm::vec3 translation = glm::vec3(
+        //        Core::RandomFloatNTP() * span,
+        //        Core::RandomFloatNTP() * span,
+        //        Core::RandomFloatNTP() * span
+        //    );
+        //    glm::vec3 rotationAxis = normalize(translation);
+        //    float rotation = translation.x;
+        //    glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
+        //    std::get<1>(asteroid) = Physics::CreateCollider(colliderMeshes[resourceIndex], transform);
+        //    std::get<2>(asteroid) = transform;
+        //    asteroids.push_back(asteroid);
+        //}
 
-        // Setup asteroids far
-        for (int i = 0; i < 20; i++)
-        {
-            std::tuple<ModelId, Physics::ColliderId, glm::mat4> asteroid;
-            size_t resourceIndex = (size_t)(Core::FastRandom() % 6);
-            std::get<0>(asteroid) = models[resourceIndex];
-            float span = 80.0f;
-            glm::vec3 translation = glm::vec3(
-                Core::RandomFloatNTP() * span,
-                Core::RandomFloatNTP() * span,
-                Core::RandomFloatNTP() * span
-            );
-            glm::vec3 rotationAxis = normalize(translation);
-            float rotation = translation.x;
-            glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
-            std::get<1>(asteroid) = Physics::CreateCollider(colliderMeshes[resourceIndex], transform);
-            std::get<2>(asteroid) = transform;
-            asteroids.push_back(asteroid);
-        }
+        //// Setup asteroids far
+        //for (int i = 0; i < 0; i++)
+        //{
+        //    std::tuple<ModelId, Physics::ColliderId, glm::mat4> asteroid;
+        //    size_t resourceIndex = (size_t)(Core::FastRandom() % 6);
+        //    std::get<0>(asteroid) = models[resourceIndex];
+        //    float span = 80.0f;
+        //    glm::vec3 translation = glm::vec3(
+        //        Core::RandomFloatNTP() * span,
+        //        Core::RandomFloatNTP() * span,
+        //        Core::RandomFloatNTP() * span
+        //    );
+        //    glm::vec3 rotationAxis = normalize(translation);
+        //    float rotation = translation.x;
+        //    glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
+        //    std::get<1>(asteroid) = Physics::CreateCollider(colliderMeshes[resourceIndex], transform);
+        //    std::get<2>(asteroid) = transform;
+        //    asteroids.push_back(asteroid);
+        //}
 
         ModelId plane = LoadModel("assets/podracer/plane.glb");
         Physics::ColliderMeshId planeMesh = Physics::LoadColliderMesh("assets/podracer/plane_physics.glb");
@@ -145,11 +146,11 @@ namespace Game {
             std::tuple<ModelId, Physics::ColliderId, glm::mat4> ground;
             std::get<0>(ground) = plane;
             glm::vec3 translation = glm::vec3(
-                0.f, 3.f, 0.f
+                0.f, -3.f, 0.f
             );
             glm::vec3 rotationAxis = normalize(translation);
             float rotation = translation.x;
-            glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
+            glm::mat4 transform = glm::translate(translation);
             std::get<1>(ground) = Physics::CreateCollider(planeMesh, transform);
             std::get<2>(ground) = transform;
             groundPlane = (ground);
@@ -170,7 +171,7 @@ namespace Game {
 
         Input::Keyboard* kbd = Input::GetDefaultKeyboard();
 
-        const int numLights = 4;
+        const int numLights = 1;
         Render::PointLightId lights[numLights];
         // Setup lights
         for (int i = 0; i < numLights; i++)
@@ -221,10 +222,10 @@ namespace Game {
             collided = ship.CheckCollisions();
 
             // Store all drawcalls in the render device
-            for (auto const& asteroid : asteroids)
+            /*for (auto const& asteroid : asteroids)
             {
                 RenderDevice::Draw(std::get<0>(asteroid), std::get<2>(asteroid));
-            }
+            }*/
 
             RenderDevice::Draw(std::get<0>(groundPlane), std::get<2>(groundPlane));
 
@@ -237,6 +238,9 @@ namespace Game {
                 ship.position = pos;
                 ship.orientation = ori;
             }
+
+            //Render::LightServer::SetPosition(lights[0], ship.position);
+            //Render::LightServer::Update();
 
             // Execute the entire rendering pipeline
             RenderDevice::Render(this->window, dt);
