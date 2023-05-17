@@ -64,7 +64,8 @@ static Core::CVar* r_draw_light_sphere_id = nullptr;
 void
 Initialize()
 {
-	globalLightDirection = glm::normalize(glm::vec3(-0.1f,-0.77735f,-0.27735f));
+	//globalLightDirection = glm::normalize(glm::vec3(-0.1f,-0.77735f,-0.27735f));
+	globalLightDirection = glm::normalize(glm::vec3(-1.f, -1.f, -1.f));
 	globalLightColor = glm::vec3(1.0f,0.8f,0.8f) * 3.0f;
 
 	icoSphereModel = LoadModel("assets/system/icosphere.glb");
