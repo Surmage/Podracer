@@ -200,12 +200,28 @@ namespace Game {
         bool collided = false;
         bool renderCar = true;
 
-        std::vector<float>groundPos;
-        groundPos.reserve(10);
+        int amountOfPlanes = 160;
+        float planeL = 8.f;
+
+
+        std::vector<glm::mat4>planeTransforms;
+        planeTransforms.reserve(amountOfPlanes);
+
+        for (int i = 0; i < amountOfPlanes; i++) {
+
+            glm::vec3 translation = glm::vec3(
+                    0.0f, 0.f, originalPos.z + (i * planeL)
+            );
+            glm::vec3 rotationAxis = normalize(glm::vec3(0.0f, 1.f, 0.0f));
+            float rotation = -float(i) / 100.f;
+
+            //glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
+            glm::mat4 transform =  glm::translate(translation);
+            planeTransforms[i] = transform;
+        }
 
         // game loop
-        while (this->window->IsOpen())
-        {
+        while (this->window->IsOpen()) {
             auto timeStart = std::chrono::steady_clock::now();
             glClear(GL_DEPTH_BUFFER_BIT);
             glEnable(GL_DEPTH_TEST);
@@ -214,37 +230,24 @@ namespace Game {
 
             this->window->Update();
 
-            if (kbd->pressed[Input::Key::Code::End])
-            {
+            if (kbd->pressed[Input::Key::Code::End]) {
                 ShaderResource::ReloadShaders();
             }
 
-            if(renderCar)
+            if (renderCar)
                 ship.Update(dt);
 
             collided = ship.CheckCollisions();
+            //Spawn tiles
+            {
+                for (int i = 0; i < 100; i++) {
 
 
-            if(ship.position != prevPos){
-                if(ship.position.z >= groundPos[6])
-                {
-                    prevPos = ship.position;
-                    std::cout << groundPos[8] << std::endl;
-
+                    //glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
+                    RenderDevice::Draw(std::get<0>(groundPlane), planeTransforms[i]);
                 }
             }
-
-            for (int i=0; i<10; i++) {
-                glm::vec3 translation = glm::vec3(
-                        0.0f, 0.f, prevPos.z + (i * 6)
-                );
-                groundPos[i] = translation.z;
-                glm::mat4 transform = glm::translate(translation);
-                RenderDevice::Draw(std::get<0>(groundPlane), transform);
-            }
-
-
-            //RenderDevice::Draw(std::get<0>(groundPlane), std::get<2>(groundPlane));
+            std::cout << "Ship: " << ship.position.z << std::endl;
 
             if (!collided && renderCar)
             {
@@ -255,9 +258,6 @@ namespace Game {
                 ship.position = originalPos;
                 ship.orientation = ori;
             }
-
-            //Render::LightServer::SetPosition(lights[0], ship.position);
-            //Render::LightServer::Update();
 
             // Execute the entire rendering pipeline
             RenderDevice::Render(this->window, dt);

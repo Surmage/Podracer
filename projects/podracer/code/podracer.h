@@ -22,8 +22,8 @@ struct SpaceShip
     const float normalSpeed = 1.0f;
     const float boostSpeed = normalSpeed * 2.0f;
     const float accelerationFactor = 1.0f;
-    const float camOffsetY = 1.0f;
-    const float cameraSmoothFactor = 10.0f;
+    const float camOffsetY = 1.5f;
+    const float cameraSmoothFactor = 20.0f;
 
     float currentSpeed = 0.0f;
 

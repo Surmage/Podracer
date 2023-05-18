@@ -83,7 +83,7 @@ SpaceShip::Update(float dt)
     this->rotationZ = mix(this->rotationZ, 0.0f, dt * cameraSmoothFactor);
 
     // update camera view transform
-    vec3 desiredCamPos = this->position + vec3(this->transform * vec4(0, camOffsetY, -4.0f, 0));
+    vec3 desiredCamPos = this->position + vec3(this->transform * vec4(0, camOffsetY, -1.0f, 0));
     this->camPos = mix(this->camPos, desiredCamPos, dt * cameraSmoothFactor);
     cam->view = lookAt(this->camPos, this->camPos + vec3(this->transform[2]), vec3(this->transform[1]));
 
