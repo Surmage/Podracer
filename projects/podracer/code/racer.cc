@@ -46,8 +46,6 @@ PodRacerVehicle::Update(float dt)
     Mouse* mouse = Input::GetDefaultMouse();
     Keyboard* kbd = Input::GetDefaultKeyboard();
 
-    Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
-
     if (kbd->held[Key::W])
     {
         if (kbd->held[Key::Shift])
@@ -55,10 +53,19 @@ PodRacerVehicle::Update(float dt)
         else
             this->currentSpeed = mix(this->currentSpeed, this->normalSpeed, std::min(1.0f, dt * 90.0f));
     }
+    else if (kbd->held[Key::S])
+    {
+        if (kbd->held[Key::Shift])
+            this->currentSpeed = -mix(this->currentSpeed, this->boostSpeed, std::min(1.0f, dt * 30.0f));
+        else
+            this->currentSpeed = -mix(this->currentSpeed, this->normalSpeed, std::min(1.0f, dt * 90.0f));
+    }
     else
     {
         this->currentSpeed = 0;
     }
+    Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
+
     vec3 desiredVelocity = vec3(0, 0, this->currentSpeed);
     desiredVelocity = this->transform * vec4(desiredVelocity, 0.0f);
 
