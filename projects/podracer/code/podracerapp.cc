@@ -155,6 +155,11 @@ namespace Game {
             groundPlane = (ground);
         }
 
+        //Just a guy
+        ModelId alien = LoadModel("assets/podracer/alien.glb");
+
+
+
         // Setup skybox
         std::vector<const char*> skybox
         {
@@ -200,28 +205,40 @@ namespace Game {
         bool collided = false;
         bool renderCar = true;
 
-        int amountOfPlanes = 160;
-        float planeL = 8.f;
+        int amountOfPlanes = 1600;
+        float planeL = 1.0f;
 
 
         std::vector<glm::mat4>planeTransforms;
-        planeTransforms.reserve(amountOfPlanes);
 
         for (int i = 0; i < amountOfPlanes; i++) {
 
             glm::vec3 translation = glm::vec3(
-                    0.0f, 0.f, originalPos.z + (i * planeL)
+                    0.0f, 0.f, (i * planeL)
             );
-            glm::vec3 rotationAxis = normalize(glm::vec3(0.0f, 1.f, 0.0f));
-            float rotation = -float(i) / 100.f;
+            glm::vec3 rotationAxis;
+            float rotation;
+            if(i > 50 && i < 700){
+                //rotationAxis = normalize(glm::vec3(translation));
+                rotationAxis = normalize(glm::vec3(0.f, 0.f, 1.f));
+                rotation = -45;
+            }
+            else{
+                rotationAxis = normalize(glm::vec3(translation));
+                rotation = 0.f;
+            }
 
-            //glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
-            glm::mat4 transform =  glm::translate(translation);
-            planeTransforms[i] = transform;
+            glm::mat4 rotate = glm::rotate(glm::radians(rotation), rotationAxis);
+            glm::mat4 translate = glm::translate(translation);
+            glm::mat4 transform = translate * rotate;
+            //glm::mat4 transform =  glm::translate(translation);
+            planeTransforms.push_back(transform);
         }
+        float rotamt = 0.f;
 
         // game loop
         while (this->window->IsOpen()) {
+            rotamt += 0.001;
             auto timeStart = std::chrono::steady_clock::now();
             glClear(GL_DEPTH_BUFFER_BIT);
             glEnable(GL_DEPTH_TEST);
@@ -240,7 +257,8 @@ namespace Game {
             collided = ship.CheckCollisions();
             //Spawn tiles
             {
-                for (int i = 0; i < 100; i++) {
+                //for (int i = 0; i < 100; i++) {
+                for (int i = ship.position.z; i < ship.position.z + 100; i++) {
 
 
                     //glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
@@ -249,15 +267,23 @@ namespace Game {
             }
             std::cout << "Ship: " << ship.position.z << std::endl;
 
+            glm::vec3 translation = glm::vec3(
+                    1.5f, 1.5f, 2.f
+            );
+            glm::vec3 rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
+            float rotation = rotamt;
+            glm::mat4 alienTransform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
+
             if (!collided && renderCar)
             {
-                RenderDevice::Draw(ship.model, ship.transform);               
+                RenderDevice::Draw(ship.model, ship.transform);
+                RenderDevice::Draw(alien, alienTransform);
             }
-            else if (collided && renderCar) {
+            /*else if (collided && renderCar) {
                 //renderCar = false;
                 ship.position = originalPos;
                 ship.orientation = ori;
-            }
+            }*/
 
             // Execute the entire rendering pipeline
             RenderDevice::Render(this->window, dt);
