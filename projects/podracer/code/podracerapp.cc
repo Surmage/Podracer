@@ -210,22 +210,36 @@ namespace Game {
 
 
         std::vector<glm::mat4>planeTransforms;
+        float height = 0.f;
+        float rotation = 0;
 
-        for (int i = 0; i < amountOfPlanes; i++) {
+        for (int i = 0;  i < amountOfPlanes; i++) {
 
-            glm::vec3 translation = glm::vec3(
-                    0.0f, 0.f, (i * planeL)
-            );
+            glm::vec3 translation;
             glm::vec3 rotationAxis;
-            float rotation;
-            if(i > 50 && i < 700){
+            if(i > 50 && i < 300){
                 //rotationAxis = normalize(glm::vec3(translation));
-                rotationAxis = normalize(glm::vec3(0.f, 0.f, 1.f));
+                rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
                 rotation = -45;
+                translation = glm::vec3(
+                        0.0f, (height + 1.41f) / 2, (i * planeL)/2 //1.41 being sqrt of 1+1
+                );
+                height++;
+            }
+            else if(i > 300 && i < 700){
+                rotationAxis = normalize(glm::vec3(-1.f, 0.f, 0.f));
+                rotation = 45;
+                translation = glm::vec3(
+                        0.0f, (height - 1.41f) / 2, (i * planeL)/2 //1.41 being sqrt of 1+1
+                );
+                height--;
             }
             else{
                 rotationAxis = normalize(glm::vec3(translation));
                 rotation = 0.f;
+                translation = glm::vec3(
+                        0.0f, height, (i * planeL)
+                );
             }
 
             glm::mat4 rotate = glm::rotate(glm::radians(rotation), rotationAxis);
@@ -251,10 +265,6 @@ namespace Game {
                 ShaderResource::ReloadShaders();
             }
 
-            if (renderCar)
-                ship.Update(dt);
-
-            collided = ship.CheckCollisions();
             //Spawn tiles
             {
                 //for (int i = 0; i < 100; i++) {
@@ -265,7 +275,30 @@ namespace Game {
                     RenderDevice::Draw(std::get<0>(groundPlane), planeTransforms[i]);
                 }
             }
-            std::cout << "Ship: " << ship.position.z << std::endl;
+
+            if (renderCar)
+            { //mat4, 4th matrix x y z
+                //planeTransforms[ship.position.z];
+                if(ship.position.z < 20){
+                    ship.Update(dt, 0.f);
+                }
+                else{
+                    ship.Update(dt, 45.f / 2);
+                }
+
+
+                //glm::mat4 m = planeTransforms[ship.position.z];
+
+                //std::cout << m[3].x << " " <<  m[3].y << " " << m[3].z << std::endl;
+                //glm::vec3 v = glm::vec3(m[3].x, m[3].y+5, m[3].z);
+
+
+            }
+
+
+            collided = ship.CheckCollisions();
+
+            //std::cout << "Ship: " << ship.position.z << std::endl;
 
             glm::vec3 translation = glm::vec3(
                     1.5f, 1.5f, 2.f

@@ -5,6 +5,7 @@
 #include "render/physics.h"
 #include "render/debugrender.h"
 #include "render/particlesystem.h"
+#include <iostream>
 
 using namespace Input;
 using namespace glm;
@@ -41,7 +42,7 @@ SpaceShip::SpaceShip()
 }
 
 void
-SpaceShip::Update(float dt)
+SpaceShip::Update(float dt, float angle)
 {
     //Mouse* mouse = Input::GetDefaultMouse();
     Keyboard* kbd = Input::GetDefaultKeyboard();
@@ -64,18 +65,25 @@ SpaceShip::Update(float dt)
 
     this->linearVelocity = mix(this->linearVelocity, desiredVelocity, dt * accelerationFactor);
 
-    float rotX = kbd->held[Key::Left] ? 1.0f : kbd->held[Key::Right] ? -1.0f : 0.0f;
-    float rotY = kbd->held[Key::Up] ? -1.0f : kbd->held[Key::Down] ? 1.0f : 0.0f;
+    //float rotX = kbd->held[Key::Left] ? 1.0f : kbd->held[Key::Right] ? -1.0f : 0.0f;
+    //float rotY = kbd->held[Key::Up] ? -1.0f : kbd->held[Key::Down] ? 1.0f : 0.0f;
     float rotZ = kbd->held[Key::A] ? -1.0f : kbd->held[Key::D] ? 1.0f : 0.0f;
+    float rotY = glm::radians(angle);
 
     this->position += this->linearVelocity * dt * 10.0f;
 
+    std::cout << orientation.x << " " << rotY << std::endl;
+
     const float rotationSpeed = 1.8f * dt;
-    rotXSmooth = mix(rotXSmooth, rotX * rotationSpeed, dt * cameraSmoothFactor);
+    //rotXSmooth = mix(rotXSmooth, rotX * rotationSpeed, dt * cameraSmoothFactor);
     rotYSmooth = mix(rotYSmooth, rotY * rotationSpeed, dt * cameraSmoothFactor);
-    rotZSmooth = mix(rotZSmooth, rotZ * rotationSpeed, dt * cameraSmoothFactor);
+    //rotZSmooth = mix(rotZSmooth, rotZ * rotationSpeed, dt * cameraSmoothFactor);
     quat localOrientation = quat(vec3(-rotYSmooth, rotXSmooth, rotZSmooth));
-    this->orientation = this->orientation * localOrientation;
+    if(this->orientation.x > -rotY){
+        this->orientation = this->orientation * localOrientation;
+    }
+
+    //std::cout << this->orientation.x << " " << this->orientation.y << " " << this->orientation.z << std::endl;
     this->rotationZ -= rotXSmooth;
     this->rotationZ = clamp(this->rotationZ, -45.0f, 45.0f);
     mat4 T = translate(this->position) * (mat4)this->orientation;
