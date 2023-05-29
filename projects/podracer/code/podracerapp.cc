@@ -235,11 +235,12 @@ namespace Game {
                 height--;
             }
             else{
-                rotationAxis = normalize(glm::vec3(translation));
+                
                 rotation = 0.f;
                 translation = glm::vec3(
                         0.0f, height, (i * planeL)
                 );
+                rotationAxis = normalize(glm::vec3(translation));
             }
 
             glm::mat4 rotate = glm::rotate(glm::radians(rotation), rotationAxis);
@@ -280,10 +281,10 @@ namespace Game {
             { //mat4, 4th matrix x y z
                 //planeTransforms[ship.position.z];
                 if(ship.position.z < 20){
-                    ship.Update(dt, 0.f);
+                    ship.Update(dt, planeTransforms[0]);
                 }
                 else{
-                    ship.Update(dt, 45.f / 2);
+                    ship.Update(dt, planeTransforms[ship.position.z]);
                 }
 
 
@@ -305,11 +306,11 @@ namespace Game {
             );
             glm::vec3 rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
             float rotation = rotamt;
-            glm::mat4 alienTransform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
+            glm::mat4 alienTransform = glm::translate(translation) * glm::rotate(rotation, rotationAxis);
 
             if (!collided && renderCar)
             {
-                RenderDevice::Draw(ship.model, ship.transform);
+                RenderDevice::Draw(ship.model, planeTransforms[ship.position.z] * glm::translate(glm::vec3(0.f, 1.f, 0.f)));
                 RenderDevice::Draw(alien, alienTransform);
             }
             /*else if (collided && renderCar) {

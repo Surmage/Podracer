@@ -42,7 +42,7 @@ SpaceShip::SpaceShip()
 }
 
 void
-SpaceShip::Update(float dt, float angle)
+SpaceShip::Update(float dt, glm::mat4 trans)
 {
     //Mouse* mouse = Input::GetDefaultMouse();
     Keyboard* kbd = Input::GetDefaultKeyboard();
@@ -66,9 +66,9 @@ SpaceShip::Update(float dt, float angle)
     this->linearVelocity = mix(this->linearVelocity, desiredVelocity, dt * accelerationFactor);
 
     //float rotX = kbd->held[Key::Left] ? 1.0f : kbd->held[Key::Right] ? -1.0f : 0.0f;
-    //float rotY = kbd->held[Key::Up] ? -1.0f : kbd->held[Key::Down] ? 1.0f : 0.0f;
+    float rotY = kbd->held[Key::Up] ? -1.0f : kbd->held[Key::Down] ? 1.0f : 0.0f;
     float rotZ = kbd->held[Key::A] ? -1.0f : kbd->held[Key::D] ? 1.0f : 0.0f;
-    float rotY = glm::radians(angle);
+    //float rotY = glm::radians(angle);
 
     this->position += this->linearVelocity * dt * 10.0f;
 
@@ -87,7 +87,8 @@ SpaceShip::Update(float dt, float angle)
     this->rotationZ -= rotXSmooth;
     this->rotationZ = clamp(this->rotationZ, -45.0f, 45.0f);
     mat4 T = translate(this->position) * (mat4)this->orientation;
-    this->transform = T * (mat4)quat(vec3(0, 0, rotationZ));
+    //this->transform = T * (mat4)quat(vec3(0, 0, rotationZ));
+    this->transform = T * trans;
     this->rotationZ = mix(this->rotationZ, 0.0f, dt * cameraSmoothFactor);
 
     // update camera view transform

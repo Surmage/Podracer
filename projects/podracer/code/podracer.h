@@ -37,7 +37,7 @@ struct SpaceShip
     Render::ParticleEmitter* particleEmitterRight;
     float emitterOffset = -0.5f;
 
-    void Update(float dt, float angle);
+    void Update(float dt, glm::mat4 trans);
 
     bool CheckCollisions();
     
