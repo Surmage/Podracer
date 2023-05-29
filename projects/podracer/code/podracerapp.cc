@@ -242,7 +242,7 @@ namespace Game {
                 
                 rotation = 0.f;
                 translation = glm::vec3(
-                        0.0f, height, (i * planeL)
+                        0.0f, height, (i * planeL) -1
                 );
                 rotationAxis = translation;
                 rotate = glm::mat4(1.f);

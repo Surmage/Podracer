@@ -30,16 +30,16 @@ struct Podracer
 {
     Podracer();
     
-    glm::vec3 position = glm::vec3(0.0f, 2.f, 0.0f);
+    glm::vec3 racerPos = glm::vec3(0.0f, 1.f, 2.0f);
     glm::quat orientation = glm::identity<glm::quat>();
-    glm::vec3 camPos = glm::vec3(0, 1.0f, -2.0f);
+    glm::vec3 position = glm::vec3(0, 2.0f, 0.0f);
     glm::mat4 transform = glm::mat4(1);
     glm::vec3 linearVelocity = glm::vec3(0);
 
     const float normalSpeed = 1.0f;
     const float boostSpeed = normalSpeed * 2.0f;
     const float accelerationFactor = 1.0f;
-    const float camOffsetY = 1.5f;
+    const float camOffsetY = 2.5f;
     const float cameraSmoothFactor = 20.0f;
 
     float currentSpeed = 0.0f;

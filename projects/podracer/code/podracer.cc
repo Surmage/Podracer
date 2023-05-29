@@ -18,7 +18,7 @@ Podracer::Podracer()
     uint32_t numParticles = 2048;
     this->particleEmitterLeft = new ParticleEmitter(numParticles);
     this->particleEmitterLeft->data = {
-        .origin = glm::vec4(this->position + (vec3(this->transform[2]) * emitterOffset),1),
+        .origin = glm::vec4(this->racerPos + (vec3(this->transform[2]) * emitterOffset),1),
         .dir = glm::vec4(glm::vec3(-this->transform[2]), 0),
         .startColor = glm::vec4(0.38f, 0.76f, 0.95f, 1.0f) * 2.0f,
         .endColor = glm::vec4(0,0,0,1.0f),
@@ -90,7 +90,7 @@ Podracer::Update(float dt, Tile& tile)
         }      
     }*/
 
-    this->position += this->linearVelocity * dt * 10.0f;
+    this->racerPos += this->linearVelocity * dt * 10.0f;
 
     //std::cout << orientation.x << " " << rotY << std::endl;
 
@@ -106,7 +106,7 @@ Podracer::Update(float dt, Tile& tile)
     std::cout << this->orientation.x << " " << this->orientation.y << " " << this->orientation.z << std::endl;
     this->rotationZ -= rotXSmooth;
     this->rotationZ = clamp(this->rotationZ, -45.0f, 45.0f);
-    mat4 T = translate(this->position) * (mat4)this->orientation;
+    mat4 T = translate(this->racerPos) * (mat4)this->orientation;
     this->transform = T * (mat4)quat(vec3(0, 0, rotationZ));
     //this->transform = T * trans * (mat4)quat(vec3(0, 0, rotationZ));
     //this->transform = tile.transform * T;
@@ -115,14 +115,14 @@ Podracer::Update(float dt, Tile& tile)
     //std::cout << position.x << " " << position.y << " " << position.z << std::endl;
 
     // update camera view transform
-    vec3 desiredCamPos = this->position + vec3(0, camOffsetY, -5.0f);
-    this->camPos = mix(this->camPos, desiredCamPos, dt * cameraSmoothFactor);
-    cam->view = lookAt(this->camPos, this->camPos + vec3(this->transform[2]), vec3(this->transform[1]));
+    vec3 desiredCamPos = this->racerPos + vec3(0, camOffsetY, -2.0f);
+    this->position = mix(this->position, desiredCamPos, dt * cameraSmoothFactor);
+    cam->view = lookAt(this->position, this->position + vec3(this->transform[2]), vec3(this->transform[1]));
 
     const float thrusterPosOffset = 0.365f;
-    this->particleEmitterLeft->data.origin = glm::vec4(vec3(this->position + (vec3(this->transform[0]) * -thrusterPosOffset)) + (vec3(this->transform[2]) * emitterOffset), 1);
+    this->particleEmitterLeft->data.origin = glm::vec4(vec3(this->racerPos + (vec3(this->transform[0]) * -thrusterPosOffset)) + (vec3(this->transform[2]) * emitterOffset), 1);
     this->particleEmitterLeft->data.dir = glm::vec4(glm::vec3(-this->transform[2]), 0);
-    this->particleEmitterRight->data.origin = glm::vec4(vec3(this->position + (vec3(this->transform[0]) * thrusterPosOffset)) + (vec3(this->transform[2]) * emitterOffset), 1);
+    this->particleEmitterRight->data.origin = glm::vec4(vec3(this->racerPos + (vec3(this->transform[0]) * thrusterPosOffset)) + (vec3(this->transform[2]) * emitterOffset), 1);
     this->particleEmitterRight->data.dir = glm::vec4(glm::vec3(-this->transform[2]), 0);
     
     float t = (currentSpeed / this->normalSpeed);
@@ -141,10 +141,10 @@ Podracer::CheckCollisions()
     bool hit = false;
     for (int i = 0; i < 8; i++)
     {
-        glm::vec3 pos = position;
+        glm::vec3 pos = racerPos;
         glm::vec3 dir = rotation * glm::vec4(glm::normalize(colliderEndPoints[i]), 0.0f);
         float len = glm::length(colliderEndPoints[i]);
-        Physics::RaycastPayload payload = Physics::Raycast(position, dir, len);
+        Physics::RaycastPayload payload = Physics::Raycast(racerPos, dir, len);
 
         // debug draw collision rays
         // Debug::DrawLine(pos, pos + dir * len, 1.0f, glm::vec4(0, 1, 0, 1), glm::vec4(0, 1, 0, 1), Debug::RenderMode::AlwaysOnTop);
