@@ -24,6 +24,8 @@ using namespace Render;
 
 namespace Game {
 
+   
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -193,7 +195,7 @@ namespace Game {
             lights[i] = Render::LightServer::CreatePointLight(translation, color, Core::RandomFloat() * 4.0f, 1.0f + (15 + Core::RandomFloat() * 10.0f));
         }
 
-        SpaceShip ship;
+        Podracer ship;
         ship.model = LoadModel("assets/podracer/craft_racer.glb");
         glm::vec3 originalPos = ship.position;
         glm::vec3 prevPos = ship.position;
@@ -209,30 +211,32 @@ namespace Game {
         float planeL = 1.0f;
 
 
-        std::vector<glm::mat4>planeTransforms;
+        std::vector<Tile>tiles;
         float height = 0.f;
         float rotation = 0;
 
         for (int i = 0;  i < amountOfPlanes; i++) {
-
             glm::vec3 translation;
             glm::vec3 rotationAxis;
+            glm::mat4 rotate;
             if(i > 50 && i < 300){
-                //rotationAxis = normalize(glm::vec3(translation));
                 rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
                 rotation = -45;
                 translation = glm::vec3(
-                        0.0f, (height + 1.41f) / 2, (i * planeL)/2 //1.41 being sqrt of 1+1
-                );
+                    0.0f, (height + 1.41f) / 2, (i * planeL) //1.41 being sqrt of 1+1
+                ); //this fails? because the length of 1 is insufficient with an incline of 45 degrees (Pythagorean)
                 height++;
+                rotate = glm::rotate(glm::radians(rotation), rotationAxis);
             }
             else if(i > 300 && i < 700){
-                rotationAxis = normalize(glm::vec3(-1.f, 0.f, 0.f));
+                //rotationAxis = normalize(glm::vec3(translation));
+                rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
                 rotation = 45;
                 translation = glm::vec3(
-                        0.0f, (height - 1.41f) / 2, (i * planeL)/2 //1.41 being sqrt of 1+1
+                    0.0f, (height - 1.41f) / 2, (i * planeL) //1.41 being sqrt of 1+1
                 );
-                height--;
+                height++;
+                rotate = glm::rotate(glm::radians(rotation), rotationAxis);
             }
             else{
                 
@@ -240,19 +244,25 @@ namespace Game {
                 translation = glm::vec3(
                         0.0f, height, (i * planeL)
                 );
-                rotationAxis = normalize(glm::vec3(translation));
+                rotationAxis = translation;
+                rotate = glm::mat4(1.f);
             }
 
-            glm::mat4 rotate = glm::rotate(glm::radians(rotation), rotationAxis);
             glm::mat4 translate = glm::translate(translation);
             glm::mat4 transform = translate * rotate;
+            Tile t(translation, transform, i);
+            t.rotationY = rotation;
             //glm::mat4 transform =  glm::translate(translation);
-            planeTransforms.push_back(transform);
+            tiles.push_back(t);
         }
         float rotamt = 0.f;
 
         // game loop
-        while (this->window->IsOpen()) {
+
+        //The idea. The game has tiles. Each tile has an id. Moving forward moves you along the tile grid. Each tile has position. 
+        //Movement takes you a percentage of the tile distance ahead per button press? 
+        //Moving forward takes you tile to tile. Rotation of the next tile is applied to the podracer as it gets closer.
+        while (this->window->IsOpen()) { 
             rotamt += 0.001;
             auto timeStart = std::chrono::steady_clock::now();
             glClear(GL_DEPTH_BUFFER_BIT);
@@ -273,21 +283,18 @@ namespace Game {
 
 
                     //glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
-                    RenderDevice::Draw(std::get<0>(groundPlane), planeTransforms[i]);
+                    RenderDevice::Draw(std::get<0>(groundPlane), tiles[i].transform);
                 }
             }
-
             if (renderCar)
             { //mat4, 4th matrix x y z
                 //planeTransforms[ship.position.z];
-                if(ship.position.z < 20){
-                    ship.Update(dt, planeTransforms[0]);
-                }
-                else{
-                    ship.Update(dt, planeTransforms[ship.position.z]);
-                }
 
+                ship.Update(dt, tiles[(int)ship.position.z]);
+                
+                
 
+                //std::cout << (int)ship.position.z << " " << tiles[(int)ship.position.z].position.z << std::endl;
                 //glm::mat4 m = planeTransforms[ship.position.z];
 
                 //std::cout << m[3].x << " " <<  m[3].y << " " << m[3].z << std::endl;
@@ -310,7 +317,7 @@ namespace Game {
 
             if (!collided && renderCar)
             {
-                RenderDevice::Draw(ship.model, planeTransforms[ship.position.z] * glm::translate(glm::vec3(0.f, 1.f, 0.f)));
+                RenderDevice::Draw(ship.model, ship.transform);
                 RenderDevice::Draw(alien, alienTransform);
             }
             /*else if (collided && renderCar) {

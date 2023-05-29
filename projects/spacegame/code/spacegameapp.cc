@@ -181,7 +181,7 @@ SpaceGameApp::Run()
         lights[i] = Render::LightServer::CreatePointLight(translation, color, Core::RandomFloat() * 4.0f, 1.0f + (15 + Core::RandomFloat() * 10.0f));
     }
 
-    SpaceShip ship;
+    Podracer ship;
     ship.model = LoadModel("assets/space/spaceship.glb");
 
     std::clock_t c_start = std::clock();

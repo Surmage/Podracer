@@ -12,7 +12,7 @@ using namespace Render;
 
 namespace Game
 {
-SpaceShip::SpaceShip()
+Podracer::Podracer()
 {
     uint32_t numParticles = 2048;
     this->particleEmitterLeft = new ParticleEmitter(numParticles);
@@ -41,7 +41,7 @@ SpaceShip::SpaceShip()
 }
 
 void
-SpaceShip::Update(float dt)
+Podracer::Update(float dt)
 {
     Mouse* mouse = Input::GetDefaultMouse();
     Keyboard* kbd = Input::GetDefaultKeyboard();
@@ -103,7 +103,7 @@ SpaceShip::Update(float dt)
 }
 
 bool
-SpaceShip::CheckCollisions()
+Podracer::CheckCollisions()
 {
     glm::mat4 rotation = (glm::mat4)orientation;
     bool hit = false;

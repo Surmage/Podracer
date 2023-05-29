@@ -13,7 +13,7 @@ using namespace Render;
 
 namespace Game
 {
-SpaceShip::SpaceShip()
+Podracer::Podracer()
 {
     uint32_t numParticles = 2048;
     this->particleEmitterLeft = new ParticleEmitter(numParticles);
@@ -42,7 +42,7 @@ SpaceShip::SpaceShip()
 }
 
 void
-SpaceShip::Update(float dt, glm::mat4 trans)
+Podracer::Update(float dt, Tile& tile)
 {
     //Mouse* mouse = Input::GetDefaultMouse();
     Keyboard* kbd = Input::GetDefaultKeyboard();
@@ -56,43 +56,66 @@ SpaceShip::Update(float dt, glm::mat4 trans)
         else
             this->currentSpeed = mix(this->currentSpeed, this->normalSpeed, std::min(1.0f, dt * 90.0f));
     }
+    else if (kbd->held[Key::S]) {       
+            this->currentSpeed = mix(this->currentSpeed, -(this->normalSpeed), std::min(1.0f, dt * 90.0f));
+    }
     else
     {
         this->currentSpeed = 0;
     }
-    vec3 desiredVelocity = vec3(0, 0, this->currentSpeed);
+
+    if (kbd->held[Key::A]) {
+        this->currentSideSpeed = mix(this->currentSideSpeed, this->boostSpeed, std::min(1.0f, dt * 30.0f));
+    }
+    else if (kbd->held[Key::D]) {
+        this->currentSideSpeed = mix(this->currentSideSpeed, -this->boostSpeed, std::min(1.0f, dt * 30.0f));
+    }
+    else {
+        this->currentSideSpeed = 0;
+    }
+    vec3 desiredVelocity = vec3(this->currentSideSpeed, 0, this->currentSpeed);
     desiredVelocity = this->transform * vec4(desiredVelocity, 0.0f);
 
     this->linearVelocity = mix(this->linearVelocity, desiredVelocity, dt * accelerationFactor);
 
     //float rotX = kbd->held[Key::Left] ? 1.0f : kbd->held[Key::Right] ? -1.0f : 0.0f;
     float rotY = kbd->held[Key::Up] ? -1.0f : kbd->held[Key::Down] ? 1.0f : 0.0f;
-    float rotZ = kbd->held[Key::A] ? -1.0f : kbd->held[Key::D] ? 1.0f : 0.0f;
-    //float rotY = glm::radians(angle);
+    //float rotZ = kbd->held[Key::A] ? -1.0f : kbd->held[Key::D] ? 1.0f : 0.0f;
+    //float rotY = 0;
+
+  /*  if (tile.rotationY != orientation.x) { 
+        float difference = -(1+(glm::radians(tile.rotationY)));
+        if (orientation.x > difference) {
+            orientation.x = difference;
+        }      
+    }*/
 
     this->position += this->linearVelocity * dt * 10.0f;
 
-    std::cout << orientation.x << " " << rotY << std::endl;
+    //std::cout << orientation.x << " " << rotY << std::endl;
 
     const float rotationSpeed = 1.8f * dt;
     //rotXSmooth = mix(rotXSmooth, rotX * rotationSpeed, dt * cameraSmoothFactor);
     rotYSmooth = mix(rotYSmooth, rotY * rotationSpeed, dt * cameraSmoothFactor);
     //rotZSmooth = mix(rotZSmooth, rotZ * rotationSpeed, dt * cameraSmoothFactor);
     quat localOrientation = quat(vec3(-rotYSmooth, rotXSmooth, rotZSmooth));
-    if(this->orientation.x > -rotY){
-        this->orientation = this->orientation * localOrientation;
-    }
-
-    //std::cout << this->orientation.x << " " << this->orientation.y << " " << this->orientation.z << std::endl;
+    
+    this->orientation = this->orientation * localOrientation;
+    
+    //std::cout << this->linearVelocity.z << std::endl;
+    std::cout << this->orientation.x << " " << this->orientation.y << " " << this->orientation.z << std::endl;
     this->rotationZ -= rotXSmooth;
     this->rotationZ = clamp(this->rotationZ, -45.0f, 45.0f);
     mat4 T = translate(this->position) * (mat4)this->orientation;
-    //this->transform = T * (mat4)quat(vec3(0, 0, rotationZ));
-    this->transform = T * trans;
+    this->transform = T * (mat4)quat(vec3(0, 0, rotationZ));
+    //this->transform = T * trans * (mat4)quat(vec3(0, 0, rotationZ));
+    //this->transform = tile.transform * T;
     this->rotationZ = mix(this->rotationZ, 0.0f, dt * cameraSmoothFactor);
+    //std::cout << T[0][0] << std::endl;
+    //std::cout << position.x << " " << position.y << " " << position.z << std::endl;
 
     // update camera view transform
-    vec3 desiredCamPos = this->position + vec3(this->transform * vec4(0, camOffsetY, -1.0f, 0));
+    vec3 desiredCamPos = this->position + vec3(0, camOffsetY, -5.0f);
     this->camPos = mix(this->camPos, desiredCamPos, dt * cameraSmoothFactor);
     cam->view = lookAt(this->camPos, this->camPos + vec3(this->transform[2]), vec3(this->transform[1]));
 
@@ -112,7 +135,7 @@ SpaceShip::Update(float dt, glm::mat4 trans)
 }
 
 bool
-SpaceShip::CheckCollisions()
+Podracer::CheckCollisions()
 {
     glm::mat4 rotation = (glm::mat4)orientation;
     bool hit = false;

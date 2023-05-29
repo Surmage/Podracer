@@ -9,11 +9,28 @@ namespace Render
 namespace Game
 {
 
-struct SpaceShip
+struct Tile {
+    glm::vec3 position; //center of tile
+    glm::mat4 transform;
+    int id;
+    float rotationY;
+    float rotationX;
+
+    Tile() {};
+    Tile(glm::vec3& position, glm::mat4& transform, int id) {
+        this->position = position;
+        this->transform = transform;
+        this->id = id;
+        rotationY = 0;
+        rotationX = 0;
+    }
+};
+
+struct Podracer
 {
-    SpaceShip();
+    Podracer();
     
-    glm::vec3 position = glm::vec3(0.0f, 0.5f, 0.0f);
+    glm::vec3 position = glm::vec3(0.0f, 2.f, 0.0f);
     glm::quat orientation = glm::identity<glm::quat>();
     glm::vec3 camPos = glm::vec3(0, 1.0f, -2.0f);
     glm::mat4 transform = glm::mat4(1);
@@ -26,6 +43,7 @@ struct SpaceShip
     const float cameraSmoothFactor = 20.0f;
 
     float currentSpeed = 0.0f;
+    float currentSideSpeed = 0.0f;
 
     float rotationZ = 0;
     float rotXSmooth = 0;
@@ -37,7 +55,7 @@ struct SpaceShip
     Render::ParticleEmitter* particleEmitterRight;
     float emitterOffset = -0.5f;
 
-    void Update(float dt, glm::mat4 trans);
+    void Update(float dt, Tile & tile);
 
     bool CheckCollisions();
     
