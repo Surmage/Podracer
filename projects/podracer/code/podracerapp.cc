@@ -281,7 +281,8 @@ namespace Game {
                 //for (int i = 0; i < 100; i++) {
                 for (int i = ship.position.z; i < ship.position.z + 100; i++) {
 
-
+                    if (i < 0)
+                        i = 0;
                     //glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
                     RenderDevice::Draw(std::get<0>(groundPlane), tiles[i].transform);
                 }

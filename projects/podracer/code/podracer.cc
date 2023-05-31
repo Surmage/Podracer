@@ -78,24 +78,36 @@ Podracer::Update(float dt, Tile& tile)
 
     this->linearVelocity = mix(this->linearVelocity, desiredVelocity, dt * accelerationFactor);
 
-    //float rotX = kbd->held[Key::Left] ? 1.0f : kbd->held[Key::Right] ? -1.0f : 0.0f;
+    float rotX = kbd->held[Key::Left] ? 1.0f : kbd->held[Key::Right] ? -1.0f : 0.0f;
     float rotY = kbd->held[Key::Up] ? -1.0f : kbd->held[Key::Down] ? 1.0f : 0.0f;
     //float rotZ = kbd->held[Key::A] ? -1.0f : kbd->held[Key::D] ? 1.0f : 0.0f;
     //float rotY = 0;
 
-  /*  if (tile.rotationY != orientation.x) { 
-        float difference = -(1+(glm::radians(tile.rotationY)));
+
+    this->position += this->linearVelocity * dt * 10.0f;
+    vec3 center = this->position + vec3(this->transform[2]);
+    //this->racerPos = center + vec3(0, -camOffsetY, 2.0f);
+    //this->racerPos = center - normalize(vec3(0, center.y, 0));
+    this->racerPos = center;
+    //vec3 center = this->position + normalize(vec3(0, 0, rotationZ)) * vec3(2);
+
+
+    std::cout << normalize(center).x << " " << normalize(center).y << " " << normalize(center).z << std::endl;
+
+   /* if (tile.rotationY != orientation.x) {
+        float difference = -(1 + (glm::radians(tile.rotationY)));
+
         if (orientation.x > difference) {
             orientation.x = difference;
-        }      
+            
+        }
     }*/
 
-    this->racerPos += this->linearVelocity * dt * 10.0f;
-
-    //std::cout << orientation.x << " " << rotY << std::endl;
+    //std::cout << orientation.x << std::endl;
+    //std::cout << this->position.x << " " << this->position.y << " " << this->position.z << std::endl;
 
     const float rotationSpeed = 1.8f * dt;
-    //rotXSmooth = mix(rotXSmooth, rotX * rotationSpeed, dt * cameraSmoothFactor);
+    rotXSmooth = mix(rotXSmooth, rotX * rotationSpeed, dt * cameraSmoothFactor);
     rotYSmooth = mix(rotYSmooth, rotY * rotationSpeed, dt * cameraSmoothFactor);
     //rotZSmooth = mix(rotZSmooth, rotZ * rotationSpeed, dt * cameraSmoothFactor);
     quat localOrientation = quat(vec3(-rotYSmooth, rotXSmooth, rotZSmooth));
@@ -103,21 +115,26 @@ Podracer::Update(float dt, Tile& tile)
     this->orientation = this->orientation * localOrientation;
     
     //std::cout << this->linearVelocity.z << std::endl;
-    std::cout << this->orientation.x << " " << this->orientation.y << " " << this->orientation.z << std::endl;
+    //std::cout << this->orientation.x << " " << this->orientation.y << " " << this->orientation.z << std::endl;
     this->rotationZ -= rotXSmooth;
     this->rotationZ = clamp(this->rotationZ, -45.0f, 45.0f);
     mat4 T = translate(this->racerPos) * (mat4)this->orientation;
-    this->transform = T * (mat4)quat(vec3(0, 0, rotationZ));
+
     //this->transform = T * trans * (mat4)quat(vec3(0, 0, rotationZ));
     //this->transform = tile.transform * T;
     this->rotationZ = mix(this->rotationZ, 0.0f, dt * cameraSmoothFactor);
+    this->transform = T * (mat4)quat(vec3(0, 0, rotationZ));
     //std::cout << T[0][0] << std::endl;
     //std::cout << position.x << " " << position.y << " " << position.z << std::endl;
 
+
+    
+
     // update camera view transform
-    vec3 desiredCamPos = this->racerPos + vec3(0, camOffsetY, -2.0f);
-    this->position = mix(this->position, desiredCamPos, dt * cameraSmoothFactor);
-    cam->view = lookAt(this->position, this->position + vec3(this->transform[2]), vec3(this->transform[1]));
+    //vec3 desiredCamPos = this->racerPos + vec3(0, camOffsetY, -2.0f);
+    //this->position = mix(this->position, desiredCamPos, dt * cameraSmoothFactor);
+    cam->view = lookAt(this->position, center, vec3(this->transform[1]));
+    //this->transform = mat4(quat(this->position + vec3(0, 0, 2)));
 
     const float thrusterPosOffset = 0.365f;
     this->particleEmitterLeft->data.origin = glm::vec4(vec3(this->racerPos + (vec3(this->transform[0]) * -thrusterPosOffset)) + (vec3(this->transform[2]) * emitterOffset), 1);
