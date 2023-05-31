@@ -85,10 +85,13 @@ Podracer::Update(float dt, Tile& tile)
 
 
     this->position += this->linearVelocity * dt * 10.0f;
+    vec3 offsetPosition = position + vec3(0, orientation.y, orientation.z); //figure this out
+    
     vec3 center = this->position + vec3(this->transform[2]);
+    vec3 offsetCenter = offsetPosition + vec3(this->transform[2]);
     //this->racerPos = center + vec3(0, -camOffsetY, 2.0f);
     //this->racerPos = center - normalize(vec3(0, center.y, 0));
-    this->racerPos = center;
+    this->racerPos = offsetCenter;
     //vec3 center = this->position + normalize(vec3(0, 0, rotationZ)) * vec3(2);
 
 
