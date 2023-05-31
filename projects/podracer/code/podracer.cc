@@ -83,19 +83,16 @@ Podracer::Update(float dt, Tile& tile)
     //float rotZ = kbd->held[Key::A] ? -1.0f : kbd->held[Key::D] ? 1.0f : 0.0f;
     //float rotY = 0;
 
-
     this->position += this->linearVelocity * dt * 10.0f;
-    vec3 offsetPosition = position + vec3(0, orientation.y, orientation.z); //figure this out
+
+    //if(orientation.z <= 1)
+    //   orientation.z += 0.01;
     
-    vec3 center = this->position + vec3(this->transform[2]);
-    vec3 offsetCenter = offsetPosition + vec3(this->transform[2]);
-    //this->racerPos = center + vec3(0, -camOffsetY, 2.0f);
-    //this->racerPos = center - normalize(vec3(0, center.y, 0));
-    this->racerPos = offsetCenter;
+
+
     //vec3 center = this->position + normalize(vec3(0, 0, rotationZ)) * vec3(2);
 
-
-    std::cout << normalize(center).x << " " << normalize(center).y << " " << normalize(center).z << std::endl;
+    //std::cout << normalize(center).x << " " << normalize(center).y << " " << normalize(center).z << std::endl;
 
    /* if (tile.rotationY != orientation.x) {
         float difference = -(1 + (glm::radians(tile.rotationY)));
@@ -118,7 +115,7 @@ Podracer::Update(float dt, Tile& tile)
     this->orientation = this->orientation * localOrientation;
     
     //std::cout << this->linearVelocity.z << std::endl;
-    //std::cout << this->orientation.x << " " << this->orientation.y << " " << this->orientation.z << std::endl;
+
     this->rotationZ -= rotXSmooth;
     this->rotationZ = clamp(this->rotationZ, -45.0f, 45.0f);
     mat4 T = translate(this->racerPos) * (mat4)this->orientation;
@@ -136,8 +133,32 @@ Podracer::Update(float dt, Tile& tile)
     // update camera view transform
     //vec3 desiredCamPos = this->racerPos + vec3(0, camOffsetY, -2.0f);
     //this->position = mix(this->position, desiredCamPos, dt * cameraSmoothFactor);
+
+    vec3 center = this->position + vec3(this->transform[2]);
     cam->view = lookAt(this->position, center, vec3(this->transform[1]));
     //this->transform = mat4(quat(this->position + vec3(0, 0, 2)));
+
+    //vec3 losDirection = normalize(center - position) + vec3(this->transform[2]); //figure this out
+    std::cout << "Center: " << (center).x << " " << (center).y << " " << (center).z << std::endl;
+    std::cout << "View: " << vec3(cam->view[2]).x << " " << vec3(cam->view[2]).y << " " << vec3(cam->view[2]).z << std::endl;
+    std::cout << "Orientation: " << this->orientation.x << " " << this->orientation.y << " " << this->orientation.z << std::endl;
+
+    //vec3 offsetCenter = center + vec3(cam->view[2]);
+    //this->racerPos = center + vec3(0, -camOffsetY, 2.0f);
+    //this->racerPos = center - normalize(vec3(0, center.y, 0));
+    //this->racerPos = center * vec3(cam->view[2]);
+    //std::cout << rotX << " " << rotY << std::endl;
+    if(rotX != 0){
+        this->racerPos = center + vec3(0, -center.y/2, -vec3(cam->view[2]).y);
+    }
+    else if(rotY != 0){
+        this->racerPos = center + vec3(0, vec3(cam->view[2]).z, -vec3(cam->view[2]).y);
+    }
+    else{
+        this->racerPos = center + vec3(0, vec3(cam->view[2]).z, -vec3(cam->view[2]).y);
+    }
+    //this->racerPos = center + vec3(0, vec3(cam->view[2]).z, -vec3(cam->view[2]).y);
+    //this->racerPos = center + vec3(0, -center.y/2, -vec3(cam->view[2]).y);
 
     const float thrusterPosOffset = 0.365f;
     this->particleEmitterLeft->data.origin = glm::vec4(vec3(this->racerPos + (vec3(this->transform[0]) * -thrusterPosOffset)) + (vec3(this->transform[2]) * emitterOffset), 1);
