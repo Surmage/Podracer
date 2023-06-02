@@ -103,6 +103,8 @@ Podracer::Update(float dt, Tile& tile)
         }
     }*/
 
+
+
     //std::cout << orientation.x << std::endl;
     //std::cout << this->position.x << " " << this->position.y << " " << this->position.z << std::endl;
 
@@ -113,6 +115,7 @@ Podracer::Update(float dt, Tile& tile)
     quat localOrientation = quat(vec3(-rotYSmooth, rotXSmooth, rotZSmooth));
     
     this->orientation = this->orientation * localOrientation;
+    //this->orientation = vec3(-vec3(tile.transform[2]).y, 0, 0);
     
     //std::cout << this->linearVelocity.z << std::endl;
 
@@ -139,8 +142,8 @@ Podracer::Update(float dt, Tile& tile)
     //this->transform = mat4(quat(this->position + vec3(0, 0, 2)));
 
     //vec3 losDirection = normalize(center - position) + vec3(this->transform[2]); //figure this out
-    std::cout << "Center: " << (center).x << " " << (center).y << " " << (center).z << std::endl;
-    std::cout << "View: " << vec3(cam->view[2]).x << " " << vec3(cam->view[2]).y << " " << vec3(cam->view[2]).z << std::endl;
+    //std::cout << "Center: " << (center).x << " " << (center).y << " " << (center).z << std::endl;
+    //std::cout << "View: " << vec3(cam->view[2]).x << " " << vec3(cam->view[2]).y << " " << vec3(cam->view[2]).z << std::endl;
     std::cout << "Orientation: " << this->orientation.x << " " << this->orientation.y << " " << this->orientation.z << std::endl;
 
     //vec3 offsetCenter = center + vec3(cam->view[2]);

@@ -222,10 +222,11 @@ namespace Game {
             if(i > 50 && i < 300){
                 rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
                 rotation = -45;
+
                 translation = glm::vec3(
-                    0.0f, (height + 1.41f) / 2, (i * planeL) //1.41 being sqrt of 1+1
+                    0.0f, (height) + (0.70f / 2), (i-1) + (0.7f / 2) //1.41 being sqrt of 1+1
                 ); //this fails? because the length of 1 is insufficient with an incline of 45 degrees (Pythagorean)
-                height++;
+                height+=0.25f;
                 rotate = glm::rotate(glm::radians(rotation), rotationAxis);
             }
             else if(i > 300 && i < 700){
@@ -235,7 +236,7 @@ namespace Game {
                 translation = glm::vec3(
                     0.0f, (height - 1.41f) / 2, (i * planeL) //1.41 being sqrt of 1+1
                 );
-                height++;
+                height--;
                 rotate = glm::rotate(glm::radians(rotation), rotationAxis);
             }
             else{
@@ -291,7 +292,7 @@ namespace Game {
             { //mat4, 4th matrix x y z
                 //planeTransforms[ship.position.z];
 
-                ship.Update(dt, tiles[(int)ship.position.z]);
+                ship.Update(dt, tiles[(int)ship.position.z+1]);
                 
                 
 
