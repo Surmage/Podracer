@@ -9,23 +9,41 @@ namespace Render
 namespace Game
 {
 
-struct SpaceShip
+struct Tile {
+    glm::vec3 position; //center of tile
+    glm::mat4 transform;
+    int id;
+    float rotationY;
+    float rotationX;
+
+    Tile() {};
+    Tile(glm::vec3& position, glm::mat4& transform, int id) {
+        this->position = position;
+        this->transform = transform;
+        this->id = id;
+        rotationY = 0;
+        rotationX = 0;
+    }
+};
+
+struct Podracer
 {
-    SpaceShip();
+    Podracer();
     
-    glm::vec3 position = glm::vec3(0);
+    glm::vec3 racerPos = glm::vec3(0.0f, 1.f, 2.0f);
     glm::quat orientation = glm::identity<glm::quat>();
-    glm::vec3 camPos = glm::vec3(0, 1.0f, -2.0f);
+    glm::vec3 position = glm::vec3(0, 2.0f, 0.0f);
     glm::mat4 transform = glm::mat4(1);
     glm::vec3 linearVelocity = glm::vec3(0);
 
     const float normalSpeed = 1.0f;
     const float boostSpeed = normalSpeed * 2.0f;
     const float accelerationFactor = 1.0f;
-    const float camOffsetY = 1.0f;
-    const float cameraSmoothFactor = 10.0f;
+    const float camOffsetY = 1.5f;
+    const float cameraSmoothFactor = 20.0f;
 
     float currentSpeed = 0.0f;
+    float currentSideSpeed = 0.0f;
 
     float rotationZ = 0;
     float rotXSmooth = 0;
@@ -37,7 +55,7 @@ struct SpaceShip
     Render::ParticleEmitter* particleEmitterRight;
     float emitterOffset = -0.5f;
 
-    void Update(float dt);
+    void Update(float dt, Tile & tile);
 
     bool CheckCollisions();
     

@@ -9,13 +9,13 @@ namespace Render
 namespace Game
 {
 
-struct SpaceShip
+struct Podracer
 {
-    SpaceShip();
+    Podracer();
     
-    glm::vec3 position = glm::vec3(0);
+    glm::vec3 racerPos = glm::vec3(0);
     glm::quat orientation = glm::identity<glm::quat>();
-    glm::vec3 camPos = glm::vec3(0, 1.0f, -2.0f);
+    glm::vec3 position = glm::vec3(0, 1.0f, -2.0f);
     glm::mat4 transform = glm::mat4(1);
     glm::vec3 linearVelocity = glm::vec3(0);
 
