@@ -63,7 +63,6 @@ Podracer::Update(float dt, Tile& tile)
     {
         this->currentSpeed = 0;
     }
-
     if (kbd->held[Key::A]) {
         this->currentSideSpeed = mix(this->currentSideSpeed, this->boostSpeed, std::min(1.0f, dt * 30.0f));
     }

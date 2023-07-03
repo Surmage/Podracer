@@ -212,46 +212,60 @@ namespace Game {
 
 
         std::vector<Tile>tiles;
-        float height = 0.f;
         float rotation = 0;
 
         for (int i = 0;  i < amountOfPlanes; i++) {
             glm::vec3 translation;
             glm::vec3 rotationAxis;
             glm::mat4 rotate;
-            if(i > 50 && i < 300){
+            glm::vec3 edge;
+            if(i == 0){
+                rotation = 0.f;
+                translation = glm::vec3(
+                        0.0f, 0.f, 0.f
+                );
+                rotate = glm::mat4(1.f);
+                edge = glm::vec3(0, translation.y, translation.z + 0.5f);
+            }
+            else if(i > 50 && i < 150){
                 rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
                 rotation = -45;
 
+
+                float angle = (sin(glm::radians(-rotation)));
                 translation = glm::vec3(
-                    0.0f, (height) + (0.70f / 2), (i-1) + (0.7f / 2) //1.41 being sqrt of 1+1
+                    0.0f, tiles[i-1].edge.y + (angle / 2), tiles[i-1].edge.z + (angle / 2)//1.41 being sqrt of 1+1
                 ); //this fails? because the length of 1 is insufficient with an incline of 45 degrees (Pythagorean)
-                height+=0.25f;
+
                 rotate = glm::rotate(glm::radians(rotation), rotationAxis);
+                edge = glm::vec3(0.f, translation.y + (angle / 2), translation.z + (angle / 2));
             }
-            else if(i > 300 && i < 700){
-                //rotationAxis = normalize(glm::vec3(translation));
-                rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
-                rotation = 45;
+            else if(i > 200 && i < 250){
+                rotationAxis = normalize(glm::vec3(-1.f, 0.f, 0.f));
+                rotation = -45;
+
+                float angle = (sin(glm::radians(rotation)));
                 translation = glm::vec3(
-                    0.0f, (height - 1.41f) / 2, (i * planeL) //1.41 being sqrt of 1+1
+                        0.0f, tiles[i-1].edge.y + (angle / 2), tiles[i-1].edge.z - (angle / 2)
                 );
-                height--;
+
                 rotate = glm::rotate(glm::radians(rotation), rotationAxis);
+                edge = glm::vec3(0.f, translation.y + (angle / 2), translation.z - (angle / 2));
             }
             else{
-                
+
                 rotation = 0.f;
                 translation = glm::vec3(
-                        0.0f, height, (i * planeL) -1
+                        0.0f, tiles[i-1].edge.y, tiles[i-1].edge.z + 0.5f
                 );
                 rotationAxis = translation;
                 rotate = glm::mat4(1.f);
+                edge = glm::vec3(0, translation.y, translation.z + 0.5f);
             }
 
             glm::mat4 translate = glm::translate(translation);
             glm::mat4 transform = translate * rotate;
-            Tile t(translation, transform, i);
+            Tile t(translation, transform, edge, i);
             t.rotationY = rotation;
             //glm::mat4 transform =  glm::translate(translation);
             tiles.push_back(t);

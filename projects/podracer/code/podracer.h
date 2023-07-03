@@ -15,12 +15,14 @@ struct Tile {
     int id;
     float rotationY;
     float rotationX;
+    glm::vec3 edge;
 
     Tile() {};
-    Tile(glm::vec3& position, glm::mat4& transform, int id) {
+    Tile(glm::vec3& position, glm::mat4& transform, glm::vec3 edge, int id) {
         this->position = position;
         this->transform = transform;
         this->id = id;
+        this->edge = edge;
         rotationY = 0;
         rotationX = 0;
     }
