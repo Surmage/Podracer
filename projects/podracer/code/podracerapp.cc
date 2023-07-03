@@ -231,7 +231,6 @@ namespace Game {
                 rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
                 rotation = -45;
 
-
                 float angle = (sin(glm::radians(-rotation)));
                 translation = glm::vec3(
                     0.0f, tiles[i-1].edge.y + (angle / 2), tiles[i-1].edge.z + (angle / 2)//1.41 being sqrt of 1+1
@@ -272,6 +271,7 @@ namespace Game {
         }
         float rotamt = 0.f;
 
+        int positionIndex = 0;
         // game loop
 
         //The idea. The game has tiles. Each tile has an id. Moving forward moves you along the tile grid. Each tile has position. 
@@ -306,8 +306,8 @@ namespace Game {
             { //mat4, 4th matrix x y z
                 //planeTransforms[ship.position.z];
 
-                ship.Update(dt, tiles[(int)ship.position.z+1]);
-                
+                ship.Update(dt, positionIndex, tiles);
+                //std::cout << positionIndex << std::endl;
                 
 
                 //std::cout << (int)ship.position.z << " " << tiles[(int)ship.position.z].position.z << std::endl;

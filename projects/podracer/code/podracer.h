@@ -44,7 +44,9 @@ struct Podracer
     const float camOffsetY = 1.5f;
     const float cameraSmoothFactor = 20.0f;
 
+    float movementIndex = 0.f;
     float currentSpeed = 0.0f;
+    float currentUpSpeed = 0.0f;
     float currentSideSpeed = 0.0f;
 
     float rotationZ = 0;
@@ -57,7 +59,7 @@ struct Podracer
     Render::ParticleEmitter* particleEmitterRight;
     float emitterOffset = -0.5f;
 
-    void Update(float dt, Tile & tile);
+    void Update(float dt, int& i, std::vector<Tile>& tiles);
 
     bool CheckCollisions();
     
