@@ -240,16 +240,16 @@ namespace Game {
                 edge = glm::vec3(0.f, translation.y + (angle / 2), translation.z + (angle / 2));
             }
             else if(i > 200 && i < 250){
-                rotationAxis = normalize(glm::vec3(-1.f, 0.f, 0.f));
-                rotation = -45;
+                rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
+                rotation = 45;
 
                 float angle = (sin(glm::radians(rotation)));
                 translation = glm::vec3(
-                        0.0f, tiles[i-1].edge.y + (angle / 2), tiles[i-1].edge.z - (angle / 2)
+                        0.0f, tiles[i-1].edge.y - (angle / 2), tiles[i-1].edge.z + (angle / 2)
                 );
 
                 rotate = glm::rotate(glm::radians(rotation), rotationAxis);
-                edge = glm::vec3(0.f, translation.y + (angle / 2), translation.z - (angle / 2));
+                edge = glm::vec3(0.f, translation.y - (angle / 2), translation.z + (angle / 2));
             }
             else{
 
@@ -294,7 +294,7 @@ namespace Game {
             //Spawn tiles
             {
                 //for (int i = 0; i < 100; i++) {
-                for (int i = ship.position.z; i < ship.position.z + 100; i++) {
+                for (int i = ship.movementIndex -5; i < ship.position.z + 100; i++) {
 
                     if (i < 0)
                         i = 0;

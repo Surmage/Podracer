@@ -59,19 +59,19 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
 
             this->currentSpeed = 1.f;
 
-            if(tiles[(int)movementIndex+1].rotationY < 0.f){
+            /*if(tiles[(int)movementIndex].rotationY < 0.f){
                 this->currentSpeed = sin(glm::radians(45.f));
                 this->currentUpSpeed = sin(glm::radians(45.f));
                 std::cout << "Bleh" << movementIndex << std::endl;
             }
-            else if(tiles[(int)movementIndex+1].rotationY > 0.f){
+            else if(tiles[(int)movementIndex].rotationY > 0.f){
                 this->currentSpeed = sin(glm::radians(45.f));
                 this->currentUpSpeed = -sin(glm::radians(45.f));
                 std::cout << "Bleh" << movementIndex << std::endl;
             }
             else{
                 this->currentUpSpeed = 0.f;
-            }
+            }*/
             //this->position += normalize(tile.position);
 
 
@@ -81,7 +81,23 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     }
     else if (kbd->held[Key::S]) {       
             //this->currentSpeed = mix(this->currentSpeed, -(this->normalSpeed), std::min(1.0f, dt * 90.0f));
-        i--;
+        this->movementIndex -= dt * 10.f;
+
+        this->currentSpeed = -1.f;
+
+        /*if(tiles[(int)movementIndex].rotationY < 0.f){
+            this->currentSpeed = -sin(glm::radians(45.f));
+            this->currentUpSpeed = -sin(glm::radians(45.f));
+            std::cout << "Bleh" << movementIndex << std::endl;
+        }
+        else if(tiles[(int)movementIndex].rotationY > 0.f){
+            this->currentSpeed = -sin(glm::radians(45.f));
+            this->currentUpSpeed = sin(glm::radians(45.f));
+            std::cout << "Bleh" << movementIndex << std::endl;
+        }
+        else{
+            this->currentUpSpeed = 0.f;
+        }*/
         //this->position = tile.position + vec3(0.f, 2.f, 0.f);
     }
     else
@@ -103,12 +119,13 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
 
     this->linearVelocity = mix(this->linearVelocity, desiredVelocity, dt * accelerationFactor);
 
-    float rotX = kbd->held[Key::Left] ? 1.0f : kbd->held[Key::Right] ? -1.0f : 0.0f;
-    float rotY = kbd->held[Key::Up] ? -1.0f : kbd->held[Key::Down] ? 1.0f : 0.0f;
+    //float rotX = kbd->held[Key::Left] ? 1.0f : kbd->held[Key::Right] ? -1.0f : 0.0f;
+    //float rotY = kbd->held[Key::Up] ? -1.0f : kbd->held[Key::Down] ? 1.0f : 0.0f;
     //float rotZ = kbd->held[Key::A] ? -1.0f : kbd->held[Key::D] ? 1.0f : 0.0f;
     //float rotY = 0;
 
     this->position += desiredVelocity * dt * 10.0f;
+    this->racerPos = this->position * orientation;
 
     //if(orientation.z <= 1)
     //   orientation.z += 0.01;
@@ -134,10 +151,10 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     //std::cout << this->position.x << " " << this->position.y << " " << this->position.z << std::endl;
 
     const float rotationSpeed = 1.8f * dt;
-    rotXSmooth = mix(rotXSmooth, rotX * rotationSpeed, dt * cameraSmoothFactor);
-    rotYSmooth = mix(rotYSmooth, rotY * rotationSpeed, dt * cameraSmoothFactor);
+    //rotXSmooth = mix(rotXSmooth, rotX * rotationSpeed, dt * cameraSmoothFactor);
+    //rotYSmooth = mix(rotYSmooth, rotY * rotationSpeed, dt * cameraSmoothFactor);
     //rotZSmooth = mix(rotZSmooth, rotZ * rotationSpeed, dt * cameraSmoothFactor);
-    quat localOrientation = quat(vec3(-rotYSmooth, rotXSmooth, rotZSmooth));
+    quat localOrientation = quat(vec3(rotYSmooth, rotXSmooth, rotZSmooth));
     
     this->orientation = this->orientation * localOrientation;
     //this->orientation = vec3(-vec3(tile.transform[2]).y, 0, 0);
@@ -145,13 +162,16 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     //std::cout << this->linearVelocity.z << std::endl;
 
     this->rotationZ -= rotXSmooth;
-    this->rotationZ = clamp(this->rotationZ, -45.0f, 45.0f);
-    mat4 T = translate(this->racerPos) * (mat4)this->orientation;
+    //this->rotationZ = clamp(this->rotationZ, -45.0f, 45.0f);
+    //this->rotationZ = tiles[(int)movementIndex].rotationY;
+    mat4 T = translate(this->racerPos);
 
     //this->transform = T * trans * (mat4)quat(vec3(0, 0, rotationZ));
     //this->transform = tile.transform * T;
     this->rotationZ = mix(this->rotationZ, 0.0f, dt * cameraSmoothFactor);
-    this->transform = T * (mat4)quat(vec3(0, 0, rotationZ));
+    //this->transform = T * (mat4)quat(vec3(sin(radians(tiles[(int)movementIndex].rotationY)), 0, 0)); //handles rotation of vehicle, affects movement direction
+    this->transform = tiles[(int)movementIndex].transform; //handles rotation of vehicle, affects movement direction
+
     //std::cout << T[0][0] << std::endl;
     //std::cout << position.x << " " << position.y << " " << position.z << std::endl;
 
@@ -162,9 +182,10 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     //vec3 desiredCamPos = this->racerPos + vec3(0, camOffsetY, -2.0f);
     //this->position = mix(this->position, desiredCamPos, dt * cameraSmoothFactor);
 
-    vec3 center = this->position + vec3(this->transform[2]);
-    cam->view = lookAt(this->position, center, vec3(this->transform[1]));
+    vec3 center = racerPos + vec3(0, 5 * -sin(radians(tiles[(int)movementIndex].rotationY)), 5);
+    cam->view = lookAt(vec3(this->position.x, this->position.y + 1.f + sin(radians(tiles[(int)movementIndex].rotationY)) , this->position.z - 1.5f), center, vec3(0, 2, 0));
     //this->transform = mat4(quat(this->position + vec3(0, 0, 2)));
+    //this->racerPos = this->position + vec3(0, 0, 5);
 
     //vec3 losDirection = normalize(center - position) + vec3(this->transform[2]); //figure this out
     //std::cout << "Center: " << (center).x << " " << (center).y << " " << (center).z << std::endl;
@@ -176,7 +197,7 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     //this->racerPos = center - normalize(vec3(0, center.y, 0));
     //this->racerPos = center * vec3(cam->view[2]);
     //std::cout << rotX << " " << rotY << std::endl;
-    if(rotX != 0){
+    /*if(rotX != 0){
         this->racerPos = center + vec3(0, -center.y/2, -vec3(cam->view[2]).y);
     }
     else if(rotY != 0){
@@ -184,7 +205,7 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     }
     else{
         this->racerPos = center + vec3(0, vec3(cam->view[2]).z, -vec3(cam->view[2]).y);
-    }
+    }*/
     //this->racerPos = center + vec3(0, vec3(cam->view[2]).z, -vec3(cam->view[2]).y);
     //this->racerPos = center + vec3(0, -center.y/2, -vec3(cam->view[2]).y);
 

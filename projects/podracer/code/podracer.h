@@ -31,10 +31,10 @@ struct Tile {
 struct Podracer
 {
     Podracer();
-    
-    glm::vec3 racerPos = glm::vec3(0.0f, 1.f, 2.0f);
+
+    glm::vec3 racerPos = glm::vec3(0.0f, 0.f, 2.0f);
     glm::quat orientation = glm::identity<glm::quat>();
-    glm::vec3 position = glm::vec3(0, 2.0f, 0.0f);
+    glm::vec3 position = glm::vec3(0, 1.0f, 0.0f);
     glm::mat4 transform = glm::mat4(1);
     glm::vec3 linearVelocity = glm::vec3(0);
 
