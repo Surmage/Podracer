@@ -263,7 +263,7 @@ namespace Game {
             }
 
             glm::mat4 translate = glm::translate(translation);
-            glm::mat4 transform = translate * rotate;
+            glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
             Tile t(translation, transform, edge, i);
             t.rotationY = rotation;
             //glm::mat4 transform =  glm::translate(translation);
@@ -294,8 +294,7 @@ namespace Game {
             //Spawn tiles
             {
                 //for (int i = 0; i < 100; i++) {
-                for (int i = ship.movementIndex -5; i < ship.position.z + 100; i++) {
-
+                for (int i = ship.movementIndex -5; i < ship.movementIndex + 100; i++) {
                     if (i < 0)
                         i = 0;
                     //glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);

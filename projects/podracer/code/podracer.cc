@@ -39,6 +39,8 @@ Podracer::Podracer()
 
     ParticleSystem::Instance()->AddEmitter(this->particleEmitterLeft);
     ParticleSystem::Instance()->AddEmitter(this->particleEmitterRight);
+
+
 }
 
 void
@@ -146,7 +148,7 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     }*/
 
 
-    //std::cout << movementIndex << std::endl;
+    std::cout << movementIndex << std::endl;
     //std::cout << orientation.x << std::endl;
     //std::cout << this->position.x << " " << this->position.y << " " << this->position.z << std::endl;
 
@@ -155,8 +157,9 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     //rotYSmooth = mix(rotYSmooth, rotY * rotationSpeed, dt * cameraSmoothFactor);
     //rotZSmooth = mix(rotZSmooth, rotZ * rotationSpeed, dt * cameraSmoothFactor);
     quat localOrientation = quat(vec3(rotYSmooth, rotXSmooth, rotZSmooth));
-    
-    this->orientation = this->orientation * localOrientation;
+
+    float deg = 180;
+    this->orientation = glm::rotate(glm::radians(deg), vec3(0, 1, 0));
     //this->orientation = vec3(-vec3(tile.transform[2]).y, 0, 0);
     
     //std::cout << this->linearVelocity.z << std::endl;
@@ -171,7 +174,7 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     this->rotationZ = mix(this->rotationZ, 0.0f, dt * cameraSmoothFactor);
     //this->transform = T * (mat4)quat(vec3(sin(radians(tiles[(int)movementIndex].rotationY)), 0, 0)); //handles rotation of vehicle, affects movement direction
     float difference = tiles[(int)movementIndex+1].position.z - (int)movementIndex;
-    std::cout << movementIndex << std::endl;
+
 
     this->transform = (tiles[(int)movementIndex].transform * translate(vec3(this->position.x, 0, 0))); //handles rotation of vehicle, affects movement direction
 
@@ -186,7 +189,7 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     //this->position = mix(this->position, desiredCamPos, dt * cameraSmoothFactor);
 
     vec3 center = vec3(this->transform[3]) + vec3(0, 5 * -sin(radians(tiles[(int)movementIndex].rotationY)), 5);
-    cam->view = lookAt(vec3(this->transform[3].x, this->transform[3].y + 1.f + sin(radians(tiles[(int)movementIndex].rotationY)) , this->transform[3].z - 1.5f), center, vec3(0, 2, 0));
+    cam->view = lookAt(vec3(this->transform[3].x, this->transform[3].y + 1.5f + sin(radians(tiles[(int)movementIndex].rotationY)) , this->transform[3].z - 1.5f), center, vec3(0, 2, 0));
     //this->transform = mat4(quat(this->position + vec3(0, 0, 2)));
     //this->racerPos = this->position + vec3(0, 0, 5);
 
