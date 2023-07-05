@@ -76,50 +76,50 @@ namespace Game {
         cam->projection = projection;
 
         //// load all resources
-        //ModelId models[6] = {
-        //    LoadModel("assets/space/Asteroid_1.glb"),
-        //    LoadModel("assets/space/Asteroid_2.glb"),
-        //    LoadModel("assets/space/Asteroid_3.glb"),
-        //    LoadModel("assets/space/Asteroid_4.glb"),
-        //    LoadModel("assets/space/Asteroid_5.glb"),
-        //    LoadModel("assets/space/Asteroid_6.glb")
-        //};
-        //Physics::ColliderMeshId colliderMeshes[6] = {
-        //    Physics::LoadColliderMesh("assets/space/Asteroid_1_physics.glb"),
-        //    Physics::LoadColliderMesh("assets/space/Asteroid_2_physics.glb"),
-        //    Physics::LoadColliderMesh("assets/space/Asteroid_3_physics.glb"),
-        //    Physics::LoadColliderMesh("assets/space/Asteroid_4_physics.glb"),
-        //    Physics::LoadColliderMesh("assets/space/Asteroid_5_physics.glb"),
-        //    Physics::LoadColliderMesh("assets/space/Asteroid_6_physics.glb")
-        //};
+        ModelId models[6] = {
+            LoadModel("assets/space/Asteroid_1.glb"),
+            LoadModel("assets/space/Asteroid_2.glb"),
+            LoadModel("assets/space/Asteroid_3.glb"),
+            LoadModel("assets/space/Asteroid_4.glb"),
+            LoadModel("assets/space/Asteroid_5.glb"),
+            LoadModel("assets/space/Asteroid_6.glb")
+        };
+        Physics::ColliderMeshId colliderMeshes[6] = {
+            Physics::LoadColliderMesh("assets/space/Asteroid_1_physics.glb"),
+            Physics::LoadColliderMesh("assets/space/Asteroid_2_physics.glb"),
+            Physics::LoadColliderMesh("assets/space/Asteroid_3_physics.glb"),
+            Physics::LoadColliderMesh("assets/space/Asteroid_4_physics.glb"),
+            Physics::LoadColliderMesh("assets/space/Asteroid_5_physics.glb"),
+            Physics::LoadColliderMesh("assets/space/Asteroid_6_physics.glb")
+        };
 
         
 
-        //std::vector<std::tuple<ModelId, Physics::ColliderId, glm::mat4>> asteroids;
+        std::vector<std::tuple<ModelId, Physics::ColliderId, glm::mat4>> asteroids;
 
 
 
-        //// Setup asteroids near
-        //for (int i = 0; i < 0; i++)
-        //{
-        //    std::tuple<ModelId, Physics::ColliderId, glm::mat4> asteroid;
-        //    size_t resourceIndex = (size_t)(Core::FastRandom() % 6);
-        //    std::get<0>(asteroid) = models[resourceIndex];
-        //    float span = 20.0f;
-        //    glm::vec3 translation = glm::vec3(
-        //        Core::RandomFloatNTP() * span,
-        //        Core::RandomFloatNTP() * span,
-        //        Core::RandomFloatNTP() * span
-        //    );
-        //    glm::vec3 rotationAxis = normalize(translation);
-        //    float rotation = translation.x;
-        //    glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
-        //    std::get<1>(asteroid) = Physics::CreateCollider(colliderMeshes[resourceIndex], transform);
-        //    std::get<2>(asteroid) = transform;
-        //    asteroids.push_back(asteroid);
-        //}
+        // Setup asteroids near
+        for (int i = 0; i < 1; i++)
+        {
+            std::tuple<ModelId, Physics::ColliderId, glm::mat4> asteroid;
+            size_t resourceIndex = (size_t)(Core::FastRandom() % 6);
+            std::get<0>(asteroid) = models[resourceIndex];
+            float span = 20.0f;
+            glm::vec3 translation = glm::vec3(
+                0,
+                1,
+               5
+            );
+            glm::vec3 rotationAxis = normalize(translation);
+            float rotation = translation.x;
+            glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
+            std::get<1>(asteroid) = Physics::CreateCollider(colliderMeshes[resourceIndex], transform);
+            std::get<2>(asteroid) = transform;
+            asteroids.push_back(asteroid);
+        }
 
-        //// Setup asteroids far
+        // Setup asteroids far
         //for (int i = 0; i < 0; i++)
         //{
         //    std::tuple<ModelId, Physics::ColliderId, glm::mat4> asteroid;
@@ -204,9 +204,6 @@ namespace Game {
         std::clock_t c_start = std::clock();
         double dt = 0.01667f;
 
-        bool collided = false;
-        bool renderCar = true;
-
         int amountOfPlanes = 1600;
         float planeL = 1.0f;
 
@@ -277,6 +274,10 @@ namespace Game {
         //The idea. The game has tiles. Each tile has an id. Moving forward moves you along the tile grid. Each tile has position. 
         //Movement takes you a percentage of the tile distance ahead per button press? 
         //Moving forward takes you tile to tile. Rotation of the next tile is applied to the podracer as it gets closer.
+
+        bool collided = false;
+        bool renderCar = true;
+
         while (this->window->IsOpen()) { 
             rotamt += 0.001;
             auto timeStart = std::chrono::steady_clock::now();
@@ -324,16 +325,24 @@ namespace Game {
             //std::cout << "Ship: " << ship.position.z << std::endl;
 
             glm::vec3 translation = glm::vec3(
-                    1.5f, 1.5f, 2.f
+                    1.5f, 0.5f, 2.f
             );
             glm::vec3 rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
             float rotation = rotamt;
             glm::mat4 alienTransform = glm::translate(translation) * glm::rotate(rotation, rotationAxis);
 
-            if (!collided && renderCar)
+            if (collided )
             {
+                std::cout << "OUCH" << std::endl;
+                renderCar = false;
+            }
+            else{
+                for (auto const& asteroid : asteroids) {
+                    RenderDevice::Draw(std::get<0>(asteroid), std::get<2>(asteroid));
+                }
                 RenderDevice::Draw(ship.model, ship.transform);
                 RenderDevice::Draw(alien, alienTransform);
+
             }
             /*else if (collided && renderCar) {
                 //renderCar = false;

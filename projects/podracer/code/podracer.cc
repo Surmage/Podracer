@@ -107,10 +107,10 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
         this->currentSpeed = 0;
         this->currentUpSpeed = 0;
     }
-    if (kbd->held[Key::A]) {
+    if (kbd->held[Key::A] && this->position.x >= -5) {
         this->currentSideSpeed = mix(this->currentSideSpeed, this->boostSpeed, std::min(1.0f, dt * 20.0f));
     }
-    else if (kbd->held[Key::D]) {
+    else if (kbd->held[Key::D] && this->position.x <= 5) {
         this->currentSideSpeed = mix(this->currentSideSpeed, -this->boostSpeed, std::min(1.0f, dt * 20.0f));
     }
     else {
@@ -148,9 +148,9 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     }*/
 
 
-    std::cout << movementIndex << std::endl;
+    //std::cout << movementIndex << std::endl;
     //std::cout << orientation.x << std::endl;
-    //std::cout << this->position.x << " " << this->position.y << " " << this->position.z << std::endl;
+    std::cout << this->position.x << " " << this->position.y << " " << this->position.z << std::endl;
 
     const float rotationSpeed = 1.8f * dt;
     //rotXSmooth = mix(rotXSmooth, rotX * rotationSpeed, dt * cameraSmoothFactor);
@@ -174,7 +174,6 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     this->rotationZ = mix(this->rotationZ, 0.0f, dt * cameraSmoothFactor);
     //this->transform = T * (mat4)quat(vec3(sin(radians(tiles[(int)movementIndex].rotationY)), 0, 0)); //handles rotation of vehicle, affects movement direction
     float difference = tiles[(int)movementIndex+1].position.z - (int)movementIndex;
-
 
     this->transform = (tiles[(int)movementIndex].transform * translate(vec3(this->position.x, 0, 0))); //handles rotation of vehicle, affects movement direction
 
