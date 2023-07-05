@@ -14,7 +14,6 @@ struct Tile {
     glm::mat4 transform;
     int id;
     float rotationY;
-    float rotationX;
     glm::vec3 edge;
 
     Tile() {};
@@ -24,7 +23,6 @@ struct Tile {
         this->id = id;
         this->edge = edge;
         rotationY = 0;
-        rotationX = 0;
     }
 };
 
@@ -44,7 +42,7 @@ struct Podracer
     const float camOffsetY = 1.5f;
     const float cameraSmoothFactor = 20.0f;
 
-    float in = 0.f;
+    bool automatic = false;
     float movementIndex = 0.f;
     float currentSpeed = 0.0f;
     float currentUpSpeed = 0.0f;

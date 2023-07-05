@@ -24,7 +24,84 @@ using namespace Render;
 
 namespace Game {
 
-   
+    void createStraight(std::vector<Tile>& tiles, int i){
+        glm::vec3 translation;
+        glm::vec3 rotationAxis;
+        glm::mat4 rotate;
+        glm::vec3 edge;
+        float rotation = 0.f;
+        if(i < 1){
+            rotation = 0.f;
+            translation = glm::vec3(
+                    0.0f, 0.f, 0.f
+            );
+            rotate = glm::mat4(1.f);
+            edge = glm::vec3(translation.x, translation.y, translation.z + 0.5f);
+        }
+        else{
+            translation = glm::vec3(
+                    0.0f, tiles[i-1].edge.y, tiles[i-1].edge.z + 0.5f
+            );
+            rotationAxis = translation;
+            rotate = glm::mat4(1.f);
+            edge = glm::vec3(0, translation.y, translation.z + 0.5f);
+        }
+
+
+        glm::mat4 translate = glm::translate(translation);
+        glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
+        Tile t(translation, transform, edge, tiles.size());
+        t.rotationY = rotation;
+        //glm::mat4 transform =  glm::translate(translation);
+        tiles.push_back(t);
+    }
+    void createInclineUp(std::vector<Tile>& tiles, int i){
+
+        glm::vec3 translation;
+        glm::vec3 rotationAxis;
+        glm::mat4 rotate;
+        glm::vec3 edge;
+        rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
+        float rotation = -45;
+
+        float angle = (sin(glm::radians(-rotation)));
+        translation = glm::vec3(
+                0.0f, tiles[i-1].edge.y + (angle / 2), tiles[i-1].edge.z + (angle / 2)//1.41 being sqrt of 1+1
+        ); //this fails? because the length of 1 is insufficient with an incline of 45 degrees (Pythagorean)
+
+        rotate = glm::rotate(glm::radians(rotation), rotationAxis);
+        edge = glm::vec3(0.f, translation.y + (angle / 2), translation.z + (angle / 2));
+
+        glm::mat4 translate = glm::translate(translation);
+        glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
+        Tile t(translation, transform, edge, tiles.size());
+        t.rotationY = rotation;
+        //glm::mat4 transform =  glm::translate(translation);
+        tiles.push_back(t);
+    }
+    void createInclineDown(std::vector<Tile>& tiles, int i){
+        glm::vec3 translation;
+        glm::vec3 rotationAxis;
+        glm::mat4 rotate;
+        glm::vec3 edge;
+        rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
+        float rotation = 45;
+
+        float angle = (sin(glm::radians(rotation)));
+        translation = glm::vec3(
+                0.0f, tiles[i-1].edge.y - (angle / 2), tiles[i-1].edge.z + (angle / 2)
+        );
+
+        rotate = glm::rotate(glm::radians(rotation), rotationAxis);
+        edge = glm::vec3(0.f, translation.y - (angle / 2), translation.z + (angle / 2));
+
+        glm::mat4 translate = glm::translate(translation);
+        glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
+        Tile t(translation, transform, edge, tiles.size());
+        t.rotationY = rotation;
+        //glm::mat4 transform =  glm::translate(translation);
+        tiles.push_back(t);
+    }
 
 //------------------------------------------------------------------------------
 /**
@@ -217,54 +294,38 @@ namespace Game {
             glm::mat4 rotate;
             glm::vec3 edge;
             if(i == 0){
-                rotation = 0.f;
-                translation = glm::vec3(
-                        0.0f, 0.f, 0.f
-                );
-                rotate = glm::mat4(1.f);
-                edge = glm::vec3(0, translation.y, translation.z + 0.5f);
+                createStraight(tiles, i);
             }
             else if(i > 50 && i < 150){
-                rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
-                rotation = -45;
-
-                float angle = (sin(glm::radians(-rotation)));
-                translation = glm::vec3(
-                    0.0f, tiles[i-1].edge.y + (angle / 2), tiles[i-1].edge.z + (angle / 2)//1.41 being sqrt of 1+1
-                ); //this fails? because the length of 1 is insufficient with an incline of 45 degrees (Pythagorean)
-
-                rotate = glm::rotate(glm::radians(rotation), rotationAxis);
-                edge = glm::vec3(0.f, translation.y + (angle / 2), translation.z + (angle / 2));
+                createInclineUp(tiles, i);
             }
             else if(i > 200 && i < 250){
-                rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
-                rotation = 45;
-
-                float angle = (sin(glm::radians(rotation)));
-                translation = glm::vec3(
-                        0.0f, tiles[i-1].edge.y - (angle / 2), tiles[i-1].edge.z + (angle / 2)
-                );
-
-                rotate = glm::rotate(glm::radians(rotation), rotationAxis);
-                edge = glm::vec3(0.f, translation.y - (angle / 2), translation.z + (angle / 2));
+                createInclineDown(tiles, i);
+            }
+            else if(i > 275 && i < 300){
+                createInclineDown(tiles, i);
+            }
+            else if(i > 310 && i < 320){
+                createInclineUp(tiles, i);
+            }
+            else if(i > 350 && i < 400){
+                createInclineDown(tiles, i);
+            }
+            else if(i > 405 && i < 415){
+                createInclineUp(tiles, i);
+            }
+            else if(i > 420 && i < 430){
+                createInclineDown(tiles, i);
+            }
+            else if(i > 430 && i < 450){
+                createInclineUp(tiles, i);
             }
             else{
 
-                rotation = 0.f;
-                translation = glm::vec3(
-                        0.0f, tiles[i-1].edge.y, tiles[i-1].edge.z + 0.5f
-                );
-                rotationAxis = translation;
-                rotate = glm::mat4(1.f);
-                edge = glm::vec3(0, translation.y, translation.z + 0.5f);
+                createStraight(tiles, i);
             }
 
-            glm::mat4 translate = glm::translate(translation);
-            glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
-            Tile t(translation, transform, edge, i);
-            t.rotationY = rotation;
-            //glm::mat4 transform =  glm::translate(translation);
-            tiles.push_back(t);
+
         }
         float rotamt = 0.f;
 

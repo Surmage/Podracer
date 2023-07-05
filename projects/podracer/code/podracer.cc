@@ -51,62 +51,29 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
 
     Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
 
-    if (kbd->held[Key::W])
-    {
-        /*if (kbd->held[Key::Shift])
-            this->currentSpeed = mix(this->currentSpeed, this->boostSpeed, std::min(1.0f, dt * 30.0f));
-        else*/
-        {
-            this->movementIndex += dt * 10.f;
 
+    if(kbd->pressed[Key::Space]){
+        automatic = !automatic;
+    }
+    if(!automatic){
+        if (kbd->held[Key::W])
             this->currentSpeed = 1.f;
 
-            /*if(tiles[(int)movementIndex].rotationY < 0.f){
-                this->currentSpeed = sin(glm::radians(45.f));
-                this->currentUpSpeed = sin(glm::radians(45.f));
-                std::cout << "Bleh" << movementIndex << std::endl;
-            }
-            else if(tiles[(int)movementIndex].rotationY > 0.f){
-                this->currentSpeed = sin(glm::radians(45.f));
-                this->currentUpSpeed = -sin(glm::radians(45.f));
-                std::cout << "Bleh" << movementIndex << std::endl;
-            }
-            else{
-                this->currentUpSpeed = 0.f;
-            }*/
-            //this->position += normalize(tile.position);
-
-
+        else if (kbd->held[Key::S] && movementIndex >= 0){
+            this->currentSpeed = -1.f;
         }
-            //this->currentSpeed = mix(this->currentSpeed, this->normalSpeed, std::min(1.0f, dt * 90.0f));
-
+        else
+            this->currentSpeed = 0;
     }
-    else if (kbd->held[Key::S]) {       
-            //this->currentSpeed = mix(this->currentSpeed, -(this->normalSpeed), std::min(1.0f, dt * 90.0f));
-        this->movementIndex -= dt * 10.f;
-
-        this->currentSpeed = -1.f;
-
-        /*if(tiles[(int)movementIndex].rotationY < 0.f){
-            this->currentSpeed = -sin(glm::radians(45.f));
-            this->currentUpSpeed = -sin(glm::radians(45.f));
-            std::cout << "Bleh" << movementIndex << std::endl;
-        }
-        else if(tiles[(int)movementIndex].rotationY > 0.f){
-            this->currentSpeed = -sin(glm::radians(45.f));
-            this->currentUpSpeed = sin(glm::radians(45.f));
-            std::cout << "Bleh" << movementIndex << std::endl;
-        }
-        else{
-            this->currentUpSpeed = 0.f;
-        }*/
-        //this->position = tile.position + vec3(0.f, 2.f, 0.f);
+    else{
+        this->currentSpeed = 1.f;
     }
-    else
-    {
-        this->currentSpeed = 0;
-        this->currentUpSpeed = 0;
-    }
+
+
+    this->movementIndex += dt * 10.f * currentSpeed;
+
+
+
     if (kbd->held[Key::A] && this->position.x >= -5) {
         this->currentSideSpeed = mix(this->currentSideSpeed, this->boostSpeed, std::min(1.0f, dt * 20.0f));
     }
