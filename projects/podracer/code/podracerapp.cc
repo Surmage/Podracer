@@ -177,17 +177,28 @@ namespace Game {
 
 
         // Setup asteroids near
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 2; i++)
         {
             std::tuple<ModelId, Physics::ColliderId, glm::mat4> asteroid;
             size_t resourceIndex = (size_t)(Core::FastRandom() % 6);
             std::get<0>(asteroid) = models[resourceIndex];
             float span = 20.0f;
-            glm::vec3 translation = glm::vec3(
-                0,
-                1,
-               5
-            );
+            glm::vec3 translation;
+            if(i == 0){
+                translation = glm::vec3(
+                        0,
+                        1,
+                        5
+                );
+            }
+            else if(i == 1){
+                translation = glm::vec3(
+                        0,
+                        4,
+                        54
+                );
+            }
+
             glm::vec3 rotationAxis = normalize(translation);
             float rotation = translation.x;
             glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
@@ -296,28 +307,28 @@ namespace Game {
             if(i == 0){
                 createStraight(tiles, i);
             }
-            else if(i > 50 && i < 150){
+            else if(i > 50 && i < 100){
                 createInclineUp(tiles, i);
             }
-            else if(i > 200 && i < 250){
+            else if(i > 130 && i < 200){
                 createInclineDown(tiles, i);
             }
-            else if(i > 275 && i < 300){
+            else if(i > 225 && i < 250){
                 createInclineDown(tiles, i);
             }
-            else if(i > 310 && i < 320){
+            else if(i > 275 && i < 290){
                 createInclineUp(tiles, i);
             }
-            else if(i > 350 && i < 400){
+            else if(i > 300 && i < 350){
                 createInclineDown(tiles, i);
             }
-            else if(i > 405 && i < 415){
+            else if(i > 360 && i < 400){
                 createInclineUp(tiles, i);
             }
-            else if(i > 420 && i < 430){
+            else if(i > 410 && i < 440){
                 createInclineDown(tiles, i);
             }
-            else if(i > 430 && i < 450){
+            else if(i > 460 && i < 500){
                 createInclineUp(tiles, i);
             }
             else{
@@ -392,19 +403,21 @@ namespace Game {
             float rotation = rotamt;
             glm::mat4 alienTransform = glm::translate(translation) * glm::rotate(rotation, rotationAxis);
 
-            if (collided )
+            if (collided)
             {
                 std::cout << "OUCH" << std::endl;
-                renderCar = false;
+                //renderCar = false;
+                ship.movementIndex = 0;
+                ship.position = glm::vec3(0, 1.0f, 0.0f);
             }
-            else{
-                for (auto const& asteroid : asteroids) {
-                    RenderDevice::Draw(std::get<0>(asteroid), std::get<2>(asteroid));
-                }
-                RenderDevice::Draw(ship.model, ship.transform);
-                RenderDevice::Draw(alien, alienTransform);
 
+            for (auto const& asteroid : asteroids) {
+                RenderDevice::Draw(std::get<0>(asteroid), std::get<2>(asteroid));
             }
+            RenderDevice::Draw(ship.model, ship.transform);
+            RenderDevice::Draw(alien, alienTransform);
+
+
             /*else if (collided && renderCar) {
                 //renderCar = false;
                 ship.position = originalPos;

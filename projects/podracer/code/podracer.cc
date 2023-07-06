@@ -69,10 +69,7 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
         this->currentSpeed = 1.f;
     }
 
-
     this->movementIndex += dt * 10.f * currentSpeed;
-
-
 
     if (kbd->held[Key::A] && this->position.x >= -5) {
         this->currentSideSpeed = mix(this->currentSideSpeed, this->boostSpeed, std::min(1.0f, dt * 20.0f));
@@ -94,7 +91,8 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     //float rotY = 0;
 
     this->position += desiredVelocity * dt * 10.0f;
-    this->racerPos = this->position * orientation;
+    this->racerPos = tiles[(int)movementIndex].position + vec3(0, 1 - abs(sin(tiles[(int)movementIndex].rotationY)), 0);
+    this->racerPos += vec3(position.x, 0, 0);
 
     //if(orientation.z <= 1)
     //   orientation.z += 0.01;
@@ -117,7 +115,6 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
 
     //std::cout << movementIndex << std::endl;
     //std::cout << orientation.x << std::endl;
-    std::cout << this->position.x << " " << this->position.y << " " << this->position.z << std::endl;
 
     const float rotationSpeed = 1.8f * dt;
     //rotXSmooth = mix(rotXSmooth, rotX * rotationSpeed, dt * cameraSmoothFactor);
@@ -155,7 +152,7 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     //this->position = mix(this->position, desiredCamPos, dt * cameraSmoothFactor);
 
     vec3 center = vec3(this->transform[3]) + vec3(0, 5 * -sin(radians(tiles[(int)movementIndex].rotationY)), 5);
-    cam->view = lookAt(vec3(this->transform[3].x, this->transform[3].y + 1.5f + sin(radians(tiles[(int)movementIndex].rotationY)) , this->transform[3].z - 1.5f), center, vec3(0, 2, 0));
+    cam->view = lookAt(vec3(this->transform[3].x, this->transform[3].y + 9.5f + sin(radians(tiles[(int)movementIndex].rotationY)) , this->transform[3].z - 2.5f), center, vec3(0, 2, 0));
     //this->transform = mat4(quat(this->position + vec3(0, 0, 2)));
     //this->racerPos = this->position + vec3(0, 0, 5);
 
@@ -199,17 +196,18 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
 bool
 Podracer::CheckCollisions()
 {
-    glm::mat4 rotation = (glm::mat4)orientation;
     bool hit = false;
     for (int i = 0; i < 8; i++)
     {
-        glm::vec3 pos = racerPos;
-        glm::vec3 dir = rotation * glm::vec4(glm::normalize(colliderEndPoints[i]), 0.0f);
+        glm::vec3 pos = racerPos ;
+        std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl;
+
+        glm::vec3 dir = glm::vec4(glm::normalize(colliderEndPoints[i]), 0.0f);
         float len = glm::length(colliderEndPoints[i]);
-        Physics::RaycastPayload payload = Physics::Raycast(racerPos, dir, len);
+        Physics::RaycastPayload payload = Physics::Raycast(pos, dir, len);
 
         // debug draw collision rays
-        // Debug::DrawLine(pos, pos + dir * len, 1.0f, glm::vec4(0, 1, 0, 1), glm::vec4(0, 1, 0, 1), Debug::RenderMode::AlwaysOnTop);
+        //Debug::DrawLine(pos, pos + dir * len, 2.0f, glm::vec4(1, 0, 0, 1), glm::vec4(1, 0, 0, 1), Debug::RenderMode::AlwaysOnTop);
 
         if (payload.hit)
         {
