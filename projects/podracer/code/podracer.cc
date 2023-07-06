@@ -80,6 +80,10 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     else {
         this->currentSideSpeed = 0;
     }
+
+    if(kbd->pressed[Key::R]){
+        reset();
+    }
     vec3 desiredVelocity = vec3(this->currentSideSpeed, this->currentUpSpeed, this->currentSpeed);
     desiredVelocity = this->transform * vec4(desiredVelocity, 0.0f);
 
@@ -199,8 +203,8 @@ Podracer::CheckCollisions()
     bool hit = false;
     for (int i = 0; i < 8; i++)
     {
-        glm::vec3 pos = racerPos ;
-        std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl;
+        glm::vec3 pos = racerPos;
+        //std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl;
 
         glm::vec3 dir = glm::vec4(glm::normalize(colliderEndPoints[i]), 0.0f);
         float len = glm::length(colliderEndPoints[i]);
@@ -216,5 +220,10 @@ Podracer::CheckCollisions()
         }
     }
     return hit;
+}
+void Podracer::reset(){
+    automatic = false;
+    movementIndex = 0;
+    position = glm::vec3(0, 1.0f, 0.0f);
 }
 }

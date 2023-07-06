@@ -350,6 +350,9 @@ namespace Game {
         bool collided = false;
         bool renderCar = true;
 
+        std::chrono::high_resolution_clock::duration totalTime(0);
+        auto start = std::chrono::high_resolution_clock::now();
+
         while (this->window->IsOpen()) { 
             rotamt += 0.001;
             auto timeStart = std::chrono::steady_clock::now();
@@ -367,7 +370,7 @@ namespace Game {
             //Spawn tiles
             {
                 //for (int i = 0; i < 100; i++) {
-                for (int i = ship.movementIndex -5; i < ship.movementIndex + 100; i++) {
+                for (int i = ship.movementIndex - 10; i < ship.movementIndex + 100; i++) {
                     if (i < 0)
                         i = 0;
                     //glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
@@ -390,9 +393,13 @@ namespace Game {
 
 
             }
-
+            const auto end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> diff = end - start;
 
             collided = ship.CheckCollisions();
+
+            int points = (int)diff.count();
+            std::cout << points << std::endl;
 
             //std::cout << "Ship: " << ship.position.z << std::endl;
 
@@ -407,8 +414,8 @@ namespace Game {
             {
                 std::cout << "OUCH" << std::endl;
                 //renderCar = false;
-                ship.movementIndex = 0;
-                ship.position = glm::vec3(0, 1.0f, 0.0f);
+                ship.reset();
+                start = std::chrono::high_resolution_clock::now();
             }
 
             for (auto const& asteroid : asteroids) {
@@ -459,7 +466,7 @@ namespace Game {
         nvgSave(vg);
 
         nvgBeginPath(vg);
-        nvgCircle(vg, 600, 100, 50);
+        //nvgCircle(vg, 600, 100, 50);
         NVGpaint paint;
         paint = nvgLinearGradient(vg, 600, 100, 650, 150, nvgRGBA(255, 0, 0, 255), nvgRGBA(0, 255, 0, 255));
         nvgFillPaint(vg, paint);

@@ -59,6 +59,7 @@ struct Podracer
     float emitterOffset = -0.5f;
 
     void Update(float dt, int& i, std::vector<Tile>& tiles);
+    void reset();
 
     bool CheckCollisions();
     
