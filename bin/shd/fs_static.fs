@@ -9,6 +9,7 @@ precision highp int;
 layout(location=0) in vec3 in_WorldSpacePos;
 layout(location=1) in vec3 in_Normal;
 layout(location=3) in vec2 in_TexCoords;
+layout(location=4) in float visibility;
 
 layout(location=0) out vec4 out_Color;
 
@@ -109,4 +110,5 @@ void main()
     }
 
     out_Color = vec4(light.rgb * baseColor.rgb + emissive, 1.0f);
+    out_Color = mix(vec4(vec3(1.f, 1.f, 1.f), 1.0),out_Color, visibility);
 }

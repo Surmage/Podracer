@@ -350,7 +350,7 @@ namespace Game {
         bool collided = false;
         bool renderCar = true;
 
-        std::chrono::high_resolution_clock::duration totalTime(0);
+        //std::chrono::high_resolution_clock::duration totalTime(0);
         auto start = std::chrono::high_resolution_clock::now();
 
         while (this->window->IsOpen()) { 
@@ -398,7 +398,7 @@ namespace Game {
 
             collided = ship.CheckCollisions();
 
-            int points = (int)diff.count();
+            points = (int)diff.count();
             std::cout << points << std::endl;
 
             //std::cout << "Ship: " << ship.position.z << std::endl;

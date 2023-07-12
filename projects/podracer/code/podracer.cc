@@ -156,7 +156,7 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     //this->position = mix(this->position, desiredCamPos, dt * cameraSmoothFactor);
 
     vec3 center = vec3(this->transform[3]) + vec3(0, 5 * -sin(radians(tiles[(int)movementIndex].rotationY)), 5);
-    cam->view = lookAt(vec3(this->transform[3].x, this->transform[3].y + 9.5f + sin(radians(tiles[(int)movementIndex].rotationY)) , this->transform[3].z - 2.5f), center, vec3(0, 2, 0));
+    cam->view = lookAt(vec3(this->transform[3].x, this->transform[3].y + 1.5f + sin(radians(tiles[(int)movementIndex].rotationY)) , this->transform[3].z - 1.5f), center, vec3(0, 2, 0));
     //this->transform = mat4(quat(this->position + vec3(0, 0, 2)));
     //this->racerPos = this->position + vec3(0, 0, 5);
 

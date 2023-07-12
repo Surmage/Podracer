@@ -13,11 +13,15 @@ layout(location=0) out vec3 out_WorldSpacePos;
 layout(location=1) out vec3 out_Normal;
 layout(location=2) out vec4 out_Tangent;
 layout(location=3) out vec2 out_TexCoords;
+layout(location=4) out float visibility;
 
 uniform mat4 ViewProjection;
 uniform mat4 Model;
 
 invariant gl_Position;
+
+const float density = 0.035f;
+const float gradient = 1.5f;
 
 void main()
 {
@@ -27,4 +31,9 @@ void main()
 	out_Tangent = vec4(normalize((Model * vec4(in_Tangent.xyz, 0)).xyz), in_Tangent.w);
     out_Normal = normalize((Model * vec4(in_Normal, 0)).xyz);
 	gl_Position = ViewProjection * wPos;
+
+    float distance = length(gl_Position.xyz);
+    visibility = exp(-pow((distance*density),gradient));
+    visibility = clamp(visibility, 0.0f, 1.0f);
+	//visibility = 0.5f;
 }
