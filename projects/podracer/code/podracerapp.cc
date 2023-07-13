@@ -227,8 +227,8 @@ namespace Game {
         //    asteroids.push_back(asteroid);
         //}
 
-        ModelId plane = LoadModel("assets/podracer/plane.glb");
-        Physics::ColliderMeshId planeMesh = Physics::LoadColliderMesh("assets/podracer/plane_physics.glb");
+        ModelId plane = LoadModel("newassets/plane.glb");
+        Physics::ColliderMeshId planeMesh = Physics::LoadColliderMesh("newassets/plane_physics.glb");
         std::tuple<ModelId, Physics::ColliderId, glm::mat4> groundPlane;
 
         //Setup plane

@@ -20,8 +20,8 @@ uniform mat4 Model;
 
 invariant gl_Position;
 
-const float density = 0.035f;
-const float gradient = 1.5f;
+const float density = 0.050f;
+const float gradient = 3.f;
 
 void main()
 {
