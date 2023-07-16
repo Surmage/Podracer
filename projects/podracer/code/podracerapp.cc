@@ -253,12 +253,13 @@ namespace Game {
         // Setup skybox
         std::vector<const char*> skybox
         {
-            "assets/space/bg.png",
-            "assets/space/bg.png",
-            "assets/space/bg.png",
-            "assets/space/bg.png",
-            "assets/space/bg.png",
-            "assets/space/bg.png"
+            "newassets/whitebg.png",
+            "newassets/whitebg.png",
+            "newassets/whitebg.png",
+            "newassets/whitebg.png",
+            "newassets/whitebg.png",
+            "newassets/whitebg.png"
+
         };
         TextureResourceId skyboxId = TextureResource::LoadCubemap("skybox", skybox, true);
         RenderDevice::SetSkybox(skyboxId);

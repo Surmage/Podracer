@@ -110,5 +110,5 @@ void main()
     }
 
     out_Color = vec4(light.rgb * baseColor.rgb + emissive, 1.0f);
-    out_Color = mix(vec4(vec3(1.f, 1.f, 1.f), 1.0),out_Color, visibility);
+    out_Color = mix(vec4(vec3(0.95f, 0.95f, 0.95f), 1.0),out_Color, visibility);
 }
