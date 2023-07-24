@@ -136,6 +136,7 @@ Podracer::Update(float dt, int& i, std::vector<Tile>& tiles)
     //this->rotationZ = clamp(this->rotationZ, -45.0f, 45.0f);
     //this->rotationZ = tiles[(int)movementIndex].rotationY;
     mat4 T = translate(this->racerPos);
+    T = T + T;
 
     //this->transform = T * trans * (mat4)quat(vec3(0, 0, rotationZ));
     //this->transform = tile.transform * T;

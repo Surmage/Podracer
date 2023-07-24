@@ -63,13 +63,14 @@ struct Podracer
 
     bool CheckCollisions();
     
-    const glm::vec3 colliderEndPoints[8] = {
-        glm::vec3(-1.10657, -0.480347, -0.346542),  // right wing
-        glm::vec3(1.10657, -0.480347, -0.346542),  // left wing
+    const glm::vec3 colliderEndPoints[9] = {
+        glm::vec3(-0.50657, -0.480347, -0.346542),  // right wing
+        glm::vec3(0.50657, -0.480347, -0.346542),  // left wing
         glm::vec3(-0.342382, 0.25109, -0.010299),   // right top
         glm::vec3(0.342382, 0.25109, -0.010299),   // left top
         glm::vec3(-0.285614, -0.10917, 0.869609), // right front
         glm::vec3(0.285614, -0.10917, 0.869609), // left front
+        glm::vec3(0.0, -0.10917, 0.569609), // middle front
         glm::vec3(-0.279064, -0.10917, -0.98846),   // right back
         glm::vec3(0.279064, -0.10917, -0.98846)   // right back
     };

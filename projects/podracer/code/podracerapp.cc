@@ -153,59 +153,26 @@ namespace Game {
         cam->projection = projection;
 
         //// load all resources
-        ModelId models[6] = {
-            LoadModel("assets/space/Asteroid_1.glb"),
-            LoadModel("assets/space/Asteroid_2.glb"),
-            LoadModel("assets/space/Asteroid_3.glb"),
-            LoadModel("assets/space/Asteroid_4.glb"),
-            LoadModel("assets/space/Asteroid_5.glb"),
-            LoadModel("assets/space/Asteroid_6.glb")
+        ModelId models[10] = {
+            LoadModel("assets/podracer/barrel.glb"),
+            LoadModel("assets/podracer/bones.glb"),
+            LoadModel("assets/podracer/rock_largeA.glb"),
+            LoadModel("assets/podracer/rock_largeB.glb"),
+            LoadModel("assets/podracer/rover.glb"),
+            LoadModel("assets/podracer/meteor.glb"),
+            LoadModel("assets/podracer/rail.glb"),
+            LoadModel("assets/podracer/satelliteDish.glb"),
+            LoadModel("newassets/box_collider.glb")
+ 
         };
-        Physics::ColliderMeshId colliderMeshes[6] = {
-            Physics::LoadColliderMesh("assets/space/Asteroid_1_physics.glb"),
-            Physics::LoadColliderMesh("assets/space/Asteroid_2_physics.glb"),
-            Physics::LoadColliderMesh("assets/space/Asteroid_3_physics.glb"),
-            Physics::LoadColliderMesh("assets/space/Asteroid_4_physics.glb"),
-            Physics::LoadColliderMesh("assets/space/Asteroid_5_physics.glb"),
-            Physics::LoadColliderMesh("assets/space/Asteroid_6_physics.glb")
-        };
-
-        
+        Physics::ColliderMeshId boxMesh = Physics::LoadColliderMesh("newassets/box_collider.glb");
+      
 
         std::vector<std::tuple<ModelId, Physics::ColliderId, glm::mat4>> asteroids;
 
+        
 
-
-        // Setup asteroids near
-        for (int i = 0; i < 2; i++)
-        {
-            std::tuple<ModelId, Physics::ColliderId, glm::mat4> asteroid;
-            size_t resourceIndex = (size_t)(Core::FastRandom() % 6);
-            std::get<0>(asteroid) = models[resourceIndex];
-            float span = 20.0f;
-            glm::vec3 translation;
-            if(i == 0){
-                translation = glm::vec3(
-                        0,
-                        1,
-                        5
-                );
-            }
-            else if(i == 1){
-                translation = glm::vec3(
-                        0,
-                        4,
-                        54
-                );
-            }
-
-            glm::vec3 rotationAxis = normalize(translation);
-            float rotation = translation.x;
-            glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
-            std::get<1>(asteroid) = Physics::CreateCollider(colliderMeshes[resourceIndex], transform);
-            std::get<2>(asteroid) = transform;
-            asteroids.push_back(asteroid);
-        }
+        
 
         // Setup asteroids far
         //for (int i = 0; i < 0; i++)
@@ -337,8 +304,30 @@ namespace Game {
                 createStraight(tiles, i);
             }
 
-
         }
+
+        // Setup asteroids near
+        for (int i = 0; i < 10; i++)
+        {
+            std::tuple<ModelId, Physics::ColliderId, glm::mat4> asteroid;
+            size_t resourceIndex = (size_t)(Core::FastRandom() % 10);
+            std::get<0>(asteroid) = models[resourceIndex];
+            float span = 5.0f;
+
+            glm::vec3 translation = glm::vec3(
+                tiles[i + 10].position.x,
+                tiles[i + 10].position.y,
+                tiles[i + 10].position.z
+            );
+
+            glm::vec3 rotationAxis = normalize(translation);
+            float rotation = translation.x;
+            glm::mat4 transform = glm::translate(translation);
+            std::get<1>(asteroid) = Physics::CreateCollider(boxMesh, glm::scale(transform, glm::vec3(0.7f, 0.7f, 0.7f)));
+            std::get<2>(asteroid) = glm::scale(transform, glm::vec3(1.7f, 1.7f, 1.7f));
+            asteroids.push_back(asteroid);
+        }
+
         float rotamt = 0.f;
 
         int positionIndex = 0;
@@ -415,8 +404,8 @@ namespace Game {
             {
                 std::cout << "OUCH" << std::endl;
                 //renderCar = false;
-                ship.reset();
-                start = std::chrono::high_resolution_clock::now();
+                //ship.reset();
+                //start = std::chrono::high_resolution_clock::now();
             }
 
             for (auto const& asteroid : asteroids) {
