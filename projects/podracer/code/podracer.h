@@ -12,14 +12,16 @@ namespace Game
 struct Tile {
     glm::vec3 position; //center of tile
     glm::mat4 transform;
+    glm::mat4 rotation;
     int id;
     float rotationY;
     glm::vec3 edge;
 
     Tile() {};
-    Tile(glm::vec3& position, glm::mat4& transform, glm::vec3 edge, int id) {
+    Tile(glm::vec3& position, glm::mat4& transform, glm::mat4& rotation, glm::vec3 edge, int id) {
         this->position = position;
         this->transform = transform;
+        this->rotation = rotation;
         this->id = id;
         this->edge = edge;
         rotationY = 0;

@@ -25,6 +25,6 @@ float RandomFloat();
 /// Note that this is not a truely random random number generator
 float RandomFloatNTP();
 
-uint TrueRandom();
+int TrueRandom(int fromNum, int toNum);
 
 } // namespace Core

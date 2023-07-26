@@ -58,16 +58,17 @@ RandomFloatNTP()
     return r.f - 3.0f;
 }
 
+    int
+    TrueRandom(int fromNum, int toNum)
+    {
+        // Create a random number generator
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<int> dis_int(fromNum, toNum);
+
+        // Generate a random number
+        return dis_int(gen);
+    }
+
 } // namespace Core
 
-uint
-TrueRandom(uint fromNum, uint toNum)
-{
-    // Create a random number generator
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<uint> dis_int(fromNum, toNum);
-
-    // Generate a random number
-    return dis_int(gen);
-}

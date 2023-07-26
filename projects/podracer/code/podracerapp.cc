@@ -50,7 +50,7 @@ namespace Game {
 
         glm::mat4 translate = glm::translate(position);
         glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
-        Tile t(position, transform, edge, tiles.size());
+        Tile t(position, transform, rotate, edge, tiles.size());
         t.rotationY = rotation;
         //glm::mat4 transform =  glm::translate(position);
         tiles.push_back(t);
@@ -74,7 +74,7 @@ namespace Game {
 
         glm::mat4 translate = glm::translate(position);
         glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
-        Tile t(position, transform, edge, tiles.size());
+        Tile t(position, transform, rotate, edge, tiles.size());
         t.rotationY = rotation;
         //glm::mat4 transform =  glm::translate(position);
         tiles.push_back(t);
@@ -97,7 +97,7 @@ namespace Game {
 
         glm::mat4 translate = glm::translate(position);
         glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
-        Tile t(position, transform, edge, tiles.size());
+        Tile t(position, transform, rotate, edge, tiles.size());
         t.rotationY = rotation;
         //glm::mat4 transform =  glm::translate(translation);
         tiles.push_back(t);
@@ -154,7 +154,7 @@ namespace Game {
 
         //// load all terrain resources
         ModelId models[10] = {
-            LoadModel("assets/podracer/barrel.glb"),
+            LoadModel("assets/podracer/barrels.glb"),
             LoadModel("assets/podracer/bones.glb"),
             LoadModel("assets/podracer/rock_largeA.glb"),
             LoadModel("assets/podracer/rock_largeB.glb"),
@@ -162,7 +162,9 @@ namespace Game {
             LoadModel("assets/podracer/meteor.glb"),
             LoadModel("assets/podracer/rail.glb"),
             LoadModel("assets/podracer/satelliteDish.glb"),
-            LoadModel("newassets/box_collider.glb")
+            LoadModel("assets/podracer/barrel.glb"),
+            LoadModel("assets/podracer/chimney.glb")
+            //LoadModel("newassets/box_collider.glb")
  
         };
         Physics::ColliderMeshId boxMesh = Physics::LoadColliderMesh("newassets/box_collider.glb");
@@ -232,12 +234,53 @@ namespace Game {
 
         std::vector<Tile>tiles;
 
+        int lastTileType = 1;
         //setup all tiles
-        for (int i = 0;  i < amountOfPlanes; i++) {
+        while(tiles.size() < 1600){
+            int tileType;
+            if(lastTileType != 0){ //if slope
+                tileType = 0; //straight
+            }
+            else{
+                tileType = Core::TrueRandom(1, 2);
+            }
+            int tileNumber = Core::TrueRandom(5, 30);
+            if(tiles.size() >= 1550){
+                int difference = 1600 - tiles.size();
+                for(int i=0; i<difference; i++){
+                    createStraight(tiles, tiles.size());
+                }
+            }
+            for(int i=0; i<tileNumber; i++){
+                if(tileType == 0 || tiles.size() == 0){
+                    createStraight(tiles, tiles.size());
+                }
+                else if(tileType == 1){
+                    createInclineUp(tiles, tiles.size());
+                }
+                else if(tileType == 2){
+                    createInclineDown(tiles, tiles.size());
+                }
+            }
+            lastTileType = tileType;
+        }
+        std::cout << tiles.size() << std::endl;
+        /*for (int i = 0;  i < amountOfPlanes; i++) {
+            int tileType = Core::TrueRandom(0, 2);
             glm::vec3 translation;
             glm::vec3 rotationAxis;
             glm::mat4 rotate;
             glm::vec3 edge;
+            if(tileType == 0){
+                createStraight(tiles, i);
+            }
+            else if(tileType == 1){
+                createInclineUp(tiles, i);
+            }
+            else if(tileType == 2){
+                createInclineDown(tiles, i);
+            }
+
             if(i == 0){
                 createStraight(tiles, i);
             }
@@ -266,31 +309,37 @@ namespace Game {
                 createInclineUp(tiles, i);
             }
             else{
-
                 createStraight(tiles, i);
             }
 
-        }
+        }*/
 
-        glm::vec3 scales(1.f, 1.f, 1.f);
+        glm::vec3 scales(4.f, 4.f, 4.f);
 
         // Setup terrain
-        for (int i = 0; i < 10; i++)
+        for (int i = 1; i < 200; i++)
         {
             std::tuple<ModelId, Physics::ColliderId, glm::mat4> podModel;
-            size_t resourceIndex = (size_t)(Core::FastRandom() % 10);
+            int resourceIndex = Core::TrueRandom(0, 9);
+            int xIndex = Core::TrueRandom(-7, 7);
             std::get<0>(podModel) = models[resourceIndex];
-            float span = 5.0f;
+            float span = 8.0f;
+            int extra = 0;
+
+            if(tiles[(int)(i * span)+1].rotationY != tiles[(int)(i * span)].rotationY) //if next tile is different
+                extra = -1;
+            else if(tiles[(int)(i * span)-1].rotationY != tiles[(int)(i * span)].rotationY) //if prev tile is different
+                extra = 1;
 
             glm::vec3 translation = glm::vec3(
-                tiles[i + 10].position.x,
-                tiles[i + 10].position.y,
-                tiles[i + 10].position.z
+                xIndex,
+                tiles[(int)(i * span)+extra].position.y,
+                tiles[(int)(i * span)+extra].position.z
             );
 
             glm::vec3 rotationAxis = normalize(translation);
             float rotation = translation.x;
-            glm::mat4 transform = glm::translate(translation);
+            glm::mat4 transform = translate(translation) * tiles[(int)(i * span)].rotation;
             std::get<1>(podModel) = Physics::CreateCollider(boxMesh, glm::scale(transform, scales));
             std::get<2>(podModel) = glm::scale(transform, scales);
             asteroids.push_back(podModel);
@@ -349,8 +398,8 @@ namespace Game {
             {
                 std::cout << "OUCH" << std::endl;
                 //renderCar = false;
-                ship.reset();
-                start = std::chrono::high_resolution_clock::now();
+                //ship.reset();
+                //start = std::chrono::high_resolution_clock::now();
             }
 
             for (auto const& asteroid : asteroids) {
@@ -415,7 +464,7 @@ namespace Game {
 
         nvgFontSize(vg, 16.0f);
         nvgFontFace(vg, "sans");
-        nvgFillColor(vg, nvgRGBA(255, 255, 255, 128));
+        nvgFillColor(vg, nvgRGBA(255, 0, 0, 128));
         nvgText(vg, 0, 30, "Testing, testing... Everything seems to be in order.", NULL);
 
         nvgRestore(vg);
