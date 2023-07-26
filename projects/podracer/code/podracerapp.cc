@@ -25,39 +25,39 @@ using namespace Render;
 namespace Game {
 
     void createStraight(std::vector<Tile>& tiles, int i){
-        glm::vec3 translation;
+        glm::vec3 position;
         glm::vec3 rotationAxis;
         glm::mat4 rotate;
         glm::vec3 edge;
         float rotation = 0.f;
         if(i < 1){
             rotation = 0.f;
-            translation = glm::vec3(
+            position = glm::vec3(
                     0.0f, 0.f, 0.f
             );
             rotate = glm::mat4(1.f);
-            edge = glm::vec3(translation.x, translation.y, translation.z + 0.5f);
+            edge = glm::vec3(position.x, position.y, position.z + 0.5f);
         }
         else{
-            translation = glm::vec3(
+            position = glm::vec3(
                     0.0f, tiles[i-1].edge.y, tiles[i-1].edge.z + 0.5f
             );
-            rotationAxis = translation;
+            rotationAxis = position;
             rotate = glm::mat4(1.f);
-            edge = glm::vec3(0, translation.y, translation.z + 0.5f);
+            edge = glm::vec3(0, position.y, position.z + 0.5f);
         }
 
 
-        glm::mat4 translate = glm::translate(translation);
+        glm::mat4 translate = glm::translate(position);
         glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
-        Tile t(translation, transform, edge, tiles.size());
+        Tile t(position, transform, edge, tiles.size());
         t.rotationY = rotation;
-        //glm::mat4 transform =  glm::translate(translation);
+        //glm::mat4 transform =  glm::translate(position);
         tiles.push_back(t);
     }
     void createInclineUp(std::vector<Tile>& tiles, int i){
 
-        glm::vec3 translation;
+        glm::vec3 position;
         glm::vec3 rotationAxis;
         glm::mat4 rotate;
         glm::vec3 edge;
@@ -65,22 +65,22 @@ namespace Game {
         float rotation = -45;
 
         float angle = (sin(glm::radians(-rotation)));
-        translation = glm::vec3(
+        position = glm::vec3(
                 0.0f, tiles[i-1].edge.y + (angle / 2), tiles[i-1].edge.z + (angle / 2)//1.41 being sqrt of 1+1
         ); //this fails? because the length of 1 is insufficient with an incline of 45 degrees (Pythagorean)
 
         rotate = glm::rotate(glm::radians(rotation), rotationAxis);
-        edge = glm::vec3(0.f, translation.y + (angle / 2), translation.z + (angle / 2));
+        edge = glm::vec3(0.f, position.y + (angle / 2), position.z + (angle / 2));
 
-        glm::mat4 translate = glm::translate(translation);
+        glm::mat4 translate = glm::translate(position);
         glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
-        Tile t(translation, transform, edge, tiles.size());
+        Tile t(position, transform, edge, tiles.size());
         t.rotationY = rotation;
-        //glm::mat4 transform =  glm::translate(translation);
+        //glm::mat4 transform =  glm::translate(position);
         tiles.push_back(t);
     }
     void createInclineDown(std::vector<Tile>& tiles, int i){
-        glm::vec3 translation;
+        glm::vec3 position;
         glm::vec3 rotationAxis;
         glm::mat4 rotate;
         glm::vec3 edge;
@@ -88,16 +88,16 @@ namespace Game {
         float rotation = 45;
 
         float angle = (sin(glm::radians(rotation)));
-        translation = glm::vec3(
+        position = glm::vec3(
                 0.0f, tiles[i-1].edge.y - (angle / 2), tiles[i-1].edge.z + (angle / 2)
         );
 
         rotate = glm::rotate(glm::radians(rotation), rotationAxis);
-        edge = glm::vec3(0.f, translation.y - (angle / 2), translation.z + (angle / 2));
+        edge = glm::vec3(0.f, position.y - (angle / 2), position.z + (angle / 2));
 
-        glm::mat4 translate = glm::translate(translation);
+        glm::mat4 translate = glm::translate(position);
         glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
-        Tile t(translation, transform, edge, tiles.size());
+        Tile t(position, transform, edge, tiles.size());
         t.rotationY = rotation;
         //glm::mat4 transform =  glm::translate(translation);
         tiles.push_back(t);
@@ -152,7 +152,7 @@ namespace Game {
         Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
         cam->projection = projection;
 
-        //// load all resources
+        //// load all terrain resources
         ModelId models[10] = {
             LoadModel("assets/podracer/barrel.glb"),
             LoadModel("assets/podracer/bones.glb"),
@@ -170,29 +170,6 @@ namespace Game {
 
         std::vector<std::tuple<ModelId, Physics::ColliderId, glm::mat4>> asteroids;
 
-        
-
-        
-
-        // Setup asteroids far
-        //for (int i = 0; i < 0; i++)
-        //{
-        //    std::tuple<ModelId, Physics::ColliderId, glm::mat4> asteroid;
-        //    size_t resourceIndex = (size_t)(Core::FastRandom() % 6);
-        //    std::get<0>(asteroid) = models[resourceIndex];
-        //    float span = 80.0f;
-        //    glm::vec3 translation = glm::vec3(
-        //        Core::RandomFloatNTP() * span,
-        //        Core::RandomFloatNTP() * span,
-        //        Core::RandomFloatNTP() * span
-        //    );
-        //    glm::vec3 rotationAxis = normalize(translation);
-        //    float rotation = translation.x;
-        //    glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
-        //    std::get<1>(asteroid) = Physics::CreateCollider(colliderMeshes[resourceIndex], transform);
-        //    std::get<2>(asteroid) = transform;
-        //    asteroids.push_back(asteroid);
-        //}
 
         ModelId plane = LoadModel("newassets/plane.glb");
         Physics::ColliderMeshId planeMesh = Physics::LoadColliderMesh("newassets/plane_physics.glb");
@@ -211,11 +188,6 @@ namespace Game {
             std::get<2>(ground) = transform;
             groundPlane = (ground);
         }
-
-        //Just a guy
-        ModelId alien = LoadModel("assets/podracer/alien.glb");
-
-
 
         // Setup skybox
         std::vector<const char*> skybox
@@ -253,20 +225,14 @@ namespace Game {
 
         Podracer ship;
         ship.model = LoadModel("assets/podracer/craft_racer.glb");
-        glm::vec3 originalPos = ship.position;
-        glm::vec3 prevPos = ship.position;
-        glm::quat ori = ship.orientation;
 
-        std::clock_t c_start = std::clock();
         double dt = 0.01667f;
 
         int amountOfPlanes = 1600;
-        float planeL = 1.0f;
-
 
         std::vector<Tile>tiles;
-        float rotation = 0;
 
+        //setup all tiles
         for (int i = 0;  i < amountOfPlanes; i++) {
             glm::vec3 translation;
             glm::vec3 rotationAxis;
@@ -306,12 +272,14 @@ namespace Game {
 
         }
 
-        // Setup asteroids near
+        glm::vec3 scales(1.f, 1.f, 1.f);
+
+        // Setup terrain
         for (int i = 0; i < 10; i++)
         {
-            std::tuple<ModelId, Physics::ColliderId, glm::mat4> asteroid;
+            std::tuple<ModelId, Physics::ColliderId, glm::mat4> podModel;
             size_t resourceIndex = (size_t)(Core::FastRandom() % 10);
-            std::get<0>(asteroid) = models[resourceIndex];
+            std::get<0>(podModel) = models[resourceIndex];
             float span = 5.0f;
 
             glm::vec3 translation = glm::vec3(
@@ -323,19 +291,13 @@ namespace Game {
             glm::vec3 rotationAxis = normalize(translation);
             float rotation = translation.x;
             glm::mat4 transform = glm::translate(translation);
-            std::get<1>(asteroid) = Physics::CreateCollider(boxMesh, glm::scale(transform, glm::vec3(0.7f, 0.7f, 0.7f)));
-            std::get<2>(asteroid) = glm::scale(transform, glm::vec3(1.7f, 1.7f, 1.7f));
-            asteroids.push_back(asteroid);
+            std::get<1>(podModel) = Physics::CreateCollider(boxMesh, glm::scale(transform, scales));
+            std::get<2>(podModel) = glm::scale(transform, scales);
+            asteroids.push_back(podModel);
         }
 
-        float rotamt = 0.f;
 
-        int positionIndex = 0;
         // game loop
-
-        //The idea. The game has tiles. Each tile has an id. Moving forward moves you along the tile grid. Each tile has position. 
-        //Movement takes you a percentage of the tile distance ahead per button press? 
-        //Moving forward takes you tile to tile. Rotation of the next tile is applied to the podracer as it gets closer.
 
         bool collided = false;
         bool renderCar = true;
@@ -343,8 +305,7 @@ namespace Game {
         //std::chrono::high_resolution_clock::duration totalTime(0);
         auto start = std::chrono::high_resolution_clock::now();
 
-        while (this->window->IsOpen()) { 
-            rotamt += 0.001;
+        while (this->window->IsOpen()) {
             auto timeStart = std::chrono::steady_clock::now();
             glClear(GL_DEPTH_BUFFER_BIT);
             glEnable(GL_DEPTH_TEST);
@@ -363,25 +324,12 @@ namespace Game {
                 for (int i = ship.movementIndex - 10; i < ship.movementIndex + 100; i++) {
                     if (i < 0)
                         i = 0;
-                    //glm::mat4 transform = glm::rotate(rotation, rotationAxis) * glm::translate(translation);
                     RenderDevice::Draw(std::get<0>(groundPlane), tiles[i].transform);
                 }
             }
-            if (renderCar)
-            { //mat4, 4th matrix x y z
-                //planeTransforms[ship.position.z];
-
-                ship.Update(dt, positionIndex, tiles);
-                //std::cout << positionIndex << std::endl;
-                
-
-                //std::cout << (int)ship.position.z << " " << tiles[(int)ship.position.z].position.z << std::endl;
-                //glm::mat4 m = planeTransforms[ship.position.z];
-
-                //std::cout << m[3].x << " " <<  m[3].y << " " << m[3].z << std::endl;
-                //glm::vec3 v = glm::vec3(m[3].x, m[3].y+5, m[3].z);
-
-
+            if (renderCar){
+                if(ship.Update(dt, tiles)) //if reset
+                    start = std::chrono::high_resolution_clock::now();
             }
             const auto end = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> diff = end - start;
@@ -391,28 +339,24 @@ namespace Game {
             points = (int)diff.count();
             std::cout << points << std::endl;
 
-            //std::cout << "Ship: " << ship.position.z << std::endl;
 
             glm::vec3 translation = glm::vec3(
                     1.5f, 0.5f, 2.f
             );
             glm::vec3 rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
-            float rotation = rotamt;
-            glm::mat4 alienTransform = glm::translate(translation) * glm::rotate(rotation, rotationAxis);
 
             if (collided)
             {
                 std::cout << "OUCH" << std::endl;
                 //renderCar = false;
-                //ship.reset();
-                //start = std::chrono::high_resolution_clock::now();
+                ship.reset();
+                start = std::chrono::high_resolution_clock::now();
             }
 
             for (auto const& asteroid : asteroids) {
                 RenderDevice::Draw(std::get<0>(asteroid), std::get<2>(asteroid));
             }
             RenderDevice::Draw(ship.model, ship.transform);
-            RenderDevice::Draw(alien, alienTransform);
 
 
             /*else if (collided && renderCar) {

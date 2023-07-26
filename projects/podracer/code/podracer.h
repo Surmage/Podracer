@@ -45,7 +45,6 @@ struct Podracer
     bool automatic = false;
     float movementIndex = 0.f;
     float currentSpeed = 0.0f;
-    float currentUpSpeed = 0.0f;
     float currentSideSpeed = 0.0f;
 
     float rotationZ = 0;
@@ -58,7 +57,7 @@ struct Podracer
     Render::ParticleEmitter* particleEmitterRight;
     float emitterOffset = -0.5f;
 
-    void Update(float dt, int& i, std::vector<Tile>& tiles);
+    int Update(float dt, std::vector<Tile>& tiles);
     void reset();
 
     bool CheckCollisions();
