@@ -14,25 +14,25 @@ struct Tile {
     glm::mat4 transform;
     int id;
     float rotationY;
-    float rotationX;
+    glm::vec3 edge;
 
     Tile() {};
-    Tile(glm::vec3& position, glm::mat4& transform, int id) {
+    Tile(glm::vec3& position, glm::mat4& transform, glm::vec3 edge, int id) {
         this->position = position;
         this->transform = transform;
         this->id = id;
+        this->edge = edge;
         rotationY = 0;
-        rotationX = 0;
     }
 };
 
 struct Podracer
 {
     Podracer();
-    
-    glm::vec3 racerPos = glm::vec3(0.0f, 1.f, 2.0f);
+
+    glm::vec3 racerPos = glm::vec3(0.0f, 0.f, 2.0f);
     glm::quat orientation = glm::identity<glm::quat>();
-    glm::vec3 position = glm::vec3(0, 2.0f, 0.0f);
+    glm::vec3 position = glm::vec3(0, 1.0f, 0.0f);
     glm::mat4 transform = glm::mat4(1);
     glm::vec3 linearVelocity = glm::vec3(0);
 
@@ -42,6 +42,8 @@ struct Podracer
     const float camOffsetY = 1.5f;
     const float cameraSmoothFactor = 20.0f;
 
+    bool automatic = false;
+    float movementIndex = 0.f;
     float currentSpeed = 0.0f;
     float currentSideSpeed = 0.0f;
 
@@ -55,17 +57,19 @@ struct Podracer
     Render::ParticleEmitter* particleEmitterRight;
     float emitterOffset = -0.5f;
 
-    void Update(float dt, Tile & tile);
+    int Update(float dt, std::vector<Tile>& tiles);
+    void reset();
 
     bool CheckCollisions();
     
-    const glm::vec3 colliderEndPoints[8] = {
-        glm::vec3(-1.10657, -0.480347, -0.346542),  // right wing
-        glm::vec3(1.10657, -0.480347, -0.346542),  // left wing
+    const glm::vec3 colliderEndPoints[9] = {
+        glm::vec3(-0.50657, -0.480347, -0.346542),  // right wing
+        glm::vec3(0.50657, -0.480347, -0.346542),  // left wing
         glm::vec3(-0.342382, 0.25109, -0.010299),   // right top
         glm::vec3(0.342382, 0.25109, -0.010299),   // left top
         glm::vec3(-0.285614, -0.10917, 0.869609), // right front
         glm::vec3(0.285614, -0.10917, 0.869609), // left front
+        glm::vec3(0.0, -0.10917, 0.569609), // middle front
         glm::vec3(-0.279064, -0.10917, -0.98846),   // right back
         glm::vec3(0.279064, -0.10917, -0.98846)   // right back
     };

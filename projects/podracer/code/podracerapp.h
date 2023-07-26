@@ -26,6 +26,7 @@ namespace Game
         void Exit();
 
     private:
+        int points = 0;
         /// show some ui things
         void RenderUI();
         /// render some nanovg stuff

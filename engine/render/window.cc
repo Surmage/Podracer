@@ -349,11 +349,11 @@ Window::Open()
 	config.OversampleH = 3;
 	config.OversampleV = 1;
 #if _WIN32
-	int nvgFontId = nvgCreateFont(vg, "sans", "c:/windows/fonts/tahoma.ttf");
-	ImFont* font = io.Fonts->AddFontFromFileTTF("c:/windows/fonts/tahoma.ttf", 14, &config);
+	int nvgFontId = nvgCreateFont(vg, "sans", "newassets/tahoma.ttf");
+	ImFont* font = io.Fonts->AddFontFromFileTTF("newassets/tahoma.ttf", 14, &config);
 #else
-	int nvgFontId = nvgCreateFont(vg, "sans", "/usr/share/fonts/TTF/Hack-Bold.ttf");
-	ImFont* font = io.Fonts->AddFontFromFileTTF("/usr/share/fonts/TTF/Hack-Bold.ttf", 18, &config);
+	int nvgFontId = nvgCreateFont(vg, "sans", "newassets/tahoma.ttf");
+	ImFont* font = io.Fonts->AddFontFromFileTTF("newassets/tahoma.ttf", 18, &config);
 #endif
 
 	unsigned char* buffer;
