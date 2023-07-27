@@ -44,6 +44,7 @@ struct Podracer
     const float camOffsetY = 1.5f;
     const float cameraSmoothFactor = 20.0f;
 
+    bool disableControls = false;
     bool automatic = false;
     float movementIndex = 0.f;
     float currentSpeed = 0.0f;

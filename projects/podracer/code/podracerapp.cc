@@ -33,7 +33,7 @@ namespace Game {
         if(i < 1){
             rotation = 0.f;
             position = glm::vec3(
-                    0.0f, 0.f, 0.f
+                    0.0f, 0.f, -1.f
             );
             rotate = glm::mat4(1.f);
             edge = glm::vec3(position.x, position.y, position.z + 0.5f);
@@ -170,7 +170,7 @@ namespace Game {
         Physics::ColliderMeshId boxMesh = Physics::LoadColliderMesh("newassets/box_collider.glb");
       
 
-        std::vector<std::tuple<ModelId, Physics::ColliderId, glm::mat4>> asteroids;
+        std::vector<std::tuple<ModelId, Physics::ColliderId, glm::mat4, int>> asteroids;
 
 
         ModelId plane = LoadModel("newassets/plane.glb");
@@ -273,7 +273,7 @@ namespace Game {
         // Setup terrain
         for (int i = 2; i < 200; i++)
         {
-            std::tuple<ModelId, Physics::ColliderId, glm::mat4> podModel;
+            std::tuple<ModelId, Physics::ColliderId, glm::mat4, int> podModel;
             int resourceIndex = Core::TrueRandom(0, 9);
             Physics::ColliderMeshId col = boxMesh;
             //int resourceIndex = 8;
@@ -301,11 +301,12 @@ namespace Game {
                 tiles[(int)(i * span)+extra].position.y,
                 tiles[(int)(i * span)+extra].position.z
             );
-
+            int id = (int)(i * span)+extra;
 
             glm::mat4 transform = translate(position) * tiles[(int)(i * span)].rotation;
             std::get<1>(podModel) = Physics::CreateCollider(col, glm::scale(glm::translate(glm::vec3(-position.x, position.y, position.z)), colScales));
             std::get<2>(podModel) = glm::scale(transform, scales);
+            std::get<3>(podModel) = id;
             asteroids.push_back(podModel);
         }
 
@@ -317,6 +318,8 @@ namespace Game {
 
         //std::chrono::high_resolution_clock::duration totalTime(0);
         auto start = std::chrono::high_resolution_clock::now();
+        float timer = 0;
+        bool timerUp = false;
 
         while (this->window->IsOpen()) {
             auto timeStart = std::chrono::steady_clock::now();
@@ -333,17 +336,20 @@ namespace Game {
 
             //Spawn tiles
             {
-                //for (int i = 0; i < 100; i++) {
-                for (int i = ship.movementIndex - 10; i < ship.movementIndex + 100; i++) {
+                for (int i = ship.movementIndex - 10; i < ship.movementIndex + 40; i++) {
                     if (i < 0)
                         i = 0;
                     RenderDevice::Draw(std::get<0>(groundPlane), tiles[i].transform);
+                    for (auto const& asteroid : asteroids) { //spawn terrain
+                        if(i == std::get<3>(asteroid))
+                            RenderDevice::Draw(std::get<0>(asteroid), std::get<2>(asteroid));
+                    }
                 }
             }
-            if (renderCar){
-                if(ship.Update(dt, tiles)) //if reset
-                    start = std::chrono::high_resolution_clock::now();
-            }
+
+            if(ship.Update(dt, tiles)) //if reset
+                start = std::chrono::high_resolution_clock::now();
+
             const auto end = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> diff = end - start;
 
@@ -358,18 +364,31 @@ namespace Game {
             );
             glm::vec3 rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
 
-            if (collided)
-            {
-                std::cout << "OUCH" << std::endl;
-                //renderCar = false;
-                //ship.reset();
-                //start = std::chrono::high_resolution_clock::now();
+            { //Collisions and respawning
+                /*if (collided && renderCar)
+                {
+                    std::cout << "OUCH" << std::endl;
+                    renderCar = false;
+                    timer = points + 3;
+                    ship.disableControls = true;
+                    ship.automatic = false;
+                }
+                if(points >= timer && !renderCar)
+                    timerUp = true;
+
+                if(timerUp){
+                    ship.reset();
+                    start = std::chrono::high_resolution_clock::now();
+                    renderCar = true;
+                    ship.disableControls = false;
+                    timerUp = false;
+                }*/
             }
 
-            for (auto const& asteroid : asteroids) {
-                RenderDevice::Draw(std::get<0>(asteroid), std::get<2>(asteroid));
-            }
-            RenderDevice::Draw(ship.model, ship.transform);
+
+
+            if(renderCar)
+                RenderDevice::Draw(ship.model, ship.transform);
 
 
             /*else if (collided && renderCar) {

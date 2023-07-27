@@ -52,39 +52,46 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
 
 
-    if(kbd->pressed[Key::Space]){
-        automatic = !automatic;
-    }
-    if(!automatic){
-        if (kbd->held[Key::W])
-            this->currentSpeed = 1.f;
-
-        else if (kbd->held[Key::S] && movementIndex >= 0){
-            this->currentSpeed = -1.f;
+    if(!disableControls){
+        if(kbd->pressed[Key::Space]){
+            automatic = !automatic;
         }
-        else
-            this->currentSpeed = 0;
+        if(!automatic){
+            if (kbd->held[Key::W])
+                this->currentSpeed = 1.f;
+
+            else if (kbd->held[Key::S] && movementIndex >= 0){
+                this->currentSpeed = -1.f;
+            }
+            else
+                this->currentSpeed = 0;
+        }
+        else{
+            this->currentSpeed = 1.f;
+        }
+
+        if (kbd->held[Key::A] && this->position.x >= -5) {
+            this->currentSideSpeed = mix(this->currentSideSpeed, this->boostSpeed, std::min(1.0f, dt * 20.0f));
+        }
+        else if (kbd->held[Key::D] && this->position.x <= 5) {
+            this->currentSideSpeed = mix(this->currentSideSpeed, -this->boostSpeed, std::min(1.0f, dt * 20.0f));
+        }
+        else {
+            this->currentSideSpeed = 0;
+        }
+
+        if(kbd->pressed[Key::R]){
+            reset();
+            return 1;
+        }
     }
     else{
-        this->currentSpeed = 1.f;
+        this->currentSpeed = 0.f;
+        this->currentSideSpeed = 0.f;
     }
 
     this->movementIndex += dt * 10.f * currentSpeed;
 
-    if (kbd->held[Key::A] && this->position.x >= -5) {
-        this->currentSideSpeed = mix(this->currentSideSpeed, this->boostSpeed, std::min(1.0f, dt * 20.0f));
-    }
-    else if (kbd->held[Key::D] && this->position.x <= 5) {
-        this->currentSideSpeed = mix(this->currentSideSpeed, -this->boostSpeed, std::min(1.0f, dt * 20.0f));
-    }
-    else {
-        this->currentSideSpeed = 0;
-    }
-
-    if(kbd->pressed[Key::R]){
-        reset();
-        return 1;
-    }
     vec3 desiredVelocity = vec3(this->currentSideSpeed, 0, this->currentSpeed);
     desiredVelocity = this->transform * vec4(desiredVelocity, 0.0f);
 
