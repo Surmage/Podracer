@@ -166,7 +166,7 @@ namespace Game {
             LoadModel("assets/podracer/chimney.glb")
  
         };
-        ModelId boxMod = LoadModel("newassets/box_collider.glb");
+        Physics::ColliderMeshId boneCol = Physics::LoadColliderMesh("assets/podracer/bones.glb");
         Physics::ColliderMeshId boxMesh = Physics::LoadColliderMesh("newassets/box_collider.glb");
       
 
@@ -267,26 +267,34 @@ namespace Game {
         std::cout << tiles.size() << std::endl;
 
         glm::vec3 scales(4.f, 4.f, 4.f);
+        glm::vec3 colScales(0.7f);
         int xIndex;
 
         // Setup terrain
-        for (int i = 1; i < 200; i++)
+        for (int i = 2; i < 200; i++)
         {
             std::tuple<ModelId, Physics::ColliderId, glm::mat4> podModel;
             int resourceIndex = Core::TrueRandom(0, 9);
+            Physics::ColliderMeshId col = boxMesh;
             //int resourceIndex = 8;
-            if(resourceIndex == 0) //if bones
+            if(resourceIndex == 0) { //if bones
                 xIndex = 0.f;
-            else
+                col = boneCol;
+                colScales = scales;
+            }
+
+            else{
                 xIndex = Core::TrueRandom(-7, 7);
+            }
+
             std::get<0>(podModel) = models[resourceIndex];
             float span = 8.0f;
             int extra = 0;
 
-            if(tiles[(int)(i * span)+1].rotationY != tiles[(int)(i * span)].rotationY) //if next tile is different
-                extra = -1;
-            if(tiles[(int)(i * span)-1].rotationY != tiles[(int)(i * span)].rotationY) //if prev tile is different
-                extra = 1;
+            if(tiles[(int)(i * span)+2].rotationY != tiles[(int)(i * span)].rotationY) //if next tile is different
+                extra = -2;
+            if(tiles[(int)(i * span)-2].rotationY != tiles[(int)(i * span)].rotationY) //if prev tile is different
+                extra = 2;
 
             glm::vec3 position = glm::vec3(
                 xIndex,
@@ -294,8 +302,9 @@ namespace Game {
                 tiles[(int)(i * span)+extra].position.z
             );
 
+
             glm::mat4 transform = translate(position) * tiles[(int)(i * span)].rotation;
-            std::get<1>(podModel) = Physics::CreateCollider(boxMesh, glm::scale(transform, glm::vec3(0.7f)));
+            std::get<1>(podModel) = Physics::CreateCollider(col, glm::scale(glm::translate(glm::vec3(-position.x, position.y, position.z)), colScales));
             std::get<2>(podModel) = glm::scale(transform, scales);
             asteroids.push_back(podModel);
         }

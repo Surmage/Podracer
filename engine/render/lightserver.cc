@@ -96,7 +96,7 @@ Initialize()
 	shadowCameraInfo.projection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, 0.1f, 500.0f);
 	shadowCameraInfo.view = glm::lookAt(glm::vec3(-10.0f,75.0f, -20.0f),
 		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, 0.0f, 1.0f));
+		glm::vec3(0.f, 1.0f, 1.f));
 	LightServer::globalLightDirection = shadowCameraInfo.view[2];
 	CameraManager::CreateCamera(shadowCameraInfo);
 }

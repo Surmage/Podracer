@@ -91,6 +91,7 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     this->position += desiredVelocity * dt * 10.0f;
     this->racerPos = tiles[(int)movementIndex].position + vec3(0, 1 - abs(sin(tiles[(int)movementIndex].rotationY)), 0);
     this->racerPos += vec3(position.x, 0, 0);
+    //std::cout << racerPos.x << " " << racerPos.y << " " << racerPos.z << std::endl;
 
     this->transform = (tiles[(int)movementIndex].transform * translate(vec3(this->position.x, 0, 0))); //handles rotation of vehicle, affects movement direction
 
@@ -146,6 +147,6 @@ Podracer::CheckCollisions()
 void Podracer::reset(){
     automatic = false;
     movementIndex = 0;
-    position = glm::vec3(0, 1.0f, 0.0f);
+    position = glm::vec3(0.f, 1.0f, 0.0f);
 }
 }
