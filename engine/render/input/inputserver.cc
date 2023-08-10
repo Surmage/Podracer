@@ -55,14 +55,14 @@ InputHandler::BeginFrame()
 	hid->mouse.delta = glm::vec2(0);
 	hid->mouse.previousPosition = hid->mouse.position;
 
-    /*  for (int i = 0; i < Gamepad::Button::NumGamepadButtons; i++)
+    for (int i = 0; i < Gamepad::Button::NumGamepadButtons; i++)
     {
-        if (hid->keyboard.released[i])
-            hid->keyboard.held[i] = false;
+        if (hid->gamepads[i]->released[i])
+            hid->gamepads[i]->held[i] = false;
 
-        hid->keyboard.pressed[i] = false;
-        hid->keyboard.released[i] = false;
-    }*/
+        hid->gamepads[i]->pressed[i] = false;
+        hid->gamepads[i]->released[i] = false;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -132,6 +132,24 @@ InputHandler::HandleMousePressEvent(int32 button, int32 action, int32 mods)
 		hid->mouse.released[button] = true;
 	}
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+    void
+    InputHandler::HandleJoystickButtonPressEvent(int32 button, int32 action, int32 mods)
+    {
+        assert(button < Gamepad::Button::NumGamepadButtons);
+        if (action == GLFW_PRESS)
+        {
+            hid->mouse.pressed[button] = true;
+            hid->mouse.held[button] = true;
+        }
+        else if (action == GLFW_RELEASE)
+        {
+            hid->mouse.released[button] = true;
+        }
+    }
 
 //------------------------------------------------------------------------------
 /**
