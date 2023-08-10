@@ -57,15 +57,9 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
             reset();
             return 1;
         }
-        if(kbd->pressed[Key::Q]){
-            cameraX = -3;
-        }
-        else if(kbd->pressed[Key::E]){
-            cameraX = 3;
-        }
-        else if(kbd->pressed[Key::T]){
-            cameraX = 0;
-        }
+        cameraX = kbd->held[Key::Q] ? 5.0f : kbd->held[Key::E] ? -5.0f : 0.0f;
+        cameraY = kbd->held[Key::T] ? 5.0f : 0.0f;
+
         if(kbd->pressed[Key::Space]){
             automatic = !automatic;
         }
@@ -106,6 +100,10 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     desiredVelocity = this->transform * vec4(desiredVelocity, 0.0f);
 
     this->rotationY = tiles[(int)movementIndex].rotationY;
+    float upcomingRotationY = tiles[(int)movementIndex+5].rotationY;
+    if(rotationY == 45 || upcomingRotationY == 45)
+        cameraY = 5;
+    
     this->positionX += desiredVelocity.x * dt * 10.0f;
     this->racerPos = tiles[(int)movementIndex].position + vec3(0, 1 - abs(sin(this->rotationY)), 0);
     this->racerPos += vec3(positionX, 0, 0);
@@ -116,7 +114,11 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     // update camera view transform
 
     vec3 center = vec3(this->transform[3]) + vec3(0, 5 * -sin(radians(this->rotationY)), 5);
-    cam->view = lookAt(vec3(this->transform[3].x + cameraX, this->transform[3].y + 1.5f + sin(radians(this->rotationY)), this->transform[3].z - 1.5f), center, vec3(0, 2, 0));
+    float eyeX = this->transform[3].x + cameraX;
+    float eyeY = this->transform[3].y + 1.5f + cameraY + sin(radians(this->rotationY));
+    float eyeZ = this->transform[3].z - 1.5f;
+    vec3 eye = vec3(eyeX, eyeY, eyeZ);
+    cam->view = lookAt(eye, center, vec3(0, 2, 0));
 
     //std::cout << "Center: " << (center).x << " " << (center).y << " " << (center).z << std::endl;
     //std::cout << "View: " << vec3(cam->view[2]).x << " " << vec3(cam->view[2]).y << " " << vec3(cam->view[2]).z << std::endl;
