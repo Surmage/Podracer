@@ -53,6 +53,19 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
 
 
     if(!disableControls){
+        if(kbd->pressed[Key::R]){
+            reset();
+            return 1;
+        }
+        if(kbd->pressed[Key::Q]){
+            cameraX = -3;
+        }
+        else if(kbd->pressed[Key::E]){
+            cameraX = 3;
+        }
+        else if(kbd->pressed[Key::T]){
+            cameraX = 0;
+        }
         if(kbd->pressed[Key::Space]){
             automatic = !automatic;
         }
@@ -80,10 +93,7 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
             this->currentSideSpeed = 0;
         }
 
-        if(kbd->pressed[Key::R]){
-            reset();
-            return 1;
-        }
+
     }
     else{
         this->currentSpeed = 0.f;
@@ -106,7 +116,7 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     // update camera view transform
 
     vec3 center = vec3(this->transform[3]) + vec3(0, 5 * -sin(radians(this->rotationY)), 5);
-    cam->view = lookAt(vec3(this->transform[3].x, this->transform[3].y + 1.5f + sin(radians(this->rotationY)) , this->transform[3].z - 1.5f), center, vec3(0, 2, 0));
+    cam->view = lookAt(vec3(this->transform[3].x + cameraX, this->transform[3].y + 1.5f + sin(radians(this->rotationY)), this->transform[3].z - 1.5f), center, vec3(0, 2, 0));
 
     //std::cout << "Center: " << (center).x << " " << (center).y << " " << (center).z << std::endl;
     //std::cout << "View: " << vec3(cam->view[2]).x << " " << vec3(cam->view[2]).y << " " << vec3(cam->view[2]).z << std::endl;

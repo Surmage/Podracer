@@ -54,6 +54,7 @@ struct Podracer
     float rotYSmooth = 0;
     float rotZSmooth = 0;
     float positionX = 0;
+    float cameraX = 0;
 
     Render::ModelId model;
     Render::ParticleEmitter* particleEmitterLeft;

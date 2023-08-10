@@ -270,16 +270,17 @@ namespace Game {
         glm::vec3 scaleSmol(0.7f);
         glm::vec3 colScales;
         int xIndex;
+        const float span = 10.0f;
 
         // Setup terrain
-        for (int i = 2; i < 200; i++)
+        for (int i = 2; i < (int)(1600 / span); i++)
         {
-            std::tuple<ModelId, Physics::ColliderId, glm::mat4, int> podModel;
-            int resourceIndex = Core::TrueRandom(0, 9);
+            std::tuple<ModelId, Physics::ColliderId, glm::mat4, int> podModel; //Model to be created
+            int resourceIndex = Core::TrueRandom(0, 9); //Randomizes which model
             Physics::ColliderMeshId col = boxMesh;
             //int resourceIndex = 8;
             if(resourceIndex == 0) { //if bones
-                xIndex = 0.f;
+                xIndex = 0.f; //bones spawn in middle of road
                 col = boneCol;
                 colScales = scaleBig;
             }
@@ -290,7 +291,7 @@ namespace Game {
             }
 
             std::get<0>(podModel) = models[resourceIndex];
-            float span = 8.0f;
+
             int extra = 0;
 
             if(tiles[(int)(i * span)+2].rotationY != tiles[(int)(i * span)].rotationY) //if next tile is different
@@ -336,6 +337,7 @@ namespace Game {
             }
 
             //Spawn tiles
+            //TODO: Multithread
             {
                 for (int i = ship.movementIndex - 10; i < ship.movementIndex + 40; i++) {
                     if (i < 0)
@@ -366,7 +368,7 @@ namespace Game {
             glm::vec3 rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
 
             { //Collisions and respawning
-                if (collided && renderCar)
+                /*if (collided && renderCar)
                 {
                     std::cout << "OUCH" << std::endl;
                     renderCar = false;
@@ -383,7 +385,7 @@ namespace Game {
                     renderCar = true;
                     ship.disableControls = false;
                     timerUp = false;
-                }
+                }*/
             }
 
 
