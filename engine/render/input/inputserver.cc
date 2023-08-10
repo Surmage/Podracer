@@ -54,6 +54,15 @@ InputHandler::BeginFrame()
 
 	hid->mouse.delta = glm::vec2(0);
 	hid->mouse.previousPosition = hid->mouse.position;
+
+    /*  for (int i = 0; i < Gamepad::Button::NumGamepadButtons; i++)
+    {
+        if (hid->keyboard.released[i])
+            hid->keyboard.held[i] = false;
+
+        hid->keyboard.pressed[i] = false;
+        hid->keyboard.released[i] = false;
+    }*/
 }
 
 //------------------------------------------------------------------------------

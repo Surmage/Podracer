@@ -5,6 +5,7 @@
 #include "render/physics.h"
 #include "render/debugrender.h"
 #include "render/particlesystem.h"
+#include "render/input/gamepad.h" //Should maybe not be included here
 #include <iostream>
 
 using namespace Input;
@@ -48,6 +49,10 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
 {
     //Mouse* mouse = Input::GetDefaultMouse();
     Keyboard* kbd = Input::GetDefaultKeyboard();
+    //----------GAMEPAD----------
+    //Gamepad* gamepad = Input::GetGamepad(0);
+    //int buttonCount;
+    Input::Gamepad::gamepad();
 
     Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
 
@@ -57,7 +62,7 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
             automatic = !automatic;
         }
         if(!automatic){
-            if (kbd->held[Key::W])
+            if (kbd->held[Key::W]  /*|| glfwGetJoystickName(GLFW_JOYSTICK_1) == std::string("Logitech Gamepad F310") && GLFW_PRESS == glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttonCount)[0]*/)
                 this->currentSpeed = 1.f;
 
             else if (kbd->held[Key::S] && movementIndex >= 0){
