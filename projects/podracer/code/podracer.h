@@ -34,7 +34,6 @@ struct Podracer
 
     glm::vec3 racerPos = glm::vec3(0.0f, 0.f, 2.0f);
     glm::quat orientation = glm::identity<glm::quat>();
-    glm::vec3 position = glm::vec3(0, 1.0f, 0.0f);
     glm::mat4 transform = glm::mat4(1);
     glm::vec3 linearVelocity = glm::vec3(0);
 
@@ -50,10 +49,11 @@ struct Podracer
     float currentSpeed = 0.0f;
     float currentSideSpeed = 0.0f;
 
-    float rotationZ = 0;
+    float rotationY = 0;
     float rotXSmooth = 0;
     float rotYSmooth = 0;
     float rotZSmooth = 0;
+    float positionX = 0;
 
     Render::ModelId model;
     Render::ParticleEmitter* particleEmitterLeft;

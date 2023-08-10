@@ -266,8 +266,9 @@ namespace Game {
         }
         std::cout << tiles.size() << std::endl;
 
-        glm::vec3 scales(4.f, 4.f, 4.f);
-        glm::vec3 colScales(0.7f);
+        glm::vec3 scaleBig(4.f, 4.f, 4.f);
+        glm::vec3 scaleSmol(0.7f);
+        glm::vec3 colScales;
         int xIndex;
 
         // Setup terrain
@@ -280,11 +281,12 @@ namespace Game {
             if(resourceIndex == 0) { //if bones
                 xIndex = 0.f;
                 col = boneCol;
-                colScales = scales;
+                colScales = scaleBig;
             }
 
             else{
                 xIndex = Core::TrueRandom(-7, 7);
+                colScales = scaleSmol;
             }
 
             std::get<0>(podModel) = models[resourceIndex];
@@ -305,11 +307,10 @@ namespace Game {
 
             glm::mat4 transform = translate(position) * tiles[(int)(i * span)].rotation;
             std::get<1>(podModel) = Physics::CreateCollider(col, glm::scale(glm::translate(glm::vec3(-position.x, position.y, position.z)), colScales));
-            std::get<2>(podModel) = glm::scale(transform, scales);
+            std::get<2>(podModel) = glm::scale(transform, scaleBig);
             std::get<3>(podModel) = id;
             asteroids.push_back(podModel);
         }
-
 
         // game loop
 
@@ -365,7 +366,7 @@ namespace Game {
             glm::vec3 rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
 
             { //Collisions and respawning
-                /*if (collided && renderCar)
+                if (collided && renderCar)
                 {
                     std::cout << "OUCH" << std::endl;
                     renderCar = false;
@@ -382,7 +383,7 @@ namespace Game {
                     renderCar = true;
                     ship.disableControls = false;
                     timerUp = false;
-                }*/
+                }
             }
 
 
