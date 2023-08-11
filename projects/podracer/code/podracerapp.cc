@@ -103,6 +103,11 @@ namespace Game {
         tiles.push_back(t);
     }
 
+    double clockToMilliseconds(clock_t ticks){
+        // units/(units/time) => time (seconds) * 1000 = milliseconds
+        return (ticks/(double)CLOCKS_PER_SEC)*1000.0;
+    }
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -322,6 +327,8 @@ namespace Game {
         auto start = std::chrono::high_resolution_clock::now();
         float timer = 0;
         bool timerUp = false;
+        clock_t current_ticks, delta_ticks;
+        clock_t fps = 0;
 
         while (this->window->IsOpen()) {
             auto timeStart = std::chrono::steady_clock::now();
@@ -329,6 +336,8 @@ namespace Game {
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
+
+            current_ticks = clock();
 
             this->window->Update();
 
@@ -358,8 +367,8 @@ namespace Game {
 
             collided = ship.CheckCollisions();
 
-            points = (int)diff.count();
-            std::cout << points << std::endl;
+            points = (int)diff.count(); //Points based on time alive
+            //std::cout << points << std::endl;
 
 
             glm::vec3 translation = glm::vec3(
@@ -403,6 +412,11 @@ namespace Game {
             // Execute the entire rendering pipeline
             RenderDevice::Render(this->window, dt);
 
+            delta_ticks = clock() - current_ticks; //the time, in ms, that took to render the scene
+            if(delta_ticks > 0)
+                fps = CLOCKS_PER_SEC / delta_ticks;
+            std::cout << "Fps: " << fps << std::endl;
+
             // transfer new frame to window
             this->window->SwapBuffers();
 
@@ -432,7 +446,6 @@ namespace Game {
     void
     PodracerApp::RenderNanoVG(NVGcontext* vg)
     {
-        nvgSave(vg);
 
         nvgBeginPath(vg);
         //nvgCircle(vg, 600, 100, 50);
@@ -452,6 +465,32 @@ namespace Game {
         nvgFontFace(vg, "sans");
         nvgFillColor(vg, nvgRGBA(255, 0, 0, 128));
         nvgText(vg, 0, 30, "Testing, testing... Everything seems to be in order.", NULL);
+
+        nvgRestore(vg);
+    }
+    void
+    PodracerApp::RenderNanoVGFPS(NVGcontext* vg, clock_t fps)
+    {
+        nvgSave(vg);
+
+        nvgBeginPath(vg);
+        //nvgCircle(vg, 600, 100, 50);
+        NVGpaint paint;
+        paint = nvgLinearGradient(vg, 600, 100, 650, 150, nvgRGBA(255, 0, 0, 255), nvgRGBA(0, 255, 0, 255));
+        nvgFillPaint(vg, paint);
+        nvgFill(vg);
+
+
+
+        // Header
+        nvgBeginPath(vg);
+        nvgStrokeColor(vg, nvgRGBA(0, 0, 0, 32));
+        nvgStroke(vg);
+
+        nvgFontSize(vg, 16.0f);
+        nvgFontFace(vg, "sans");
+        nvgFillColor(vg, nvgRGBA(255, 0, 0, 128));
+        nvgText(vg, 0, 30, "Fps " + fps, NULL);
 
         nvgRestore(vg);
     }

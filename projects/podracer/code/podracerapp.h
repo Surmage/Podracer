@@ -31,6 +31,7 @@ namespace Game
         void RenderUI();
         /// render some nanovg stuff
         void RenderNanoVG(NVGcontext* vg);
+        void RenderNanoVGFPS(NVGcontext* vg, clock_t fps);
 
         Display::Window* window;
 
