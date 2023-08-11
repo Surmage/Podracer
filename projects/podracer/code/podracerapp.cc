@@ -329,6 +329,9 @@ namespace Game {
         bool timerUp = false;
         clock_t current_ticks, delta_ticks;
         clock_t fps = 0;
+        float frameTime = 0;
+        std::chrono::duration<double> diff;
+        float previousTime = 0;
 
         while (this->window->IsOpen()) {
             auto timeStart = std::chrono::steady_clock::now();
@@ -363,7 +366,13 @@ namespace Game {
                 start = std::chrono::high_resolution_clock::now();
 
             const auto end = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> diff = end - start;
+
+            if(diff.count() != 0)
+            {
+                previousTime = diff.count();
+            }
+            diff = end - start;
+            frameTime = diff.count() - previousTime;
 
             collided = ship.CheckCollisions();
 
