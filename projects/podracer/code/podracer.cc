@@ -50,9 +50,9 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     //Mouse* mouse = Input::GetDefaultMouse();
     Keyboard* kbd = Input::GetDefaultKeyboard();
     //----------GAMEPAD----------
-    Gamepad* gamepad = Input::GetGamepad(0);
+    //Gamepad* gamepad = Input::GetGamepad(0);
     //int buttonCount;
-    Input::Gamepad::gamepad();
+    //Input::Gamepad::gamepad();
 
     Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
 
