@@ -275,7 +275,7 @@ namespace Game {
         glm::vec3 scaleSmol(0.7f);
         glm::vec3 colScales;
         int xIndex;
-        const float span = 10.0f;
+        const float span = 1.0f;
 
         // Setup terrain
         for (int i = 2; i < (int)(1600 / span); i++)
