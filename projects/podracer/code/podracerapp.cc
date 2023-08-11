@@ -350,7 +350,7 @@ namespace Game {
 
             //Spawn tiles
             //TODO: Multithread
-            {
+            /*{
                 for (int i = ship.movementIndex - 10; i < ship.movementIndex + 40; i++) {
                     if (i < 0)
                         i = 0;
@@ -360,7 +360,7 @@ namespace Game {
                             RenderDevice::Draw(std::get<0>(asteroid), std::get<2>(asteroid));
                     }
                 }
-            }
+            }*/
 
             if(ship.Update(dt, tiles)) //if reset
                 start = std::chrono::high_resolution_clock::now();
