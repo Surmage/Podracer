@@ -424,7 +424,7 @@ namespace Game {
             delta_ticks = clock() - current_ticks; //the time, in ms, that took to render the scene
             if(delta_ticks > 0)
                 fps = CLOCKS_PER_SEC / delta_ticks;
-            std::cout << "Fps: " << delta_ticks << std::endl;
+            std::cout << "Fps: " << (1 / frameTime) << std::endl;
 
             // transfer new frame to window
             this->window->SwapBuffers();
