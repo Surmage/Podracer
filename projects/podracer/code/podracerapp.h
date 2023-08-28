@@ -27,13 +27,14 @@ namespace Game
 
     private:
         int points = 0;
+        float frames = 60;
         /// show some ui things
         void RenderUI();
         /// render some nanovg stuff
         void RenderNanoVG(NVGcontext* vg);
-        void RenderNanoVGFPS(NVGcontext* vg, clock_t fps);
 
         Display::Window* window;
+
 
     };
 }

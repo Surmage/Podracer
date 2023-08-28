@@ -19,6 +19,10 @@
 #include "podracer.h"
 #include <iostream>
 
+#define NANOVG_GL2_IMPLEMENTATION
+#include "nanovg_gl.h"
+
+
 using namespace Display;
 using namespace Render;
 
@@ -332,6 +336,7 @@ namespace Game {
         float frameTime = 0;
         std::chrono::duration<double> diff;
         float previousTime = 0;
+        struct NVGcontext* vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
 
         while (this->window->IsOpen()) {
             auto timeStart = std::chrono::steady_clock::now();
@@ -386,7 +391,7 @@ namespace Game {
             glm::vec3 rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
 
             { //Collisions and respawning
-                /*if (collided && renderCar)
+                if (collided && renderCar)
                 {
                     std::cout << "OUCH" << std::endl;
                     renderCar = false;
@@ -403,7 +408,7 @@ namespace Game {
                     renderCar = true;
                     ship.disableControls = false;
                     timerUp = false;
-                }*/
+                }
             }
 
 
@@ -424,7 +429,11 @@ namespace Game {
             delta_ticks = clock() - current_ticks; //the time, in ms, that took to render the scene
             if(delta_ticks > 0)
                 fps = CLOCKS_PER_SEC / delta_ticks;
-            std::cout << "Fps: " << (1 / frameTime) << std::endl;
+            this->frames = 1 / frameTime;
+            //std::cout << "Fps: " << (1 / frameTime) << std::endl;
+
+           
+            RenderNanoVG(vg);
 
             // transfer new frame to window
             this->window->SwapBuffers();
@@ -473,34 +482,11 @@ namespace Game {
         nvgFontSize(vg, 16.0f);
         nvgFontFace(vg, "sans");
         nvgFillColor(vg, nvgRGBA(255, 0, 0, 128));
-        nvgText(vg, 0, 30, "Testing, testing... Everything seems to be in order.", NULL);
+        char buf[100];
+        sprintf(buf, "Fps: %f", frames);
+        nvgText(vg, 0, 30, buf, NULL);
 
         nvgRestore(vg);
     }
-    void
-    PodracerApp::RenderNanoVGFPS(NVGcontext* vg, clock_t fps)
-    {
-        nvgSave(vg);
 
-        nvgBeginPath(vg);
-        //nvgCircle(vg, 600, 100, 50);
-        NVGpaint paint;
-        paint = nvgLinearGradient(vg, 600, 100, 650, 150, nvgRGBA(255, 0, 0, 255), nvgRGBA(0, 255, 0, 255));
-        nvgFillPaint(vg, paint);
-        nvgFill(vg);
-
-
-
-        // Header
-        nvgBeginPath(vg);
-        nvgStrokeColor(vg, nvgRGBA(0, 0, 0, 32));
-        nvgStroke(vg);
-
-        nvgFontSize(vg, 16.0f);
-        nvgFontFace(vg, "sans");
-        nvgFillColor(vg, nvgRGBA(255, 0, 0, 128));
-        nvgText(vg, 0, 30, "Fps " + fps, NULL);
-
-        nvgRestore(vg);
-    }
 }

@@ -101,13 +101,14 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
 
     this->rotationY = tiles[(int)movementIndex].rotationY;
     float upcomingRotationY = tiles[(int)movementIndex+5].rotationY;
+
     if(rotationY == 45 || upcomingRotationY == 45)
-        cameraY = 5;
+        this->cameraY = 5;
     else if(rotationY == -45 || upcomingRotationY == -45)
-        cameraY = 5;
+        this->cameraY = 5;
     
     this->positionX += desiredVelocity.x * dt * 10.0f;
-    this->racerPos = tiles[(int)movementIndex].position + vec3(0, 1 - abs(sin(this->rotationY)), 0);
+    this->racerPos = tiles[(int)movementIndex].position;
     this->racerPos += vec3(positionX, 0, 0);
     //std::cout << racerPos.x << " " << racerPos.y << " " << racerPos.z << std::endl;
 
@@ -116,8 +117,8 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     // update camera view transform
 
     vec3 center = vec3(this->transform[3]) + vec3(0, 0, 5);
-    float eyeX = this->transform[3].x + cameraX;
-    float eyeY = this->transform[3].y + 1.5f + cameraY;
+    float eyeX = this->transform[3].x + this->cameraX;
+    float eyeY = this->transform[3].y + 1.5f + this->cameraY;
     float eyeZ = this->transform[3].z - 1.5f;
     vec3 eye = vec3(eyeX, eyeY, eyeZ);
     cam->view = lookAt(eye, center, vec3(0, 2, 0));
