@@ -28,6 +28,9 @@ namespace Game
     private:
         int points = 0;
         float frames = 60;
+        bool renderCar = true;
+        int seconds = 0;
+        bool collisionsOn = true;
         /// show some ui things
         void RenderUI();
         /// render some nanovg stuff

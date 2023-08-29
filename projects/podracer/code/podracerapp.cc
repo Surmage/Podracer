@@ -273,13 +273,12 @@ namespace Game {
             }
             lastTileType = tileType;
         }
-        std::cout << tiles.size() << std::endl;
 
         glm::vec3 scaleBig(4.f, 4.f, 4.f);
         glm::vec3 scaleSmol(0.7f);
         glm::vec3 colScales;
         int xIndex;
-        const float span = 10.0f;
+        const float span = 6.0f;
 
         // Setup terrain
         for (int i = 2; i < (int)(1600 / span); i++)
@@ -325,7 +324,6 @@ namespace Game {
         // game loop
 
         bool collided = false;
-        bool renderCar = true;
 
         //std::chrono::high_resolution_clock::duration totalTime(0);
         auto start = std::chrono::high_resolution_clock::now();
@@ -370,11 +368,27 @@ namespace Game {
                 }
             }
 
-            if(ship.Update(dt, tiles)) //if reset
-                start = std::chrono::high_resolution_clock::now();
+            if(seconds == 3){
+                ship.automatic = true;
+                ship.disableControls = false;
+            }
+            else if(seconds < 3){
+                ship.automatic = false;
+                ship.disableControls = true;
+            }
 
+
+            if(ship.Update(dt, tiles)){
+                //if reset
+                points = 0;
+                start = std::chrono::high_resolution_clock::now();
+                ship.automatic = false;
+                ship.disableControls = true;
+            }
+            this->collisionsOn = !ship.disableCollisions;
             const auto end = std::chrono::high_resolution_clock::now();
 
+            seconds = (int)diff.count();
             if(diff.count() != 0)
             {
                 previousTime = diff.count();
@@ -384,7 +398,7 @@ namespace Game {
 
             collided = ship.CheckCollisions();
 
-            points = (int)diff.count(); //Points based on time alive
+             //Points based on time alive
             //std::cout << points << std::endl;
 
 
@@ -401,25 +415,31 @@ namespace Game {
                 {
                     std::cout << "OUCH" << std::endl;
                     renderCar = false;
-                    timer = points + 3;
+                    timer = seconds + 3;
                     ship.disableControls = true;
                     ship.automatic = false;
                 }
 
+
             }
-            if(points >= timer && !renderCar)
+            if(seconds >= timer && !renderCar)
                 timerUp = true;
 
             if(timerUp){
                 ship.reset();
+                points = 0;
                 start = std::chrono::high_resolution_clock::now();
                 renderCar = true;
                 ship.disableControls = false;
                 timerUp = false;
             }
 
-            if(renderCar)
+            if(renderCar) {
                 RenderDevice::Draw(ship.model, ship.transform);
+                if(ship.automatic)
+                    points = (int)( (100 * (diff.count()-3)) / (span));
+
+            }
 
 
             // Execute the entire rendering pipeline
@@ -465,15 +485,46 @@ namespace Game {
 
         nvgBeginPath(vg);
 
-        nvgFontSize(vg, 32.0f);
+        nvgFontSize(vg, 16.0f);
         nvgFontFace(vg, "sans");
         nvgFillColor(vg, nvgRGBA(255, 0, 0, 128));
+
+
+        nvgTextAlign(vg, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
+
+        //Text for frames (fps)
         char buf[100];
         sprintf(buf, "Fps: %f", frames);
+        nvgText(vg, 550, 10, buf, NULL);
 
-        nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-        nvgText(vg, 100, 30, buf, NULL);
+        //Text for collisions being on/off
+        if(collisionsOn)
+            nvgText(vg, 60, 460, "Collisions: ON", NULL);
+        else
+            nvgText(vg, 60, 460, "Collisions: OFF", NULL);
 
+        //Text for points gained
+        nvgFontSize(vg, 32.0f);
+        char buf2[100];
+        sprintf(buf2, "Points: %i", points);
+        nvgText(vg, 320, 20, buf2, NULL);
+
+        //Text for game over
+        if(!renderCar){
+            nvgFontSize(vg, 100.0f);
+            nvgText(vg, 320, 180, "GAME OVER", NULL);
+        }
+
+        //Text for countdown
+        nvgFontSize(vg, 100.0f);
+        if(seconds < 3){
+            char buf3[100];
+            sprintf(buf3, "%i", 3-seconds);
+            nvgText(vg, 320, 180, buf3, NULL);
+        }
+        else if(seconds == 3){
+            nvgText(vg, 320, 180, "GO!", NULL);
+        }
 
         nvgRestore(vg);
     }

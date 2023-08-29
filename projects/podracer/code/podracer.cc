@@ -170,7 +170,9 @@ Podracer::CheckCollisions()
     return hit;
 }
 void Podracer::reset(){
+    cameraY = 0;
     automatic = false;
+    disableControls = true;
     movementIndex = 0;
     positionX = 0;
     racerPos = glm::vec3(0.f, 1.0f, 0.0f);
