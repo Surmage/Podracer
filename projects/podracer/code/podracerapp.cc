@@ -129,7 +129,7 @@ namespace Game {
     bool PodracerApp::Open() {
         App::Open();
         this->window = new Display::Window;
-        this->window->SetSize(1280, 720);
+        this->window->SetSize(640, 480);
 
         if (this->window->Open())
         {
@@ -337,6 +337,10 @@ namespace Game {
         std::chrono::duration<double> diff;
         float previousTime = 0;
         struct NVGcontext* vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
+        if(!vg){
+            glfwTerminate();
+            return;
+        }
 
         while (this->window->IsOpen()) {
             auto timeStart = std::chrono::steady_clock::now();
@@ -354,7 +358,6 @@ namespace Game {
             }
 
             //Spawn tiles
-            //TODO: Multithread
             {
                 for (int i = ship.movementIndex - 10; i < ship.movementIndex + 40; i++) {
                     if (i < 0)
@@ -390,6 +393,9 @@ namespace Game {
             );
             glm::vec3 rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
 
+
+
+            if(!ship.disableCollisions)
             { //Collisions and respawning
                 if (collided && renderCar)
                 {
@@ -399,29 +405,22 @@ namespace Game {
                     ship.disableControls = true;
                     ship.automatic = false;
                 }
-                if(points >= timer && !renderCar)
-                    timerUp = true;
 
-                if(timerUp){
-                    ship.reset();
-                    start = std::chrono::high_resolution_clock::now();
-                    renderCar = true;
-                    ship.disableControls = false;
-                    timerUp = false;
-                }
             }
+            if(points >= timer && !renderCar)
+                timerUp = true;
 
-
+            if(timerUp){
+                ship.reset();
+                start = std::chrono::high_resolution_clock::now();
+                renderCar = true;
+                ship.disableControls = false;
+                timerUp = false;
+            }
 
             if(renderCar)
                 RenderDevice::Draw(ship.model, ship.transform);
 
-
-            /*else if (collided && renderCar) {
-                //renderCar = false;
-                ship.position = originalPos;
-                ship.orientation = ori;
-            }*/
 
             // Execute the entire rendering pipeline
             RenderDevice::Render(this->window, dt);
@@ -432,7 +431,6 @@ namespace Game {
             this->frames = 1 / frameTime;
             //std::cout << "Fps: " << (1 / frameTime) << std::endl;
 
-           
             RenderNanoVG(vg);
 
             // transfer new frame to window
@@ -466,25 +464,16 @@ namespace Game {
     {
 
         nvgBeginPath(vg);
-        //nvgCircle(vg, 600, 100, 50);
-        NVGpaint paint;
-        paint = nvgLinearGradient(vg, 600, 100, 650, 150, nvgRGBA(255, 0, 0, 255), nvgRGBA(0, 255, 0, 255));
-        nvgFillPaint(vg, paint);
-        nvgFill(vg);
 
-
-
-        // Header
-        nvgBeginPath(vg);
-        nvgStrokeColor(vg, nvgRGBA(0, 0, 0, 32));
-        nvgStroke(vg);
-
-        nvgFontSize(vg, 16.0f);
+        nvgFontSize(vg, 32.0f);
         nvgFontFace(vg, "sans");
         nvgFillColor(vg, nvgRGBA(255, 0, 0, 128));
         char buf[100];
         sprintf(buf, "Fps: %f", frames);
-        nvgText(vg, 0, 30, buf, NULL);
+
+        nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+        nvgText(vg, 100, 30, buf, NULL);
+
 
         nvgRestore(vg);
     }

@@ -87,11 +87,13 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
             this->currentSideSpeed = 0;
         }
 
-
     }
     else{
         this->currentSpeed = 0.f;
         this->currentSideSpeed = 0.f;
+    }
+    if(kbd->pressed[Key::C]){
+        disableCollisions = !disableCollisions;
     }
 
     this->movementIndex += dt * 10.f * currentSpeed;

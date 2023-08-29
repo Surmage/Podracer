@@ -33,6 +33,7 @@ namespace Game
         /// render some nanovg stuff
         void RenderNanoVG(NVGcontext* vg);
 
+
         Display::Window* window;
 
 
