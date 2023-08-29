@@ -131,6 +131,10 @@ namespace Game {
         this->window = new Display::Window;
         this->window->SetSize(640, 480);
 
+        std::cout << "Choose a difficulty from 1 to 3, 1 being easy, 2 being medium, and 3 hardest";
+        std::cout << "\nDifficulty: ";
+        std::cin >> difficulty;
+
         if (this->window->Open())
         {
             // set clear color to gray
@@ -154,6 +158,7 @@ namespace Game {
     }
 
     void PodracerApp::Run() {
+
         int w;
         int h;
         this->window->GetSize(w, h);
@@ -278,7 +283,21 @@ namespace Game {
         glm::vec3 scaleSmol(0.7f);
         glm::vec3 colScales;
         int xIndex;
-        const float span = 6.0f;
+        float span;
+        switch(difficulty){
+            case 1:
+                span = 10;
+                break;
+            case 2:
+                span = 6;
+                break;
+            case 3:
+                span = 4;
+                break;
+            default:
+                span = 10;
+        }
+
 
         // Setup terrain
         for (int i = 2; i < (int)(amountOfPlanes / span); i++)

@@ -32,6 +32,7 @@ namespace Game
         int seconds = 0;
         bool collisionsOn = true;
         bool won = false;
+        int difficulty = 1;
         /// show some ui things
         void RenderUI();
         /// render some nanovg stuff
