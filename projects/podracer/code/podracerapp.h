@@ -31,6 +31,7 @@ namespace Game
         bool renderCar = true;
         int seconds = 0;
         bool collisionsOn = true;
+        bool won = false;
         /// show some ui things
         void RenderUI();
         /// render some nanovg stuff

@@ -51,7 +51,11 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
 
     Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
 
-
+    if(movementIndex >= tiles.size())
+        if(kbd->pressed[Key::R]){
+            reset();
+            return 1;
+        }
     if(!disableControls){
         if(kbd->pressed[Key::R]){
             reset();

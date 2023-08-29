@@ -239,13 +239,13 @@ namespace Game {
 
         double dt = 0.01667f;
 
-        int amountOfPlanes = 1600;
+        const int amountOfPlanes = 1600;
 
         std::vector<Tile>tiles;
 
         int lastTileType = 1;
         //setup all tiles
-        while(tiles.size() < 1600){
+        while(tiles.size() < amountOfPlanes){
             int tileType;
             if(lastTileType != 0){ //if slope
                 tileType = 0; //straight
@@ -281,7 +281,7 @@ namespace Game {
         const float span = 6.0f;
 
         // Setup terrain
-        for (int i = 2; i < (int)(1600 / span); i++)
+        for (int i = 2; i < (int)(amountOfPlanes / span); i++)
         {
             std::tuple<ModelId, Physics::ColliderId, glm::mat4, int> podModel; //Model to be created
             int resourceIndex = Core::TrueRandom(0, 9); //Randomizes which model
@@ -384,8 +384,11 @@ namespace Game {
                 start = std::chrono::high_resolution_clock::now();
                 ship.automatic = false;
                 ship.disableControls = true;
+                won = false;
             }
-            this->collisionsOn = !ship.disableCollisions;
+            if(ship.movementIndex >= tiles.size()){
+                won = true;
+            }
             const auto end = std::chrono::high_resolution_clock::now();
 
             seconds = (int)diff.count();
@@ -395,52 +398,52 @@ namespace Game {
             }
             diff = end - start;
             frameTime = diff.count() - previousTime;
-
-            collided = ship.CheckCollisions();
-
-             //Points based on time alive
-            //std::cout << points << std::endl;
+            if(!won){
+                this->collisionsOn = !ship.disableCollisions;
 
 
-            glm::vec3 translation = glm::vec3(
-                    1.5f, 0.5f, 2.f
-            );
-            glm::vec3 rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
+                collided = ship.CheckCollisions();
+
+                //Points based on time alive
+                //std::cout << points << std::endl;
 
 
+                if(!ship.disableCollisions)
+                { //Collisions and respawning
+                    if (collided && renderCar)
+                    {
+                        std::cout << "OUCH" << std::endl;
+                        renderCar = false;
+                        timer = seconds + 3;
+                        ship.disableControls = true;
+                        ship.automatic = false;
+                    }
 
-            if(!ship.disableCollisions)
-            { //Collisions and respawning
-                if (collided && renderCar)
-                {
-                    std::cout << "OUCH" << std::endl;
-                    renderCar = false;
-                    timer = seconds + 3;
-                    ship.disableControls = true;
-                    ship.automatic = false;
+
+                }
+                if(seconds >= timer && !renderCar)
+                    timerUp = true;
+
+                if(timerUp){
+                    ship.reset();
+                    points = 0;
+                    start = std::chrono::high_resolution_clock::now();
+                    renderCar = true;
+                    ship.disableControls = false;
+                    timerUp = false;
                 }
 
+                if(renderCar) {
+                    RenderDevice::Draw(ship.model, ship.transform);
+                    if(ship.automatic)
+                        points = (int)( (100 * (diff.count()-3)) / (span));
 
+                }
             }
-            if(seconds >= timer && !renderCar)
-                timerUp = true;
-
-            if(timerUp){
-                ship.reset();
-                points = 0;
-                start = std::chrono::high_resolution_clock::now();
-                renderCar = true;
-                ship.disableControls = false;
-                timerUp = false;
+            else{
+                ship.disableControls = true;
+                ship.automatic = false;
             }
-
-            if(renderCar) {
-                RenderDevice::Draw(ship.model, ship.transform);
-                if(ship.automatic)
-                    points = (int)( (100 * (diff.count()-3)) / (span));
-
-            }
-
 
             // Execute the entire rendering pipeline
             RenderDevice::Render(this->window, dt);
@@ -513,6 +516,12 @@ namespace Game {
         if(!renderCar){
             nvgFontSize(vg, 100.0f);
             nvgText(vg, 320, 180, "GAME OVER", NULL);
+        }
+
+        //Text for game over
+        if(won){
+            nvgFontSize(vg, 100.0f);
+            nvgText(vg, 320, 180, "YOU WIN!", NULL);
         }
 
         //Text for countdown
