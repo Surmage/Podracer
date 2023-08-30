@@ -21,6 +21,7 @@
 
 #define NANOVG_GL2_IMPLEMENTATION
 #include "nanovg_gl.h"
+#include "core/savefile.h"
 
 
 using namespace Display;
@@ -258,13 +259,21 @@ namespace Game {
             else{
                 tileType = Core::TrueRandom(1, 2);
             }
-            int tileNumber = Core::TrueRandom(5, 30);
-            if(tiles.size() >= 1550){
-                int difference = 1600 - tiles.size();
+            //Decide how many tiles are placed of selected type
+            int tileNumber;
+            if(tiles.size() <= 0){
+                tileNumber = 30;
+            }
+            else{
+                tileNumber = Core::TrueRandom(5, 30);
+            }
+
+            /*if(tiles.size() >= amountOfPlanes){
+                int difference = amountOfPlanes - tiles.size();
                 for(int i=0; i<difference; i++){
                     createStraight(tiles, tiles.size());
                 }
-            }
+            }*/
             for(int i=0; i<tileNumber; i++){
                 if(tileType == 0 || tiles.size() == 0){
                     createStraight(tiles, tiles.size());
@@ -278,7 +287,6 @@ namespace Game {
             }
             lastTileType = tileType;
         }
-
         glm::vec3 scaleBig(4.f, 4.f, 4.f);
         glm::vec3 scaleSmol(0.7f);
         glm::vec3 colScales;
@@ -298,9 +306,8 @@ namespace Game {
                 span = 10;
         }
 
-
         // Setup terrain
-        for (int i = 2; i < (int)(amountOfPlanes / span); i++)
+        for (int i = 10; i < (int)(amountOfPlanes / span); i++)
         {
             std::tuple<ModelId, Physics::ColliderId, glm::mat4, int> podModel; //Model to be created
             int resourceIndex = Core::TrueRandom(0, 9); //Randomizes which model
@@ -404,6 +411,7 @@ namespace Game {
                 ship.automatic = false;
                 ship.disableControls = true;
                 won = false;
+                saved = false;
             }
             if(ship.movementIndex >= tiles.size()){
                 won = true;
@@ -423,19 +431,18 @@ namespace Game {
 
                 collided = ship.CheckCollisions();
 
-                //Points based on time alive
-                //std::cout << points << std::endl;
-
-
                 if(!ship.disableCollisions)
                 { //Collisions and respawning
-                    if (collided && renderCar)
+                    if (collided && renderCar) //Game over
                     {
                         std::cout << "OUCH" << std::endl;
                         renderCar = false;
                         timer = seconds + 3;
                         ship.disableControls = true;
                         ship.automatic = false;
+                        if(!saved)
+                            saveScore(points);
+                        saved = true;
                     }
 
 
@@ -450,6 +457,7 @@ namespace Game {
                     renderCar = true;
                     ship.disableControls = false;
                     timerUp = false;
+                    saved = false;
                 }
 
                 if(renderCar) {
@@ -462,6 +470,9 @@ namespace Game {
             else{
                 ship.disableControls = true;
                 ship.automatic = false;
+                if(!saved)
+                    saveScore(points);
+                saved = true;
             }
 
             // Execute the entire rendering pipeline

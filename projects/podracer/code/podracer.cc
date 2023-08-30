@@ -64,9 +64,9 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
         cameraX = kbd->held[Key::Q] ? 5.0f : kbd->held[Key::E] ? -5.0f : 0.0f;
         cameraY = kbd->held[Key::T] ? 5.0f : 0.0f;
 
-        if(kbd->pressed[Key::Space]){
+        /*if(kbd->pressed[Key::Space]){
             automatic = !automatic;
-        }
+        }*/
         if(!automatic){
             if (kbd->held[Key::W])
                 this->currentSpeed = 1.f;
@@ -177,8 +177,8 @@ void Podracer::reset(){
     cameraY = 0;
     automatic = false;
     disableControls = true;
-    movementIndex = 0;
+    movementIndex = 4;
     positionX = 0;
-    racerPos = glm::vec3(0.f, 1.0f, 0.0f);
+    racerPos = glm::vec3(0.f, 1.0f, 4.0f);
 }
 }

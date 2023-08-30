@@ -7,7 +7,7 @@ FILE(GLOB project_headers code/*.h)
 FILE(GLOB project_sources code/*.cc)
 
 SET(files_project ${project_headers} ${project_sources})
-SET(files_proto)
+SET(files_proto ../../engine/core/savefile.h)
 #flat_compile(
 #	test.fbs
 #	# add more flatbuffer files here

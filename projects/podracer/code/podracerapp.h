@@ -32,6 +32,7 @@ namespace Game
         int seconds = 0;
         bool collisionsOn = true;
         bool won = false;
+        bool saved = false;
         int difficulty = 1;
         /// show some ui things
         void RenderUI();

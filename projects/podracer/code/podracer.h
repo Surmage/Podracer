@@ -32,7 +32,7 @@ struct Podracer
 {
     Podracer();
 
-    glm::vec3 racerPos = glm::vec3(0.0f, 0.f, 2.0f);
+    glm::vec3 racerPos = glm::vec3(0.0f, 0.f, 4.0f);
     glm::quat orientation = glm::identity<glm::quat>();
     glm::mat4 transform = glm::mat4(1);
     glm::vec3 linearVelocity = glm::vec3(0);
@@ -46,7 +46,7 @@ struct Podracer
     bool disableControls = true;
     bool disableCollisions = false;
     bool automatic = false;
-    float movementIndex = 0.f;
+    float movementIndex = 4.f;
     float currentSpeed = 0.0f;
     float currentSideSpeed = 0.0f;
 
