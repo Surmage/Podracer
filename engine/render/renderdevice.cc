@@ -33,8 +33,8 @@ static GLuint fullscreenQuadVAO;
 /**
 */
 RenderDevice::RenderDevice() :
-    frameSizeW(160),
-    frameSizeH(90)
+    frameSizeW(214),
+    frameSizeH(120)
 {
     // empty
 }
