@@ -55,14 +55,16 @@ InputHandler::BeginFrame()
 	hid->mouse.delta = glm::vec2(0);
 	hid->mouse.previousPosition = hid->mouse.position;
 
-    for (int i = 0; i < Gamepad::Button::NumGamepadButtons; i++)
-    {
-        if (hid->gamepads[i]->released[i])
-            hid->gamepads[i]->held[i] = false;
-
-        hid->gamepads[i]->pressed[i] = false;
-        hid->gamepads[i]->released[i] = false;
-    }
+////////////////////This is what is causing the crash///////////////////////////
+//    for (int i = 0; i < Gamepad::Button::NumGamepadButtons; i++)
+//    {
+//        if (hid->gamepads[i]->released[i])
+//            hid->gamepads[i]->held[i] = false;
+//
+//        hid->gamepads[i]->pressed[i] = false;
+//        hid->gamepads[i]->released[i] = false;
+//    }
+//////////////////////////////////////////////////////////////////////////////
 }
 
 //------------------------------------------------------------------------------
