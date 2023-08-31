@@ -130,7 +130,7 @@ namespace Game {
     bool PodracerApp::Open() {
         App::Open();
         this->window = new Display::Window;
-        this->window->SetSize(1280, 720);
+        this->window->SetSize(640, 480);
 
         std::cout << "Choose a difficulty from 1 to 3, 1 being easy, 2 being medium, and 3 hardest";
         std::cout << "\nDifficulty: ";
