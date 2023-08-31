@@ -252,6 +252,13 @@ namespace Game {
         int lastTileType = 1;
         //setup all tiles
         while(tiles.size() < amountOfPlanes){
+            if(tiles.size() >= amountOfPlanes - 30){
+                int difference = amountOfPlanes - tiles.size();
+                for(int i=0; i<difference; i++){
+                    createStraight(tiles, tiles.size());
+                }
+                break;
+            }
             int tileType;
             if(lastTileType != 0){ //if slope
                 tileType = 0; //straight
@@ -268,12 +275,6 @@ namespace Game {
                 tileNumber = Core::TrueRandom(5, 30);
             }
 
-            /*if(tiles.size() >= amountOfPlanes){
-                int difference = amountOfPlanes - tiles.size();
-                for(int i=0; i<difference; i++){
-                    createStraight(tiles, tiles.size());
-                }
-            }*/
             for(int i=0; i<tileNumber; i++){
                 if(tileType == 0 || tiles.size() == 0){
                     createStraight(tiles, tiles.size());
@@ -287,6 +288,7 @@ namespace Game {
             }
             lastTileType = tileType;
         }
+        std::cout << tiles.size() << std::endl;
         glm::vec3 scaleBig(4.f, 4.f, 4.f);
         glm::vec3 scaleSmol(0.7f);
         glm::vec3 colScales;
