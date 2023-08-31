@@ -56,14 +56,14 @@ InputHandler::BeginFrame()
 	hid->mouse.previousPosition = hid->mouse.position;
 
 ////////////////////This is what is causing the crash///////////////////////////
-//    for (int i = 0; i < Gamepad::Button::NumGamepadButtons; i++)
-//    {
-//        if (hid->gamepads[i]->released[i])
-//            hid->gamepads[i]->held[i] = false;
-//
-//        hid->gamepads[i]->pressed[i] = false;
-//        hid->gamepads[i]->released[i] = false;
-//    }
+    for (int i = 0; i < Gamepad::Button::NumGamepadButtons; i++)
+    {
+        if (hid->gamepads[i]->released[i])
+            hid->gamepads[i]->held[i] = false;
+
+        hid->gamepads[i]->pressed[i] = false;
+        hid->gamepads[i]->released[i] = false;
+    }
 //////////////////////////////////////////////////////////////////////////////
 }
 
@@ -139,17 +139,17 @@ InputHandler::HandleMousePressEvent(int32 button, int32 action, int32 mods)
 /**
 */
     void
-    InputHandler::HandleJoystickButtonPressEvent(int id, int32 button, int32 action, int32 mods)
+    InputHandler::HandleJoystickButtonPressEvent(int32 id, int32 button, int32 action, int32 mods)
     {
         assert(button < Gamepad::Button::NumGamepadButtons);
         if (action == GLFW_PRESS)
         {
-            hid->gamepads[id]->pressed[button] = true;
-            hid->gamepads[id]->held[button] = true;
+            hid->gamepads[id].pressed[button] = true;
+            hid->gamepads[id].held[button] = true;
         }
         else if (action == GLFW_RELEASE)
         {
-            hid->gamepads[id]->released[button] = true;
+            hid->gamepads[id].released[button] = true;
         }
     }
 
@@ -191,7 +191,7 @@ GetGamepad(int id)
 {
 	assert(hid != nullptr);
 	assert(id > 0 && id < hid->gamepads.size());
-	return hid->gamepads[id];
+	return &hid->gamepads[id];
 }
 
 } // namespace Input

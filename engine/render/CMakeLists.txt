@@ -58,7 +58,9 @@ SET(files_render
 	${files_render_pch}
 	${files_render_input})
 
-SET(files_pch ../config.h ../config.cc)
+SET(files_pch ../config.h ../config.cc
+		input/gp_buttons.cc
+		input/gp_buttons.h)
 SOURCE_GROUP("pch" FILES ${files_pch})
 ADD_LIBRARY(render STATIC ${files_render} ${files_pch})
 TARGET_PCH(render ../)
