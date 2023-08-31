@@ -159,7 +159,6 @@ namespace Game {
     }
 
     void PodracerApp::Run() {
-        prevPoints = loadScore();
         int w;
         int h;
         this->window->GetSize(w, h);
@@ -175,7 +174,7 @@ namespace Game {
             LoadModel("assets/podracer/rock_largeB.glb"),
             LoadModel("assets/podracer/rover.glb"),
             LoadModel("assets/podracer/meteor.glb"),
-            LoadModel("assets/podracer/rail.glb"),
+            LoadModel("assets/podracer/machine_barrelLarge.glb"),
             LoadModel("assets/podracer/satelliteDish.glb"),
             LoadModel("assets/podracer/barrel.glb"),
             LoadModel("assets/podracer/chimney.glb")
@@ -288,7 +287,6 @@ namespace Game {
             }
             lastTileType = tileType;
         }
-        std::cout << tiles.size() << std::endl;
         glm::vec3 scaleBig(4.f, 4.f, 4.f);
         glm::vec3 scaleSmol(0.7f);
         glm::vec3 colScales;
@@ -546,6 +544,7 @@ namespace Game {
 
         //Text for game over
         if(!renderCar){
+            prevPoints = loadScore();
             char buf[20];
             sprintf(buf, "%s%i", "Previous High Score:", prevPoints);
             nvgFontSize(vg, 50.0f);
@@ -555,6 +554,7 @@ namespace Game {
 
         //Text for win
         if(won){
+            prevPoints = loadScore();
             char buf[20];
             sprintf(buf, "%s%i", "Previous High Score:", prevPoints);
             nvgFontSize(vg, 50.0f);
