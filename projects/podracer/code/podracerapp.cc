@@ -159,7 +159,7 @@ namespace Game {
     }
 
     void PodracerApp::Run() {
-
+        prevPoints = loadScore();
         int w;
         int h;
         this->window->GetSize(w, h);
@@ -520,7 +520,7 @@ namespace Game {
 
         nvgFontSize(vg, 16.0f);
         nvgFontFace(vg, "sans");
-        nvgFillColor(vg, nvgRGBA(255, 0, 0, 128));
+        nvgFillColor(vg, nvgRGBA(255, 0, 0, 255));
 
 
         nvgTextAlign(vg, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
@@ -544,14 +544,20 @@ namespace Game {
 
         //Text for game over
         if(!renderCar){
-            nvgFontSize(vg, 100.0f);
-            nvgText(vg, 320, 180, "GAME OVER", NULL);
+            char buf[20];
+            sprintf(buf, "%s%i", "Previous High Score:", prevPoints);
+            nvgFontSize(vg, 50.0f);
+            nvgText(vg, 320, 160, "GAME OVER", NULL);
+            nvgText(vg, 320, 220, buf, NULL);
         }
 
-        //Text for game over
+        //Text for win
         if(won){
-            nvgFontSize(vg, 100.0f);
-            nvgText(vg, 320, 180, "YOU WIN!", NULL);
+            char buf[20];
+            sprintf(buf, "%s%i", "Previous High Score:", prevPoints);
+            nvgFontSize(vg, 50.0f);
+            nvgText(vg, 320, 160, "YOU WIN!", NULL);
+            nvgText(vg, 320, 220, buf, NULL);
         }
 
         //Text for countdown
