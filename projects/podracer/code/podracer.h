@@ -49,6 +49,7 @@ struct Podracer
     float movementIndex = 4.f;
     float currentSpeed = 0.0f;
     float currentSideSpeed = 0.0f;
+    float upcomingRotationY = 0;
 
     float rotationY = 0;
     float rotXSmooth = 0;

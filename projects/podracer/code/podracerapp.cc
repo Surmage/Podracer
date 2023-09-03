@@ -386,6 +386,10 @@ namespace Game {
                 for (int i = ship.movementIndex - 10; i < ship.movementIndex + 40; i++) {
                     if (i < 0)
                         i = 0;
+                    if (i >= amountOfPlanes) {
+                        i = amountOfPlanes - 1;
+                        break;
+                    }
                     RenderDevice::Draw(std::get<0>(groundPlane), tiles[i].transform);
                     for (auto const& asteroid : asteroids) { //spawn terrain
                         if(i == std::get<3>(asteroid))
@@ -393,6 +397,7 @@ namespace Game {
                     }
                 }
             }
+            std::cout << ship.movementIndex << std::endl;
 
             if(seconds == 3){
                 ship.automatic = true;
@@ -413,7 +418,7 @@ namespace Game {
                 won = false;
                 saved = false;
             }
-            if(ship.movementIndex >= tiles.size()){
+            if(ship.movementIndex >= tiles.size()-1){
                 won = true;
             }
             const auto end = std::chrono::high_resolution_clock::now();
@@ -473,6 +478,7 @@ namespace Game {
                 if(!saved)
                     saveScore(points);
                 saved = true;
+                ship.movementIndex = 4;
             }
 
             // Execute the entire rendering pipeline
@@ -513,7 +519,7 @@ namespace Game {
     }
 
     void
-    PodracerApp::RenderNanoVG(NVGcontext* vg)
+    PodracerApp::RenderNanoVG(NVGcontext* vg) //TODO: Print tile progress on screen (x/1600), fix collisions
     {
 
         nvgBeginPath(vg);

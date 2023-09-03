@@ -51,7 +51,7 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
 
     Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
 
-    if(movementIndex >= tiles.size())
+    if(movementIndex == 4)
         if(kbd->pressed[Key::R]){
             reset();
             return 1;
@@ -105,8 +105,10 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     vec3 desiredVelocity = vec3(this->currentSideSpeed, 0, this->currentSpeed);
     desiredVelocity = this->transform * vec4(desiredVelocity, 0.0f);
 
-    this->rotationY = tiles[(int)movementIndex].rotationY;
-    float upcomingRotationY = tiles[(int)movementIndex+5].rotationY;
+    if (movementIndex+5 <= tiles.size()) {
+        this->rotationY = tiles[(int)movementIndex].rotationY;
+        this->upcomingRotationY = tiles[(int)movementIndex + 5].rotationY;
+    }
 
     if(rotationY == 45 || upcomingRotationY == 45)
         this->cameraY = 5;
