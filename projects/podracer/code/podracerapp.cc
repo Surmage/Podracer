@@ -545,7 +545,7 @@ namespace Game {
         //Text for game over
         if(!renderCar){
             prevPoints = loadScore();
-            char buf[20];
+            char buf[100];
             sprintf(buf, "%s%i", "Previous High Score:", prevPoints);
             nvgFontSize(vg, 50.0f);
             nvgText(vg, 320, 160, "GAME OVER", NULL);
@@ -555,7 +555,7 @@ namespace Game {
         //Text for win
         if(won){
             prevPoints = loadScore();
-            char buf[20];
+            char buf[100];
             sprintf(buf, "%s%i", "Previous High Score:", prevPoints);
             nvgFontSize(vg, 50.0f);
             nvgText(vg, 320, 160, "YOU WIN!", NULL);
