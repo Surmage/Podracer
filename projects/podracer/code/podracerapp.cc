@@ -178,14 +178,25 @@ namespace Game {
             LoadModel("assets/podracer/satelliteDish.glb"),
             LoadModel("assets/podracer/barrel.glb"),
             LoadModel("assets/podracer/chimney.glb")
- 
+        };
+
+        float colliderSize[10] = {
+                1,
+                1,
+                1.7f,
+                1.7f,
+                0.7f,
+                2,
+                1.7f,
+                1.5f,
+                0.5f,
+                0.9f
+
+
         };
         Physics::ColliderMeshId boneCol = Physics::LoadColliderMesh("assets/podracer/bones.glb");
         Physics::ColliderMeshId boxMesh = Physics::LoadColliderMesh("newassets/box_collider.glb");
-      
-
         std::vector<std::tuple<ModelId, Physics::ColliderId, glm::mat4, int>> asteroids;
-
 
         ModelId plane = LoadModel("newassets/plane.glb");
         Physics::ColliderMeshId planeMesh = Physics::LoadColliderMesh("newassets/plane_physics.glb");
@@ -287,8 +298,8 @@ namespace Game {
             }
             lastTileType = tileType;
         }
-        glm::vec3 scaleBig(4.f, 4.f, 4.f);
-        glm::vec3 scaleSmol(0.7f);
+        glm::vec3 scaleBig(4.f);
+        //glm::vec3 scaleSmol(3.f);
         glm::vec3 colScales;
         int xIndex;
         float span;
@@ -321,7 +332,7 @@ namespace Game {
 
             else{
                 xIndex = Core::TrueRandom(-7, 7);
-                colScales = scaleSmol;
+                colScales = glm::vec3(colliderSize[resourceIndex]);
             }
 
             std::get<0>(podModel) = models[resourceIndex];
@@ -341,7 +352,7 @@ namespace Game {
             int id = (int)(i * span)+extra;
 
             glm::mat4 transform = translate(position) * tiles[(int)(i * span)].rotation;
-            std::get<1>(podModel) = Physics::CreateCollider(col, glm::scale(glm::translate(glm::vec3(-position.x, position.y, position.z)), colScales));
+            std::get<1>(podModel) = Physics::CreateCollider(col, glm::scale(glm::translate(glm::vec3(-position.x, position.y, position.z)), colScales) * tiles[(int)(i * span)].rotation);
             std::get<2>(podModel) = glm::scale(transform, scaleBig);
             std::get<3>(podModel) = id;
             asteroids.push_back(podModel);
@@ -397,7 +408,7 @@ namespace Game {
                     }
                 }
             }
-            std::cout << ship.movementIndex << std::endl;
+            //std::cout << ship.movementIndex << std::endl;
 
             if(seconds == 3){
                 ship.automatic = true;
@@ -407,7 +418,6 @@ namespace Game {
                 ship.automatic = false;
                 ship.disableControls = true;
             }
-
 
             if(ship.Update(dt, tiles)){
                 //if reset
@@ -432,15 +442,13 @@ namespace Game {
             frameTime = diff.count() - previousTime;
             if(!won){
                 this->collisionsOn = !ship.disableCollisions;
-
-
                 collided = ship.CheckCollisions();
 
                 if(!ship.disableCollisions)
                 { //Collisions and respawning
                     if (collided && renderCar) //Game over
                     {
-                        std::cout << "OUCH" << std::endl;
+                        //std::cout << "OUCH" << std::endl;
                         renderCar = false;
                         timer = seconds + 3;
                         ship.disableControls = true;
@@ -449,8 +457,6 @@ namespace Game {
                             saveScore(points);
                         saved = true;
                     }
-
-
                 }
                 if(seconds >= timer && !renderCar)
                     timerUp = true;
@@ -469,7 +475,6 @@ namespace Game {
                     RenderDevice::Draw(ship.model, ship.transform);
                     if(ship.automatic)
                         points = (int)( (100 * (diff.count()-3)) / (span));
-
                 }
             }
             else{
