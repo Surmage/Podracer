@@ -28,6 +28,7 @@ namespace Game
     private:
         int points = 0;
         int prevPoints = 0;
+        int progress = 0;
         float frames = 60;
         bool renderCar = true;
         int seconds = 0;

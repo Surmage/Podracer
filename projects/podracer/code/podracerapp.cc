@@ -298,7 +298,7 @@ namespace Game {
             }
             lastTileType = tileType;
         }
-        glm::vec3 scaleBig(4.f);
+        glm::vec3 scaleBig;
         //glm::vec3 scaleSmol(3.f);
         glm::vec3 colScales;
         int xIndex;
@@ -327,12 +327,14 @@ namespace Game {
             if(resourceIndex == 0) { //if bones
                 xIndex = 0.f; //bones spawn in middle of road
                 col = boneCol;
+                scaleBig = glm::vec3(17.5f);
                 colScales = scaleBig;
             }
 
             else{
                 xIndex = Core::TrueRandom(-7, 7);
                 colScales = glm::vec3(colliderSize[resourceIndex]);
+                scaleBig = glm::vec3(4.f);
             }
 
             std::get<0>(podModel) = models[resourceIndex];
@@ -394,6 +396,7 @@ namespace Game {
 
             //Spawn tiles
             {
+
                 for (int i = ship.movementIndex - 10; i < ship.movementIndex + 40; i++) {
                     if (i < 0)
                         i = 0;
@@ -441,6 +444,7 @@ namespace Game {
             diff = end - start;
             frameTime = diff.count() - previousTime;
             if(!won){
+                progress = (int)((ship.movementIndex / amountOfPlanes) * 100);
                 this->collisionsOn = !ship.disableCollisions;
                 collided = ship.CheckCollisions();
 
@@ -478,6 +482,7 @@ namespace Game {
                 }
             }
             else{
+                progress = 100;
                 ship.disableControls = true;
                 ship.automatic = false;
                 if(!saved)
@@ -552,6 +557,10 @@ namespace Game {
         char buf2[100];
         sprintf(buf2, "Points: %i", points);
         nvgText(vg, 320, 20, buf2, NULL);
+
+        //Text for points gained
+        sprintf(buf2, "Progress: %i%%", progress);
+        nvgText(vg, 480, 440, buf2, NULL);
 
         //Text for game over
         if(!renderCar){

@@ -59,6 +59,7 @@ struct Podracer
     float cameraX = 0;
     float cameraY = 0;
 
+
     Render::ModelId model;
     Render::ParticleEmitter* particleEmitterLeft;
     Render::ParticleEmitter* particleEmitterRight;
