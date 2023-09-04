@@ -27,6 +27,6 @@ namespace Input
 
             NumGamepadButtons,
         };
-        static Button::Code::NumGamepadButtons FromGLFW(int32 button);
+        static Button::Code FromGLFW();
     };
 } // namespace Input
