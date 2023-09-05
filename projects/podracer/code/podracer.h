@@ -15,7 +15,7 @@ struct Tile {
     glm::mat4 rotation;
     int id;
     float rotationY;
-    glm::vec3 edge;
+    glm::vec3 edge; //Edge where tile ends
 
     Tile() {};
     Tile(glm::vec3& position, glm::mat4& transform, glm::mat4& rotation, glm::vec3 edge, int id) {
@@ -33,15 +33,11 @@ struct Podracer
     Podracer();
 
     glm::vec3 racerPos = glm::vec3(0.0f, 0.f, 4.0f);
-    glm::quat orientation = glm::identity<glm::quat>();
     glm::mat4 transform = glm::mat4(1);
     glm::vec3 linearVelocity = glm::vec3(0);
 
     const float normalSpeed = 1.0f;
     const float boostSpeed = normalSpeed * 2.0f;
-    const float accelerationFactor = 1.0f;
-    const float camOffsetY = 1.5f;
-    const float cameraSmoothFactor = 20.0f;
 
     bool disableControls = true;
     bool disableCollisions = false;
@@ -52,18 +48,14 @@ struct Podracer
     float upcomingRotationY = 0;
 
     float rotationY = 0;
-    float rotXSmooth = 0;
-    float rotYSmooth = 0;
-    float rotZSmooth = 0;
     float positionX = 0;
     float cameraX = 0;
     float cameraY = 0;
 
-
     Render::ModelId model;
-    Render::ParticleEmitter* particleEmitterLeft;
-    Render::ParticleEmitter* particleEmitterRight;
-    float emitterOffset = -0.5f;
+    //Render::ParticleEmitter* particleEmitterLeft;
+    //Render::ParticleEmitter* particleEmitterRight;
+    //float emitterOffset = -0.5f;
 
     int Update(float dt, std::vector<Tile>& tiles);
     void reset();

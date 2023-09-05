@@ -31,57 +31,51 @@ namespace Game {
 
     void createStraight(std::vector<Tile>& tiles, int i){
         glm::vec3 position;
-        glm::vec3 rotationAxis;
-        glm::mat4 rotate;
+        glm::mat4 rotate = glm::mat4(1.f);
         glm::vec3 edge;
-        float rotation = 0.f;
-        if(i < 1){
-            rotation = 0.f;
+
+        if(i < 1){ //if first tile
             position = glm::vec3(
                     0.0f, 0.f, -1.f
             );
-            rotate = glm::mat4(1.f);
-            edge = glm::vec3(position.x, position.y, position.z + 0.5f);
         }
         else{
-            position = glm::vec3(
+            position = glm::vec3( //place based on previous tile's y and z
+                    //for y, use same y as previous
+                    //for z, add 0.5 to the previous' edge, to get the correct center point
                     0.0f, tiles[i-1].edge.y, tiles[i-1].edge.z + 0.5f
             );
-            rotationAxis = position;
-            rotate = glm::mat4(1.f);
-            edge = glm::vec3(0, position.y, position.z + 0.5f);
         }
+        edge = glm::vec3(0, position.y, position.z + 0.5f); //set edge of newly made tile
 
-
-        glm::mat4 translate = glm::translate(position);
-        glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
-        Tile t(position, transform, rotate, edge, tiles.size());
-        t.rotationY = rotation;
-        //glm::mat4 transform =  glm::translate(position);
+        glm::mat4 translate = glm::translate(position); //only position, no rotation
+        glm::mat4 transform = (translate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, and flipping 180 degrees
+        Tile t(position, transform, rotate, edge, tiles.size()); //Create tile with all the maths
+        t.rotationY = 0.f; //No rotation
         tiles.push_back(t);
     }
     void createInclineUp(std::vector<Tile>& tiles, int i){
-
         glm::vec3 position;
         glm::vec3 rotationAxis;
         glm::mat4 rotate;
         glm::vec3 edge;
-        rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
-        float rotation = -45;
 
-        float angle = (sin(glm::radians(-rotation)));
+        rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f)); //Rotates around x axis
+        float rotation = -45; 
+
+        float angle = (sin(glm::radians(-rotation))); //Degrees to radians
         position = glm::vec3(
-                0.0f, tiles[i-1].edge.y + (angle / 2), tiles[i-1].edge.z + (angle / 2)//1.41 being sqrt of 1+1
-        ); //this fails? because the length of 1 is insufficient with an incline of 45 degrees (Pythagorean)
+                //Position is based on previous tile's position,
+                0.0f, tiles[i-1].edge.y + (angle / 2), tiles[i-1].edge.z + (angle / 2)
+        );
 
         rotate = glm::rotate(glm::radians(rotation), rotationAxis);
         edge = glm::vec3(0.f, position.y + (angle / 2), position.z + (angle / 2));
 
         glm::mat4 translate = glm::translate(position);
         glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
-        Tile t(position, transform, rotate, edge, tiles.size());
-        t.rotationY = rotation;
-        //glm::mat4 transform =  glm::translate(position);
+        Tile t(position, transform, rotate, edge, tiles.size()); //Tile created
+        t.rotationY = rotation; //Rotation of -45
         tiles.push_back(t);
     }
     void createInclineDown(std::vector<Tile>& tiles, int i){
@@ -89,11 +83,13 @@ namespace Game {
         glm::vec3 rotationAxis;
         glm::mat4 rotate;
         glm::vec3 edge;
-        rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f));
+
+        rotationAxis = normalize(glm::vec3(1.f, 0.f, 0.f)); //Rotates around x-axis
         float rotation = 45;
 
         float angle = (sin(glm::radians(rotation)));
         position = glm::vec3(
+                //Maths for new position based on previous
                 0.0f, tiles[i-1].edge.y - (angle / 2), tiles[i-1].edge.z + (angle / 2)
         );
 
@@ -102,15 +98,9 @@ namespace Game {
 
         glm::mat4 translate = glm::translate(position);
         glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
-        Tile t(position, transform, rotate, edge, tiles.size());
+        Tile t(position, transform, rotate, edge, tiles.size()); //Tile created
         t.rotationY = rotation;
-        //glm::mat4 transform =  glm::translate(translation);
         tiles.push_back(t);
-    }
-
-    double clockToMilliseconds(clock_t ticks){
-        // units/(units/time) => time (seconds) * 1000 = milliseconds
-        return (ticks/(double)CLOCKS_PER_SEC)*1000.0;
     }
 
 //------------------------------------------------------------------------------
@@ -162,6 +152,7 @@ namespace Game {
         int w;
         int h;
         this->window->GetSize(w, h);
+
         glm::mat4 projection = glm::perspective(glm::radians(90.0f), float(w) / float(h), 0.01f, 1000.f);
         Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
         cam->projection = projection;
@@ -180,45 +171,36 @@ namespace Game {
             LoadModel("assets/podracer/chimney.glb")
         };
 
+        //Sizes for the boxes assigned to each model
         float colliderSize[10] = {
-                1,
-                1,
-                1.7f,
-                1.7f,
-                0.7f,
-                2,
-                1.7f,
-                1.5f,
-                0.5f,
-                0.9f
+                1, //bones
+                1, //barrels
+                1.7f, //rock_largeA
+                1.7f, //rock_largeB
+                0.7f, //rover
+                2, //meteor
+                1.7f, //machine_barrelLarge
+                1.5f, //satelliteDish
+                0.5f, //barrel
+                0.9f //chimney
 
 
         };
+        //The bones model uniquely uses it's own model as its collider mesh
         Physics::ColliderMeshId boneCol = Physics::LoadColliderMesh("assets/podracer/bones.glb");
+        //Other models for the terrain uses a box
         Physics::ColliderMeshId boxMesh = Physics::LoadColliderMesh("newassets/box_collider.glb");
-        std::vector<std::tuple<ModelId, Physics::ColliderId, glm::mat4, int>> asteroids;
 
+        std::vector<std::tuple<ModelId, Physics::ColliderId, glm::mat4, int>> obstacles;
+
+        //This tile is rectangular and is used to create the course, has a length of 1
         ModelId plane = LoadModel("newassets/plane.glb");
-        Physics::ColliderMeshId planeMesh = Physics::LoadColliderMesh("newassets/plane_physics.glb");
-        std::tuple<ModelId, Physics::ColliderId, glm::mat4> groundPlane;
-
-        //Setup plane
-        {
-            std::tuple<ModelId, Physics::ColliderId, glm::mat4> ground;
-            std::get<0>(ground) = plane;
-            glm::vec3 translation = glm::vec3(
-                0.f, 0.f, 0.f
-            );
-
-            glm::mat4 transform = glm::translate(translation);
-            std::get<1>(ground) = Physics::CreateCollider(planeMesh, transform);
-            std::get<2>(ground) = transform;
-            groundPlane = (ground);
-        }
+        //Plane model without its textures
 
         // Setup skybox
         std::vector<const char*> skybox
         {
+            //White background to represent fog
             "newassets/whitebg.png",
             "newassets/whitebg.png",
             "newassets/whitebg.png",
@@ -232,6 +214,7 @@ namespace Game {
 
         Input::Keyboard* kbd = Input::GetDefaultKeyboard();
 
+        //One light is enough
         const int numLights = 1;
         Render::PointLightId lights[numLights];
         // Setup lights
@@ -255,15 +238,19 @@ namespace Game {
 
         double dt = 0.01667f;
 
-        const int amountOfPlanes = 1600;
+        //Number of tiles for the course, aka course length
+        const int amountOfTiles = 1600;
 
         std::vector<Tile>tiles;
 
-        int lastTileType = 1;
+        int lastTileType = 1; //set to 1 so the course begins straight
         //setup all tiles
-        while(tiles.size() < amountOfPlanes){
-            if(tiles.size() >= amountOfPlanes - 30){
-                int difference = amountOfPlanes - tiles.size();
+        while(tiles.size() < amountOfTiles){
+            //If close to the maximum amount
+            if(tiles.size() >= amountOfTiles - 30){
+                //Find the difference to the max
+                int difference = amountOfTiles - tiles.size();
+                //Make the last stretch straight
                 for(int i=0; i<difference; i++){
                     createStraight(tiles, tiles.size());
                 }
@@ -273,18 +260,18 @@ namespace Game {
             if(lastTileType != 0){ //if slope
                 tileType = 0; //straight
             }
-            else{
-                tileType = Core::TrueRandom(1, 2);
+            else{ //if straight
+                tileType = Core::TrueRandom(1, 2); //Randomize up or down slope
             }
             //Decide how many tiles are placed of selected type
             int tileNumber;
-            if(tiles.size() <= 0){
+            if(tiles.size() <= 0){ //Start with 30
                 tileNumber = 30;
             }
             else{
-                tileNumber = Core::TrueRandom(5, 30);
+                tileNumber = Core::TrueRandom(5, 30); //Between 5 and 30
             }
-
+            //Create the tiles for the tileNumber amount
             for(int i=0; i<tileNumber; i++){
                 if(tileType == 0 || tiles.size() == 0){
                     createStraight(tiles, tiles.size());
@@ -298,75 +285,80 @@ namespace Game {
             }
             lastTileType = tileType;
         }
-        glm::vec3 scaleBig;
-        //glm::vec3 scaleSmol(3.f);
-        glm::vec3 colScales;
-        int xIndex;
+        
+        //Decide span between objects based on difficulty chosen, smaller span means less distance inbetween
         float span;
-        switch(difficulty){
-            case 1:
-                span = 10;
-                break;
-            case 2:
-                span = 6;
-                break;
-            case 3:
-                span = 4;
-                break;
-            default:
-                span = 10;
+        switch (difficulty) {
+        case 1:
+            span = 10;
+            break;
+        case 2:
+            span = 6;
+            break;
+        case 3:
+            span = 4;
+            break;
+        default:
+            span = 10;
         }
 
-        // Setup terrain
-        for (int i = 10; i < (int)(amountOfPlanes / span); i++)
+        //Terrain/Obstacles
         {
-            std::tuple<ModelId, Physics::ColliderId, glm::mat4, int> podModel; //Model to be created
-            int resourceIndex = Core::TrueRandom(0, 9); //Randomizes which model
-            Physics::ColliderMeshId col = boxMesh;
-            //int resourceIndex = 8;
-            if(resourceIndex == 0) { //if bones
-                xIndex = 0.f; //bones spawn in middle of road
-                col = boneCol;
-                scaleBig = glm::vec3(17.5f);
-                colScales = scaleBig;
+            glm::vec3 scaleBig; //For upscaling obstacles
+            glm::vec3 colScales; //For scaling collider
+            int xIndex;
+
+            // Setup terrain
+            for (int i = 10; i < (int)(amountOfTiles / span); i++)
+            {
+                std::tuple<ModelId, Physics::ColliderId, glm::mat4, int> glbModel; //Model to be created
+                int resourceIndex = Core::TrueRandom(0, 9); //Randomizes which model
+                Physics::ColliderMeshId col = boxMesh;
+                if (resourceIndex == 0) { //if bones
+                    xIndex = 0.f; //bones spawn in middle of road
+                    col = boneCol;
+                    scaleBig = glm::vec3(17.5f); //Big bones
+                    colScales = scaleBig; //Collider has same size
+                }
+
+                else { //If not bones model
+                    xIndex = Core::TrueRandom(-7, 7); //Randomized x position
+                    colScales = glm::vec3(colliderSize[resourceIndex]); //Get scale assigned to model for collider
+                    scaleBig = glm::vec3(4.f); //Scale up model
+                }
+
+                std::get<0>(glbModel) = models[resourceIndex]; //Get the model based on number generated
+
+                //Extra is used for if a model spawns at the end of a tile type set
+                //This makes the big models avoid seemingly partially going off the ground
+                int extra = 0;
+
+                if (tiles[(int)(i * span) + 2].rotationY != tiles[(int)(i * span)].rotationY) //if next tile is different
+                    extra = -2;
+                if (tiles[(int)(i * span) - 2].rotationY != tiles[(int)(i * span)].rotationY) //if prev tile is different
+                    extra = 2;
+             
+                glm::vec3 position = glm::vec3(
+                    xIndex,
+                    tiles[(int)(i * span) + extra].position.y,
+                    tiles[(int)(i * span) + extra].position.z
+                );
+                int id = (int)(i * span) + extra;
+
+                glm::mat4 transform = translate(position) * tiles[(int)(i * span)].rotation; //Position times rotation
+                //Collider needs to be flipped in its x-axis position
+                std::get<1>(glbModel) = Physics::CreateCollider(col, glm::scale(glm::translate(glm::vec3(-position.x, position.y, position.z)), colScales) * tiles[(int)(i * span)].rotation);
+                std::get<2>(glbModel) = glm::scale(transform, scaleBig);
+                std::get<3>(glbModel) = id;
+                obstacles.push_back(glbModel);
             }
-
-            else{
-                xIndex = Core::TrueRandom(-7, 7);
-                colScales = glm::vec3(colliderSize[resourceIndex]);
-                scaleBig = glm::vec3(4.f);
-            }
-
-            std::get<0>(podModel) = models[resourceIndex];
-
-            int extra = 0;
-
-            if(tiles[(int)(i * span)+2].rotationY != tiles[(int)(i * span)].rotationY) //if next tile is different
-                extra = -2;
-            if(tiles[(int)(i * span)-2].rotationY != tiles[(int)(i * span)].rotationY) //if prev tile is different
-                extra = 2;
-
-            glm::vec3 position = glm::vec3(
-                xIndex,
-                tiles[(int)(i * span)+extra].position.y,
-                tiles[(int)(i * span)+extra].position.z
-            );
-            int id = (int)(i * span)+extra;
-
-            glm::mat4 transform = translate(position) * tiles[(int)(i * span)].rotation;
-            std::get<1>(podModel) = Physics::CreateCollider(col, glm::scale(glm::translate(glm::vec3(-position.x, position.y, position.z)), colScales) * tiles[(int)(i * span)].rotation);
-            std::get<2>(podModel) = glm::scale(transform, scaleBig);
-            std::get<3>(podModel) = id;
-            asteroids.push_back(podModel);
         }
 
-        // game loop
+        //game loop stuff
 
         bool collided = false;
-
-        //std::chrono::high_resolution_clock::duration totalTime(0);
         auto start = std::chrono::high_resolution_clock::now();
-        float timer = 0;
+        float timer = 0; //used for respawning and countdown
         bool timerUp = false;
         clock_t current_ticks, delta_ticks;
         clock_t fps = 0;
@@ -396,44 +388,45 @@ namespace Game {
 
             //Spawn tiles
             {
-
+                //Spawn 40 tiles ahead of player
                 for (int i = ship.movementIndex - 10; i < ship.movementIndex + 40; i++) {
+                    //Limit i to not go out of bounds
                     if (i < 0)
                         i = 0;
-                    if (i >= amountOfPlanes) {
-                        i = amountOfPlanes - 1;
+                    if (i >= amountOfTiles) {
+                        i = amountOfTiles - 1;
                         break;
                     }
-                    RenderDevice::Draw(std::get<0>(groundPlane), tiles[i].transform);
-                    for (auto const& asteroid : asteroids) { //spawn terrain
-                        if(i == std::get<3>(asteroid))
+                    RenderDevice::Draw(plane, tiles[i].transform);
+                    for (auto const& asteroid : obstacles) { //spawn terrain
+                        if(i == std::get<3>(asteroid)) //If there's a obstacle on rendered tile
                             RenderDevice::Draw(std::get<0>(asteroid), std::get<2>(asteroid));
                     }
                 }
             }
-            //std::cout << ship.movementIndex << std::endl;
 
-            if(seconds == 3){
+            if(seconds == 3){ //3 second countdown up
                 ship.automatic = true;
                 ship.disableControls = false;
             }
-            else if(seconds < 3){
+            else if(seconds < 3){ //Counting down
                 ship.automatic = false;
                 ship.disableControls = true;
             }
 
-            if(ship.Update(dt, tiles)){
-                //if reset
+            if(ship.Update(dt, tiles)){ //if reset            
                 points = 0;
-                start = std::chrono::high_resolution_clock::now();
+                start = std::chrono::high_resolution_clock::now(); //reset clock
                 ship.automatic = false;
                 ship.disableControls = true;
                 won = false;
                 saved = false;
             }
-            if(ship.movementIndex >= tiles.size()-1){
+            if(ship.movementIndex >= tiles.size()-1){ //if reached end
                 won = true;
             }
+
+            //time calculations
             const auto end = std::chrono::high_resolution_clock::now();
 
             seconds = (int)diff.count();
@@ -443,8 +436,9 @@ namespace Game {
             }
             diff = end - start;
             frameTime = diff.count() - previousTime;
+
             if(!won){
-                progress = (int)((ship.movementIndex / amountOfPlanes) * 100);
+                progress = (int)((ship.movementIndex / amountOfTiles) * 100); //Progress in %
                 this->collisionsOn = !ship.disableCollisions;
                 collided = ship.CheckCollisions();
 
@@ -452,7 +446,6 @@ namespace Game {
                 { //Collisions and respawning
                     if (collided && renderCar) //Game over
                     {
-                        //std::cout << "OUCH" << std::endl;
                         renderCar = false;
                         timer = seconds + 3;
                         ship.disableControls = true;
@@ -477,12 +470,12 @@ namespace Game {
 
                 if(renderCar) {
                     RenderDevice::Draw(ship.model, ship.transform);
-                    if(ship.automatic)
+                    if(ship.automatic) //Change points while podracer is moving
                         points = (int)( (100 * (diff.count()-3)) / (span));
                 }
             }
             else{
-                progress = 100;
+                progress = 100; //100% progress
                 ship.disableControls = true;
                 ship.automatic = false;
                 if(!saved)
@@ -498,7 +491,6 @@ namespace Game {
             if(delta_ticks > 0)
                 fps = CLOCKS_PER_SEC / delta_ticks;
             this->frames = 1 / frameTime;
-            //std::cout << "Fps: " << (1 / frameTime) << std::endl;
 
             RenderNanoVG(vg);
 
@@ -529,7 +521,7 @@ namespace Game {
     }
 
     void
-    PodracerApp::RenderNanoVG(NVGcontext* vg) //TODO: Print tile progress on screen (x/1600), fix collisions
+    PodracerApp::RenderNanoVG(NVGcontext* vg)
     {
 
         nvgBeginPath(vg);
@@ -554,18 +546,16 @@ namespace Game {
 
         //Text for points gained
         nvgFontSize(vg, 32.0f);
-        char buf2[100];
-        sprintf(buf2, "Points: %i", points);
-        nvgText(vg, 320, 20, buf2, NULL);
+        sprintf(buf, "Points: %i", points);
+        nvgText(vg, 320, 20, buf, NULL);
 
-        //Text for points gained
-        sprintf(buf2, "Progress: %i%%", progress);
-        nvgText(vg, 480, 440, buf2, NULL);
+        //Text for tile progress
+        sprintf(buf, "Progress: %i%%", progress);
+        nvgText(vg, 480, 440, buf, NULL);
 
         //Text for game over
         if(!renderCar){
             prevPoints = loadScore();
-            char buf[100];
             sprintf(buf, "%s%i", "Previous High Score:", prevPoints);
             nvgFontSize(vg, 50.0f);
             nvgText(vg, 320, 160, "GAME OVER", NULL);
@@ -575,7 +565,6 @@ namespace Game {
         //Text for win
         if(won){
             prevPoints = loadScore();
-            char buf[100];
             sprintf(buf, "%s%i", "Previous High Score:", prevPoints);
             nvgFontSize(vg, 50.0f);
             nvgText(vg, 320, 160, "YOU WIN!", NULL);
@@ -585,9 +574,8 @@ namespace Game {
         //Text for countdown
         nvgFontSize(vg, 100.0f);
         if(seconds < 3){
-            char buf3[100];
-            sprintf(buf3, "%i", 3-seconds);
-            nvgText(vg, 320, 180, buf3, NULL);
+            sprintf(buf, "%i", 3-seconds);
+            nvgText(vg, 320, 180, buf, NULL);
         }
         else if(seconds == 3){
             nvgText(vg, 320, 180, "GO!", NULL);

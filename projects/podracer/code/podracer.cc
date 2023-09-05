@@ -15,7 +15,7 @@ namespace Game
 {
 Podracer::Podracer()
 {
-    uint32_t numParticles = 2048;
+    /*uint32_t numParticles = 2048;
     this->particleEmitterLeft = new ParticleEmitter(numParticles);
     this->particleEmitterLeft->data = {
         .origin = glm::vec4(this->racerPos + (vec3(this->transform[2]) * emitterOffset),1),
@@ -38,7 +38,7 @@ Podracer::Podracer()
     this->particleEmitterRight->data = this->particleEmitterLeft->data;
 
     ParticleSystem::Instance()->AddEmitter(this->particleEmitterLeft);
-    ParticleSystem::Instance()->AddEmitter(this->particleEmitterRight);
+    ParticleSystem::Instance()->AddEmitter(this->particleEmitterRight);*/
 
 
 }
@@ -48,46 +48,47 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
 {
     //Mouse* mouse = Input::GetDefaultMouse();
     Keyboard* kbd = Input::GetDefaultKeyboard();
-
     Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
 
-    if(movementIndex == 4)
+    if(movementIndex == 4) //If at start position
         if(kbd->pressed[Key::R]){
             reset();
             return 1;
         }
-    if(!disableControls){
+    if(!disableControls){ //If controls on
         if(kbd->pressed[Key::R]){
             reset();
             return 1;
         }
+        //Toggle side views
         cameraX = kbd->held[Key::Q] ? 5.0f : kbd->held[Key::E] ? -5.0f : 0.0f;
         cameraY = kbd->held[Key::T] ? 5.0f : 0.0f;
 
         /*if(kbd->pressed[Key::Space]){
             automatic = !automatic;
         }*/
-        if(!automatic){
-            if (kbd->held[Key::W])
+        
+        if(!automatic){ //If on manual
+            if (kbd->held[Key::W]) //Move forward
                 this->currentSpeed = 1.f;
 
-            else if (kbd->held[Key::S] && movementIndex >= 0){
+            else if (kbd->held[Key::S] && movementIndex >= 0){ //Move backwards
                 this->currentSpeed = -1.f;
             }
-            else
+            else //Stop forward movement
                 this->currentSpeed = 0;
         }
         else{
             this->currentSpeed = 1.f;
         }
 
-        if (kbd->held[Key::A] && this->positionX >= -5) {
+        if (kbd->held[Key::A] && this->positionX >= -5) { //Move left
             this->currentSideSpeed = mix(this->currentSideSpeed, this->boostSpeed, std::min(1.0f, dt * 20.0f));
         }
-        else if (kbd->held[Key::D] && this->positionX <= 5) {
+        else if (kbd->held[Key::D] && this->positionX <= 5) { //Move right
             this->currentSideSpeed = mix(this->currentSideSpeed, -this->boostSpeed, std::min(1.0f, dt * 20.0f));
         }
-        else {
+        else { //Stop side movement
             this->currentSideSpeed = 0;
         }
 
@@ -100,30 +101,32 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
         disableCollisions = !disableCollisions;
     }
 
+    //The transform is set to tile[movementIndex]'s later
     this->movementIndex += dt * 10.f * currentSpeed;
 
     vec3 desiredVelocity = vec3(this->currentSideSpeed, 0, this->currentSpeed);
     desiredVelocity = this->transform * vec4(desiredVelocity, 0.0f);
 
+    //Check if 5 tiles ahead is within scope
     if (movementIndex+5 <= tiles.size()) {
+        //Store the rotation of the current tile
         this->rotationY = tiles[(int)movementIndex].rotationY;
+        //Store the rotation of the tile 5 spaces ahead
         this->upcomingRotationY = tiles[(int)movementIndex + 5].rotationY;
     }
 
+    //Adjust camera based on tile rotations
     if(rotationY == 45 || upcomingRotationY == 45)
         this->cameraY = 5;
     else if(rotationY == -45 || upcomingRotationY == -45)
         this->cameraY = 5;
     
-    this->positionX += desiredVelocity.x * dt * 10.0f;
-    this->racerPos = tiles[(int)movementIndex].position;
-    this->racerPos += vec3(positionX, 0, 0);
-    //std::cout << racerPos.x << " " << racerPos.y << " " << racerPos.z << std::endl;
-
-    this->transform = (tiles[(int)movementIndex].transform * translate(vec3(this->positionX, 0, 0))); //handles rotation of vehicle, affects movement direction
-
+    this->positionX += desiredVelocity.x * dt * 10.0f; 
+    this->racerPos = tiles[(int)movementIndex].position; //Set position to a tile's based on index
+    this->racerPos += vec3(positionX, 0, 0); //Add movement in the x-axis
+    this->transform = (tiles[(int)movementIndex].transform * translate(vec3(this->positionX, 0, 0))); //Tile transform * x position
+    
     // update camera view transform
-
     vec3 center = vec3(this->transform[3]) + vec3(0, 0, 5);
     float eyeX = this->transform[3].x + this->cameraX;
     float eyeY = this->transform[3].y + 1.5f + this->cameraY;
@@ -131,11 +134,7 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     vec3 eye = vec3(eyeX, eyeY, eyeZ);
     cam->view = lookAt(eye, center, vec3(0, 2, 0));
 
-    //std::cout << "Center: " << (center).x << " " << (center).y << " " << (center).z << std::endl;
-    //std::cout << "View: " << vec3(cam->view[2]).x << " " << vec3(cam->view[2]).y << " " << vec3(cam->view[2]).z << std::endl;
-    //std::cout << "Orientation: " << this->orientation.x << " " << this->orientation.y << " " << this->orientation.z << std::endl;
-
-    const float thrusterPosOffset = 0.365f;
+    /*const float thrusterPosOffset = 0.365f;
     this->particleEmitterLeft->data.origin = glm::vec4(vec3(this->racerPos + (vec3(this->transform[0]) * -thrusterPosOffset)) + (vec3(this->transform[2]) * emitterOffset), 1);
     this->particleEmitterLeft->data.dir = glm::vec4(glm::vec3(-this->transform[2]), 0);
     this->particleEmitterRight->data.origin = glm::vec4(vec3(this->racerPos + (vec3(this->transform[0]) * thrusterPosOffset)) + (vec3(this->transform[2]) * emitterOffset), 1);
@@ -145,11 +144,12 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     this->particleEmitterLeft->data.startSpeed = 1.2 + (3.0f * t);
     this->particleEmitterLeft->data.endSpeed = 0.0f  + (3.0f * t);
     this->particleEmitterRight->data.startSpeed = 1.2 + (3.0f * t);
-    this->particleEmitterRight->data.endSpeed = 0.0f + (3.0f * t);
+    this->particleEmitterRight->data.endSpeed = 0.0f + (3.0f * t);*/
 
-    return 0;
     //this->particleEmitter->data.decayTime = 0.16f;//+ (0.01f  * t);
     //this->particleEmitter->data.randomTimeOffsetDist = 0.06f;/// +(0.01f * t);
+
+    return 0;
 }
 
 bool
