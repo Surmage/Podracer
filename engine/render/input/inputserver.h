@@ -33,6 +33,6 @@ public:
 
 Keyboard* GetDefaultKeyboard();
 Mouse* GetDefaultMouse();
-Gamepad* GetGamepad();
+Gamepad* GetGamepad(int id);
 
 } // namespace Input

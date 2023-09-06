@@ -356,7 +356,7 @@ namespace Game {
             collided = ship.CheckCollisions();
 
             points = (int)diff.count();
-            //std::cout << points << std::endl;
+            std::cout << points << std::endl;
 
 
             glm::vec3 translation = glm::vec3(
