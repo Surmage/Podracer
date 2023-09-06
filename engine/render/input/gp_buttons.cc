@@ -3,7 +3,7 @@
 //
 
 #include "gp_buttons.h"
-//#include "config.h"
+#include "config.h"
 #include <GLFW/glfw3.h>
 //#include <string>
 
