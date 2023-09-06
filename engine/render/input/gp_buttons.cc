@@ -2,8 +2,8 @@
 // Created by petter on 2023-08-31.
 //
 
-#include "gp_buttons.h"
 #include "config.h"
+#include "gp_buttons.h"
 #include <GLFW/glfw3.h>
 //#include <string>
 
