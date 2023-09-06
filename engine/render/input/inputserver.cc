@@ -13,7 +13,8 @@ struct HIDState
 {
 	Keyboard keyboard;
 	Mouse mouse;
-	std::vector<Gamepad*> gamepads;
+    //std::vector<Gamepad*> gamepads;
+	Gamepad gamepads;
 };
 
 static HIDState* hid = nullptr;
@@ -56,14 +57,14 @@ InputHandler::BeginFrame()
 	hid->mouse.previousPosition = hid->mouse.position;
 
 ////////////////////This is what is causing the crash///////////////////////////
-//    for (int i = 0; i < Button::Code::NumGamepadButtons; i++)
-//    {
-//        if (hid->gamepads[0]->released[0])
-//            hid->gamepads[0]->held[0] = false;
-//
-//        hid->gamepads[0]->pressed[0] = false;
-//        hid->gamepads[0]->released[0] = false;
-//    }
+    for (int i = 0; i < Button::Code::NumGamepadButtons; i++)
+    {
+        if (hid->gamepads.released[0])
+           hid->gamepads.held[0] = false;
+
+        hid->gamepads.pressed[0] = false;
+        hid->gamepads.released[0] = false;
+    }
 //////////////////////////////////////////////////////////////////////////////
 }
 
@@ -145,12 +146,12 @@ InputHandler::HandleMousePressEvent(int32 button, int32 action, int32 mods)
         if (action == GLFW_PRESS)
         {
             Button::Code code = Button::FromGLFW();
-            hid->gamepads[id]->pressed[button] = true;
-            hid->gamepads[id]->held[button] = true;
+            hid->gamepads.pressed[button] = true;
+            hid->gamepads.held[button] = true;
         }
         else if (action == GLFW_RELEASE)
         {
-            hid->gamepads[id]->released[button] = true;
+            hid->gamepads.released[button] = true;
         }
     }
 
@@ -188,11 +189,11 @@ GetDefaultMouse()
 /**
 */
 Gamepad*
-GetGamepad(int id)
+GetGamepad()
 {
 	assert(hid != nullptr);
-	assert(id > 0 && id < hid->gamepads.size());
-	return hid->gamepads[id];
+	//assert(id > 0 && id < hid->gamepads.size());
+	return &hid->gamepads;
 }
 
 } // namespace Input
