@@ -26,7 +26,6 @@ public:
     static void BeginFrame();
 
     static void HandleKeyEvent(int32 key, int32 scancode, int32 action, int32 mods);
-    static void HandleJoystickButtonPressEvent(int id, int32 button, int32 action, int32 mods);
     static void HandleMousePressEvent(int32 button, int32 pressed, int32);
     static void HandleMouseMoveEvent(double x, double y);
 };

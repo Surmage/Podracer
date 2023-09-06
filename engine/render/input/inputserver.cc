@@ -137,17 +137,17 @@ InputHandler::HandleMousePressEvent(int32 button, int32 action, int32 mods)
 /**
 */
     void
-    InputHandler::HandleJoystickButtonPressEvent(int id, int32 button, int32 action, int32 mods)
+    InputHandler::HandleJoystickButtonPressEvent(int32 button, int32 action, int32 mods)
     {
         assert(button < Gamepad::Button::NumGamepadButtons);
         if (action == GLFW_PRESS)
         {
-            hid->gamepads[id]->pressed[button] = true;
-            hid->gamepads[id]->held[button] = true;
+            hid->mouse.pressed[button] = true;
+            hid->mouse.held[button] = true;
         }
         else if (action == GLFW_RELEASE)
         {
-            hid->gamepads[id]->released[button] = true;
+            hid->mouse.released[button] = true;
         }
     }
 
