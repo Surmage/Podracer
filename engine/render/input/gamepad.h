@@ -15,13 +15,13 @@ namespace Input
 struct Gamepad
 {
     /// contains all buttons that was pressed this frame. This is reset every frame by InputServer
-    bool pressed[Button::Code::NumGamepadButtons];
+    bool pressed[Button::NumGamepadButtons];
 
     /// contains all buttons that was released this frame. This is reset every frame by InputServer
-    bool released[Button::Code::NumGamepadButtons];
+    bool released[Button::NumGamepadButtons];
 
     /// contains all buttons that are currently being held. These are reset as buttons receive the release action by InputServer
-    bool held[Button::Code::NumGamepadButtons];
+    bool held[Button::NumGamepadButtons];
 };
 
 } // namespace Input
