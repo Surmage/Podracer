@@ -55,7 +55,7 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     //Input::Gamepad::gamepad();
 
     Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
-    if(gamepad->held[Button::A_Button]){
+    if(gamepad->pressed[Button::A_Button]){
         std::cout << "Wow" << std::endl;
     };
 

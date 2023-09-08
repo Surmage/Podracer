@@ -11,7 +11,9 @@ namespace Input
 {
     int gamepad = 0;
     int buttonCount;
-    const unsigned char *buttons = glfwGetJoystickButtons(gamepad, &buttonCount);
+    const unsigned char *buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttonCount);
+    int axisCount;
+    const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axisCount);
 
     Button::Code
     Button::FromGLFW()

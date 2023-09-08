@@ -22,6 +22,20 @@
 using namespace Display;
 using namespace Render;
 
+void joystick_callback(int jid, int event)
+{
+    if (event == GLFW_CONNECTED)
+    {
+        std::cout << "JoyStick ON!" << std::endl;
+        // The joystick was connected
+    }
+    else if (event == GLFW_DISCONNECTED)
+    {
+        // The joystick was disconnected
+    }
+    std::cout << "Event called" << std::endl;
+}
+
 namespace Game {
 
     void createStraight(std::vector<Tile>& tiles, int i){
@@ -118,6 +132,7 @@ namespace Game {
     }
 
     bool PodracerApp::Open() {
+       
         App::Open();
         this->window = new Display::Window;
         this->window->SetSize(1280, 720);
@@ -138,6 +153,8 @@ namespace Game {
                                       {
                                           this->RenderNanoVG(vg);
                                       });
+            glfwSetJoystickCallback(joystick_callback);
+            
 
             return true;
         }
@@ -347,6 +364,7 @@ namespace Game {
                 }
             }
 
+
             if(ship.Update(dt, tiles)) //if reset
                 start = std::chrono::high_resolution_clock::now();
 
@@ -356,8 +374,7 @@ namespace Game {
             collided = ship.CheckCollisions();
 
             points = (int)diff.count();
-            //std::cout << points << std::endl;
-
+            //std::cout << points << std::endl;           
 
             glm::vec3 translation = glm::vec3(
                     1.5f, 0.5f, 2.f
@@ -385,7 +402,7 @@ namespace Game {
                 }*/
             }
 
-
+           
 
             if(renderCar)
                 RenderDevice::Draw(ship.model, ship.transform);
