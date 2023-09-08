@@ -108,6 +108,20 @@ Window::StaticKeyPressCallback(GLFWwindow* win, int32 key, int32 scancode, int32
 //------------------------------------------------------------------------------
 /**
 */
+    void
+    Window::StaticButtonPressCallback(GLFWwindow* win, int32 key, int32 scancode, int32 action, int32 mods)
+    {
+        Window* window = (Window*)glfwGetWindowUserPointer(win);
+
+        if (nullptr != window->buttonPressCallback)
+            window->buttonPressCallback(key, scancode, action, mods);
+
+        Input::InputHandler::HandleJoystickButtonPressEvent(key, scancode, action, mods);
+    }
+
+//------------------------------------------------------------------------------
+/**
+*/
 void
 Window::StaticMousePressCallback(GLFWwindow* win, int32 button, int32 action, int32 mods)
 {

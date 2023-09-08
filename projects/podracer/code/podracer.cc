@@ -62,7 +62,7 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
             automatic = !automatic;
         }
         if(!automatic){
-            if (kbd->held[Key::W] /*|| glfwGetJoystickName(GLFW_JOYSTICK_1) == std::string("Logitech Gamepad F310") && GLFW_PRESS == glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttonCount)[0]*/)
+            if (kbd->held[Key::W] || gamepad->held[Button::Code::A_Button])
                 this->currentSpeed = 1.f;
 
             else if (kbd->held[Key::S] && movementIndex >= 0){

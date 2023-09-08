@@ -46,6 +46,8 @@ public:
 
 	/// set key press function callback
 	void SetKeyPressFunction(const std::function<void(int32, int32, int32, int32)>& func);
+    /// set key press function callback
+    void SetButtonPressFunction(const std::function<void(int32, int32, int32, int32)>& func);
 	/// set mouse press function callback
 	void SetMousePressFunction(const std::function<void(int32, int32, int32)>& func);
 	/// set mouse move function callback
@@ -68,6 +70,8 @@ private:
 
 	/// static key press callback
 	static void StaticKeyPressCallback(GLFWwindow* win, int32 key, int32 scancode, int32 action, int32 mods);
+    /// static key press callback
+    static void StaticButtonPressCallback(GLFWwindow* win, int32 key, int32 scancode, int32 action, int32 mods);
 	/// static mouse press callback
 	static void StaticMousePressCallback(GLFWwindow* win, int32 button, int32 action, int32 mods);
 	/// static mouse move callback
@@ -93,6 +97,8 @@ private:
 
 	/// function for key press callbacks
 	std::function<void(int32, int32, int32, int32)> keyPressCallback;
+    /// function for key press callbacks
+    std::function<void(int32, int32, int32, int32)> buttonPressCallback;
 	/// function for mouse press callbacks
 	std::function<void(int32, int32, int32)> mousePressCallback;
 	/// function for mouse move callbacks
@@ -169,6 +175,20 @@ Window::SetKeyPressFunction(const std::function<void(int32, int32, int32, int32)
 {
 	this->keyPressCallback = func;
 }
+
+//------------------------------------------------------------------------------
+/**
+	parameters:
+		keycode
+		scancode
+		action
+		mods
+*/
+    inline void
+    Window::SetButtonPressFunction(const std::function<void(int32, int32, int32, int32)>& func)
+    {
+        this->buttonPressCallback = func;
+    }
 
 //------------------------------------------------------------------------------
 /**
