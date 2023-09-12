@@ -22,6 +22,17 @@ struct Gamepad
 
     /// contains all buttons that are currently being held. These are reset as buttons receive the release action by InputServer
     bool held[Button::Code::NumGamepadButtons];
+
+
+    const float* axes;
+    const unsigned char* buttons;
+    int axesCount;
+    int count;
+
+    const float* getAxis();
+    const unsigned char* getButtons();
+    void setAxis();
+    void setButtons();
 };
 
 } // namespace Input

@@ -1,6 +1,5 @@
 #include "config.h"
 #include "podracerapp.h"
-#include "config.h"
 #include <cstring>
 #include "imgui.h"
 #include "render/renderdevice.h"

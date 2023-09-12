@@ -14,7 +14,7 @@
 
 namespace Input
 {
-
+    
 //
 class InputHandler
 {
@@ -34,5 +34,6 @@ public:
 Keyboard* GetDefaultKeyboard();
 Mouse* GetDefaultMouse();
 Gamepad* GetGamepad();
+
 
 } // namespace Input

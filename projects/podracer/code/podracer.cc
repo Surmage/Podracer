@@ -58,9 +58,11 @@ Podracer::Podracer()
     ParticleSystem::Instance()->AddEmitter(this->particleEmitterLeft);
     ParticleSystem::Instance()->AddEmitter(this->particleEmitterRight);
 
+    Gamepad* gamepad = Input::GetGamepad();
     gamepadOn = bool(glfwJoystickPresent(GLFW_JOYSTICK_1));
+    gamepadAxis = gamepad->getAxis();
+    gamepadButtons = gamepad->getButtons();
     glfwSetJoystickCallback(joystick_callback);
-
 }
 
 int
@@ -69,50 +71,67 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     //Mouse* mouse = Input::GetDefaultMouse();
     Keyboard* kbd = Input::GetDefaultKeyboard();
     //----------GAMEPAD----------
-    Gamepad* gamepad = Input::GetGamepad();
+    
     //int buttonCount;
     //Input::Gamepad::gamepad();
+    Gamepad* gamepad = Input::GetGamepad();
+    gamepad->setAxis();
+    gamepad->setButtons();
 
     Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
-    std::cout << "Gamepad status: " << gamepadOn << std::endl;
+    //std::cout << "Gamepad status: " << gamepadOn << std::endl;
     /*if(gamepad->pressed[Button::A_Button]){
         std::cout << gamepadOn << std::endl;
-    };*/
-    
+    };*/      
+
+    std::cout << gamepadAxis[0] << std::endl;
 
     if(!disableControls){
-        if(kbd->pressed[Key::Space]){
-            automatic = !automatic;
-        }
-        if(!automatic){
-            if (kbd->held[Key::W] || (gamepadOn && 1)) 
-                /*|| glfwGetJoystickName(GLFW_JOYSTICK_1) == std::string("Logitech Gamepad F310") && GLFW_PRESS == glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttonCount)[0]*/
-                this->currentSpeed = 1.f;
-
-            else if (kbd->held[Key::S] && movementIndex >= 0){
-                this->currentSpeed = -1.f;
+        if (!gamepadOn) {
+            if (kbd->pressed[Key::Space]) {
+                automatic = !automatic;
             }
-            else
-                this->currentSpeed = 0;
-        }
-        else{
-            this->currentSpeed = 1.f;
-        }
+            if (!automatic) {
+                if (kbd->held[Key::W])
+                    /*|| glfwGetJoystickName(GLFW_JOYSTICK_1) == std::string("Logitech Gamepad F310") && GLFW_PRESS == glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttonCount)[0]*/
+                    this->currentSpeed = 1.f;
 
-        if (kbd->held[Key::A] && this->position.x >= -5) {
-            this->currentSideSpeed = mix(this->currentSideSpeed, this->boostSpeed, std::min(1.0f, dt * 20.0f));
-        }
-        else if (kbd->held[Key::D] && this->position.x <= 5) {
-            this->currentSideSpeed = mix(this->currentSideSpeed, -this->boostSpeed, std::min(1.0f, dt * 20.0f));
+                else if (kbd->held[Key::S] && movementIndex >= 0) {
+                    this->currentSpeed = -1.f;
+                }
+                else
+                    this->currentSpeed = 0;
+            }
+            else {
+                this->currentSpeed = 1.f;
+            }
+
+            if (kbd->held[Key::A] && this->position.x >= -5) {
+                this->currentSideSpeed = mix(this->currentSideSpeed, this->boostSpeed, std::min(1.0f, dt * 20.0f));
+            }
+            else if (kbd->held[Key::D] && this->position.x <= 5) {
+                this->currentSideSpeed = mix(this->currentSideSpeed, -this->boostSpeed, std::min(1.0f, dt * 20.0f));
+            }
+            else {
+                this->currentSideSpeed = 0;
+            }
+
+            if (kbd->pressed[Key::R]) {
+                reset();
+                return 1;
+            }
         }
         else {
-            this->currentSideSpeed = 0;
-        }
-
-        if(kbd->pressed[Key::R]){
-            reset();
-            return 1;
-        }
+            if (gamepadAxis[0] < 0) {
+                this->currentSideSpeed = 1;
+            }
+            else if (gamepadAxis[0] > 0) {
+                this->currentSideSpeed = -1;
+            }
+            else {
+                this->currentSideSpeed = 0;
+            }
+        }      
     }
     else{
         this->currentSpeed = 0.f;

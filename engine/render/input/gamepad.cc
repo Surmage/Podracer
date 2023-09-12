@@ -4,9 +4,45 @@
 //------------------------------------------------------------------------------
 #include "config.h"
 #include "gamepad.h"
+#include "render/window.h"
+#include <iostream>
+
+
 //
-//namespace Input
-//{
+namespace Input
+{
+	const float* Gamepad::getAxis() {		
+		axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axesCount);
+		return axes;
+	}
+	const unsigned char* Gamepad::getButtons() {
+		buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &count);
+
+		return buttons;
+	}
+	void Gamepad::setAxis() {
+		glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axesCount);
+	}
+	void Gamepad::setButtons() {
+		glfwGetJoystickButtons(GLFW_JOYSTICK_1, &count);
+	}
+	//const float Gamepad::checkAxis() {
+	//	int axesCount;
+	//	const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axesCount);
+
+	//	std::cout << "Axis 1: " << axes[0] << std::endl; //important for x movement
+	//	std::cout << "Axis 2: " << axes[1] << std::endl;
+	//	return axes[0];
+	//}
+	//const unsigned char* Gamepad::checkButtons() {
+	//	int count;
+	//	const unsigned char* buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &count);
+
+	//	std::cout << "Button 4: " << buttons[4] << std::endl; //Camera view
+	//	std::cout << "Button 5: " << buttons[5] << std::endl; //Camera view
+
+	//	return buttons;
+	//}
 //    void Gamepad::gamepad()
 //    {
 //        int gamepad = 0;
@@ -126,4 +162,4 @@
 //        }
 //
 //    }
-//} // namespace Input
+} // namespace Input

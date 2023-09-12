@@ -29,9 +29,7 @@ struct Tile {
 };
 
 struct Podracer
-{
-    Podracer();
-
+{   
     glm::vec3 racerPos = glm::vec3(0.0f, 0.f, 2.0f);
     glm::quat orientation = glm::identity<glm::quat>();
     glm::vec3 position = glm::vec3(0, 1.0f, 0.0f);
@@ -54,6 +52,11 @@ struct Podracer
     float rotXSmooth = 0;
     float rotYSmooth = 0;
     float rotZSmooth = 0;
+
+    const float* gamepadAxis;
+    const unsigned char* gamepadButtons;
+
+    Podracer();
 
     Render::ModelId model;
     Render::ParticleEmitter* particleEmitterLeft;
