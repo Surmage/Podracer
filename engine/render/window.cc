@@ -328,6 +328,7 @@ Window::Open()
 
 	glfwSetWindowUserPointer(this->window, this);
 	glfwSetKeyCallback(this->window, Window::StaticKeyPressCallback);
+    glfwSetJoystickCallback(reinterpret_cast<GLFWjoystickfun>(Window::StaticButtonPressCallback)); //???
 	glfwSetMouseButtonCallback(this->window, Window::StaticMousePressCallback);
 	glfwSetCursorPosCallback(this->window, Window::StaticMouseMoveCallback);
 	glfwSetCursorEnterCallback(this->window, Window::StaticMouseEnterLeaveCallback);
