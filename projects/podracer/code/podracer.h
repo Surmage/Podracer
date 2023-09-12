@@ -7,7 +7,7 @@ namespace Render
 }
 
 namespace Game
-{
+{   
 
 struct Tile {
     glm::vec3 position; //center of tile

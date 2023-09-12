@@ -14,6 +14,23 @@ using namespace Render;
 
 namespace Game
 {
+    bool gamepadOn;
+
+void joystick_callback(int jid, int event)
+{
+    if (event == GLFW_CONNECTED)
+    {
+        gamepadOn = true;
+        // The joystick was connected
+    }
+    else if (event == GLFW_DISCONNECTED)
+    {
+        gamepadOn = false;
+        // The joystick was disconnected
+    }
+    std::cout << "Event called" << std::endl;
+}
+
 Podracer::Podracer()
 {
     uint32_t numParticles = 2048;
@@ -41,6 +58,8 @@ Podracer::Podracer()
     ParticleSystem::Instance()->AddEmitter(this->particleEmitterLeft);
     ParticleSystem::Instance()->AddEmitter(this->particleEmitterRight);
 
+    gamepadOn = bool(glfwJoystickPresent(GLFW_JOYSTICK_1));
+    glfwSetJoystickCallback(joystick_callback);
 
 }
 
@@ -55,16 +74,19 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     //Input::Gamepad::gamepad();
 
     Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
-    if(gamepad->pressed[Button::A_Button]){
-        std::cout << "Wow" << std::endl;
-    };
+    std::cout << "Gamepad status: " << gamepadOn << std::endl;
+    /*if(gamepad->pressed[Button::A_Button]){
+        std::cout << gamepadOn << std::endl;
+    };*/
+    
 
     if(!disableControls){
         if(kbd->pressed[Key::Space]){
             automatic = !automatic;
         }
         if(!automatic){
-            if (kbd->held[Key::W] /*|| glfwGetJoystickName(GLFW_JOYSTICK_1) == std::string("Logitech Gamepad F310") && GLFW_PRESS == glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttonCount)[0]*/)
+            if (kbd->held[Key::W] || (gamepadOn && 1)) 
+                /*|| glfwGetJoystickName(GLFW_JOYSTICK_1) == std::string("Logitech Gamepad F310") && GLFW_PRESS == glfwGetJoystickButtons(GLFW_JOYSTICK_1, &buttonCount)[0]*/
                 this->currentSpeed = 1.f;
 
             else if (kbd->held[Key::S] && movementIndex >= 0){

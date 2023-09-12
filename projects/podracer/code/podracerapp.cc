@@ -22,20 +22,6 @@
 using namespace Display;
 using namespace Render;
 
-void joystick_callback(int jid, int event)
-{
-    if (event == GLFW_CONNECTED)
-    {
-        std::cout << "JoyStick ON!" << std::endl;
-        // The joystick was connected
-    }
-    else if (event == GLFW_DISCONNECTED)
-    {
-        // The joystick was disconnected
-    }
-    std::cout << "Event called" << std::endl;
-}
-
 namespace Game {
 
     void createStraight(std::vector<Tile>& tiles, int i){
@@ -153,7 +139,7 @@ namespace Game {
                                       {
                                           this->RenderNanoVG(vg);
                                       });
-            glfwSetJoystickCallback(joystick_callback);
+            
             
 
             return true;

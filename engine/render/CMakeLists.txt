@@ -42,6 +42,7 @@ SOURCE_GROUP("render" FILES ${files_render_render})
 
 SET(files_render_input
 	input/gamepad.h
+	input/gamepad.cc
 	input/inputserver.h
 	input/inputserver.cc
 	input/key.h
