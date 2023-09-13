@@ -270,13 +270,13 @@ namespace Game {
             //Create the tiles for the tileNumber amount
             for(int i=0; i<tileNumber; i++){
                 if(tileType == 0 || tiles.empty()){
-                    createStraight(tiles, tiles.size());
+                    createStraight(tiles, static_cast<int>(tiles.size()));
                 }
                 else if(tileType == 1){
-                    createInclineUp(tiles, tiles.size());
+                    createInclineUp(tiles, static_cast<int>(tiles.size()));
                 }
                 else if(tileType == 2){
-                    createInclineDown(tiles, tiles.size());
+                    createInclineDown(tiles, static_cast<int>(tiles.size()));
                 }
             }
             lastTileType = tileType;
@@ -385,7 +385,7 @@ namespace Game {
             //Spawn tiles
             {
                 //Spawn 40 tiles ahead of player
-                for (int i = ship.movementIndex - 10; i < ship.movementIndex + 40; i++) {
+                for (int i = static_cast<int>(ship.movementIndex) - 10; i < static_cast<int>(ship.movementIndex) + 40; i++) {
                     //Limit i to not go out of bounds
                     if (i < 0)
                         i = 0;
