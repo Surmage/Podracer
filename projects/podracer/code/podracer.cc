@@ -19,15 +19,14 @@ void joystick_callback(int jid, int event)
 {
     if (event == GLFW_CONNECTED)
     {
-        gamepadOn = true;
         // The joystick was connected
+        gamepadOn = true;
     }
     else if (event == GLFW_DISCONNECTED)
     {
-        gamepadOn = false;
         // The joystick was disconnected
+        gamepadOn = false;
     }
-    std::cout << "Event called" << std::endl;
 }
 
 Podracer::Podracer()
@@ -53,7 +52,7 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
 
     if(movementIndex == 4) //If at start position
-        if(kbd->pressed[Key::R]){
+        if(kbd->pressed[Key::R] || (gamepadOn && gamepadButtons[3])){
             reset();
             return 1;
         }
@@ -91,10 +90,10 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
             }
         }
         else{
-            if (gamepadAxis[0] < 0 && this->positionX >= -5) {
+            if (gamepadAxis[0] < -0.1f && this->positionX >= -5) {
                 this->currentSideSpeed = 1;
             }
-            else if (gamepadAxis[0] > 0 && this->positionX <= 5) {
+            else if (gamepadAxis[0] > 0.1f && this->positionX <= 5) {
                 this->currentSideSpeed = -1;
             }
             else {
@@ -110,6 +109,12 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
             else{
                 cameraX = 0.f;
             }
+            if(gamepadButtons[3]){
+                reset();
+                return 1;
+            }
+
+
             this->currentSpeed = 1.f;
 
 

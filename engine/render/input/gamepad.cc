@@ -15,7 +15,6 @@ namespace Input
     }
     const unsigned char* Gamepad::getButtons() {
         buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &count);
-
         return buttons;
     }
     void Gamepad::setAxis() {
