@@ -114,10 +114,8 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
                 return 1;
             }
 
-
+            this->cameraY = 0.f;
             this->currentSpeed = 1.f;
-
-
         }
     } else {
         this->currentSpeed = 0.f;
