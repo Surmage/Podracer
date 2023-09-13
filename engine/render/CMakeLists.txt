@@ -49,9 +49,7 @@ SET(files_render_input
 	input/key.cc
 	input/keyboard.h
 	input/mouse.h
-	input/gp_buttons.cc
-	input/gp_buttons.h
-	)
+)
 SOURCE_GROUP("input" FILES ${files_render_input})
 
 SET(files_render

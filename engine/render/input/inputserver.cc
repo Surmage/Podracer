@@ -56,16 +56,6 @@ InputHandler::BeginFrame()
 	hid->mouse.delta = glm::vec2(0);
 	hid->mouse.previousPosition = hid->mouse.position;
 
-////////////////////This is what is causing the crash///////////////////////////
-    for (int i = 0; i < Button::Code::NumGamepadButtons; i++)
-    {
-        if (hid->gamepads.released[0])
-           hid->gamepads.held[0] = false;
-
-        hid->gamepads.pressed[0] = false;
-        hid->gamepads.released[0] = false;
-    }
-//////////////////////////////////////////////////////////////////////////////
 }
 
 //------------------------------------------------------------------------------
@@ -139,21 +129,6 @@ InputHandler::HandleMousePressEvent(int32 button, int32 action, int32 mods)
 //------------------------------------------------------------------------------
 /**
 */
-    void
-    InputHandler::HandleJoystickButtonPressEvent(int32 id, int32 button, int32 action, int32 mods)
-    {
-        assert(button < Button::Code::NumGamepadButtons);
-        if (action == GLFW_PRESS)
-        {
-            Button::Code code = Button::FromGLFW();
-            hid->gamepads.pressed[button] = true;
-            hid->gamepads.held[button] = true;
-        }
-        else if (action == GLFW_RELEASE)
-        {
-            hid->gamepads.released[button] = true;
-        }
-    }
 
 //------------------------------------------------------------------------------
 /**
