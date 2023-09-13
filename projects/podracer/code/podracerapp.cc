@@ -50,7 +50,7 @@ namespace Game {
 
         glm::mat4 translate = glm::translate(position); //only position, no rotation
         glm::mat4 transform = (translate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, and flipping 180 degrees
-        Tile t(position, transform, rotate, edge, tiles.size()); //Create tile with all the maths
+        Tile t(position, transform, rotate, edge, static_cast<int>(tiles.size())); //Create tile with all the maths
         t.rotationY = 0.f; //No rotation
         tiles.push_back(t);
     }
@@ -74,7 +74,7 @@ namespace Game {
 
         glm::mat4 translate = glm::translate(position);
         glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
-        Tile t(position, transform, rotate, edge, tiles.size()); //Tile created
+        Tile t(position, transform, rotate, edge, static_cast<int>(tiles.size())); //Tile created
         t.rotationY = rotation; //Rotation of -45
         tiles.push_back(t);
     }
@@ -98,7 +98,7 @@ namespace Game {
 
         glm::mat4 translate = glm::translate(position);
         glm::mat4 transform = (translate * rotate) * (glm::mat4)glm::quat(glm::vec3(0, 3.14159f, 0)); //position, rotation, and flipping 180 degrees
-        Tile t(position, transform, rotate, edge, tiles.size()); //Tile created
+        Tile t(position, transform, rotate, edge, static_cast<int>(tiles.size())); //Tile created
         t.rotationY = rotation;
         tiles.push_back(t);
     }
@@ -106,16 +106,12 @@ namespace Game {
 //------------------------------------------------------------------------------
 /**
 */
-    PodracerApp::PodracerApp() {
-        // empty
-    }
+    PodracerApp::PodracerApp() = default;
 
 //------------------------------------------------------------------------------
 /**
 */
-    PodracerApp::~PodracerApp() {
-        // empty
-    }
+    PodracerApp::~PodracerApp() = default;
 
     bool PodracerApp::Open() {
         App::Open();
@@ -218,7 +214,7 @@ namespace Game {
         const int numLights = 1;
         Render::PointLightId lights[numLights];
         // Setup lights
-        for (int i = 0; i < numLights; i++)
+        for (auto & light : lights)
         {
             glm::vec3 translation = glm::vec3(
                 Core::RandomFloatNTP() * 20.0f,
@@ -230,7 +226,7 @@ namespace Game {
                 Core::RandomFloat(),
                 Core::RandomFloat()
             );
-            lights[i] = Render::LightServer::CreatePointLight(translation, color, Core::RandomFloat() * 4.0f, 1.0f + (15 + Core::RandomFloat() * 10.0f));
+            light = Render::LightServer::CreatePointLight(translation, color, Core::RandomFloat() * 4.0f, 1.0f + (15 + Core::RandomFloat() * 10.0f));
         }
 
         Podracer ship;
@@ -249,10 +245,10 @@ namespace Game {
             //If close to the maximum amount
             if(tiles.size() >= amountOfTiles - 30){
                 //Find the difference to the max
-                int difference = amountOfTiles - tiles.size();
+                int difference = amountOfTiles - static_cast<int>(tiles.size());
                 //Make the last stretch straight
                 for(int i=0; i<difference; i++){
-                    createStraight(tiles, tiles.size());
+                    createStraight(tiles, static_cast<int>(tiles.size()));
                 }
                 break;
             }
@@ -265,7 +261,7 @@ namespace Game {
             }
             //Decide how many tiles are placed of selected type
             int tileNumber;
-            if(tiles.size() <= 0){ //Start with 30
+            if(tiles.empty()){ //Start with 30
                 tileNumber = 30;
             }
             else{
@@ -273,7 +269,7 @@ namespace Game {
             }
             //Create the tiles for the tileNumber amount
             for(int i=0; i<tileNumber; i++){
-                if(tileType == 0 || tiles.size() == 0){
+                if(tileType == 0 || tiles.empty()){
                     createStraight(tiles, tiles.size());
                 }
                 else if(tileType == 1){
