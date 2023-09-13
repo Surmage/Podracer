@@ -1,5 +1,6 @@
 #pragma once
 #include "render/model.h"
+#include "render/input/gamepad.h"
 
 namespace Render
 {
@@ -46,6 +47,9 @@ struct Podracer
     float currentSpeed = 0.0f;
     float currentSideSpeed = 0.0f;
     float upcomingRotationY = 0;
+
+    const float* gamepadAxis;
+    const unsigned char* gamepadButtons;
 
     float rotationY = 0;
     float positionX = 0;
