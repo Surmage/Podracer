@@ -10,14 +10,14 @@ namespace Game
 {
 
 struct Tile {
-    glm::vec3 position; //center of tile
-    glm::mat4 transform;
-    glm::mat4 rotation;
-    int id;
-    float rotationY;
-    glm::vec3 edge; //Edge where tile ends
+    glm::vec3 position{}; //center of tile
+    glm::mat4 transform{};
+    glm::mat4 rotation{};
+    int id{};
+    float rotationY{};
+    glm::vec3 edge{}; //Edge where tile ends
 
-    Tile() {};
+    Tile() = default;
     Tile(glm::vec3& position, glm::mat4& transform, glm::mat4& rotation, glm::vec3 edge, int id) {
         this->position = position;
         this->transform = transform;
@@ -52,10 +52,7 @@ struct Podracer
     float cameraX = 0;
     float cameraY = 0;
 
-    Render::ModelId model;
-    //Render::ParticleEmitter* particleEmitterLeft;
-    //Render::ParticleEmitter* particleEmitterRight;
-    //float emitterOffset = -0.5f;
+    Render::ModelId model{};
 
     int Update(float dt, std::vector<Tile>& tiles);
     void reset();

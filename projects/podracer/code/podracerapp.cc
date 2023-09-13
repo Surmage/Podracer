@@ -1,8 +1,5 @@
 #include "config.h"
 #include "podracerapp.h"
-#include "config.h"
-#include <cstring>
-#include "imgui.h"
 #include "render/renderdevice.h"
 #include "render/shaderresource.h"
 #include <vector>
@@ -10,10 +7,8 @@
 #include "render/model.h"
 #include "render/cameramanager.h"
 #include "render/lightserver.h"
-#include "render/debugrender.h"
 #include "core/random.h"
 #include "render/input/inputserver.h"
-#include "core/cvar.h"
 #include "render/physics.h"
 #include <chrono>
 #include "podracer.h"
@@ -232,7 +227,7 @@ namespace Game {
         Podracer ship;
         ship.model = LoadModel("assets/podracer/craft_racer.glb");
 
-        double dt = 0.01667f;
+        float dt = 0.01667f;
 
         //Number of tiles for the course, aka course length
         const int amountOfTiles = 1600;
@@ -328,22 +323,22 @@ namespace Game {
                 //Extra is used for if a model spawns at the end of a tile type set
                 //This makes the big models avoid seemingly partially going off the ground
                 int extra = 0;
-
-                if (tiles[(int)(i * span) + 2].rotationY != tiles[(int)(i * span)].rotationY) //if next tile is different
+                auto ii = static_cast<int>(span) * i;
+                if (tiles[ii + 2].rotationY != tiles[ii].rotationY) //if next tile is different
                     extra = -2;
-                if (tiles[(int)(i * span) - 2].rotationY != tiles[(int)(i * span)].rotationY) //if prev tile is different
+                if (tiles[ii - 2].rotationY != tiles[ii].rotationY) //if prev tile is different
                     extra = 2;
              
                 glm::vec3 position = glm::vec3(
                     xIndex,
-                    tiles[(int)(i * span) + extra].position.y,
-                    tiles[(int)(i * span) + extra].position.z
+                    tiles[ii + extra].position.y,
+                    tiles[ii + extra].position.z
                 );
-                int id = (int)(i * span) + extra;
+                int id = ii + extra;
 
-                glm::mat4 transform = translate(position) * tiles[(int)(i * span)].rotation; //Position times rotation
+                glm::mat4 transform = translate(position) * tiles[ii].rotation; //Position times rotation
                 //Collider needs to be flipped in its x-axis position
-                std::get<1>(glbModel) = Physics::CreateCollider(col, glm::scale(glm::translate(glm::vec3(-position.x, position.y, position.z)), colScales) * tiles[(int)(i * span)].rotation);
+                std::get<1>(glbModel) = Physics::CreateCollider(col, glm::scale(glm::translate(glm::vec3(-position.x, position.y, position.z)), colScales) * tiles[ii].rotation);
                 std::get<2>(glbModel) = glm::scale(transform, scaleBig);
                 std::get<3>(glbModel) = id;
                 obstacles.push_back(glbModel);
@@ -359,7 +354,7 @@ namespace Game {
         clock_t current_ticks, delta_ticks;
         clock_t fps = 0;
         float frameTime = 0;
-        std::chrono::duration<double> diff;
+        std::chrono::duration<double> diff = std::chrono::seconds();
         float previousTime = 0;
         struct NVGcontext* vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
         if(!vg){
@@ -418,7 +413,7 @@ namespace Game {
                 won = false;
                 saved = false;
             }
-            if(ship.movementIndex >= tiles.size()-1){ //if reached end
+            if(ship.movementIndex >= static_cast<float>(tiles.size())-1){ //if reached end
                 won = true;
             }
 
@@ -428,10 +423,10 @@ namespace Game {
             seconds = (int)diff.count();
             if(diff.count() != 0)
             {
-                previousTime = diff.count();
+                previousTime = static_cast<float>(diff.count());
             }
             diff = end - start;
-            frameTime = diff.count() - previousTime;
+            frameTime = static_cast<float>(diff.count()) - previousTime;
 
             if(!won){
                 progress = (int)((ship.movementIndex / amountOfTiles) * 100); //Progress in %
@@ -443,7 +438,7 @@ namespace Game {
                     if (collided && renderCar) //Game over
                     {
                         renderCar = false;
-                        timer = seconds + 3;
+                        timer = static_cast<float>(seconds) + 3;
                         ship.disableControls = true;
                         ship.automatic = false;
                         if(!saved)
@@ -451,7 +446,7 @@ namespace Game {
                         saved = true;
                     }
                 }
-                if(seconds >= timer && !renderCar)
+                if(static_cast<float>(seconds) >= timer && !renderCar)
                     timerUp = true;
 
                 if(timerUp){
@@ -494,7 +489,7 @@ namespace Game {
             this->window->SwapBuffers();
 
             auto timeEnd = std::chrono::steady_clock::now();
-            dt = std::min(0.04, std::chrono::duration<double>(timeEnd - timeStart).count());
+            dt = static_cast<float>(std::min(0.04, std::chrono::duration<double>(timeEnd - timeStart).count()));
 
             if (kbd->pressed[Input::Key::Code::Escape])
                 this->Exit();
@@ -532,30 +527,30 @@ namespace Game {
         //Text for frames (fps)
         char buf[100];
         sprintf(buf, "Fps: %f", frames);
-        nvgText(vg, 550, 10, buf, NULL);
+        nvgText(vg, 550, 10, buf, nullptr);
 
         //Text for collisions being on/off
         if(collisionsOn)
-            nvgText(vg, 60, 460, "Collisions: ON", NULL);
+            nvgText(vg, 60, 460, "Collisions: ON", nullptr);
         else
-            nvgText(vg, 60, 460, "Collisions: OFF", NULL);
+            nvgText(vg, 60, 460, "Collisions: OFF", nullptr);
 
         //Text for points gained
         nvgFontSize(vg, 32.0f);
         sprintf(buf, "Points: %i", points);
-        nvgText(vg, 320, 20, buf, NULL);
+        nvgText(vg, 320, 20, buf, nullptr);
 
         //Text for tile progress
         sprintf(buf, "Progress: %i%%", progress);
-        nvgText(vg, 480, 440, buf, NULL);
+        nvgText(vg, 480, 440, buf, nullptr);
 
         //Text for game over
         if(!renderCar){
             prevPoints = loadScore();
             sprintf(buf, "%s%i", "Previous High Score:", prevPoints);
             nvgFontSize(vg, 50.0f);
-            nvgText(vg, 320, 160, "GAME OVER", NULL);
-            nvgText(vg, 320, 220, buf, NULL);
+            nvgText(vg, 320, 160, "GAME OVER", nullptr);
+            nvgText(vg, 320, 220, buf, nullptr);
         }
 
         //Text for win
@@ -563,18 +558,18 @@ namespace Game {
             prevPoints = loadScore();
             sprintf(buf, "%s%i", "Previous High Score:", prevPoints);
             nvgFontSize(vg, 50.0f);
-            nvgText(vg, 320, 160, "YOU WIN!", NULL);
-            nvgText(vg, 320, 220, buf, NULL);
+            nvgText(vg, 320, 160, "YOU WIN!", nullptr);
+            nvgText(vg, 320, 220, buf, nullptr);
         }
 
         //Text for countdown
         nvgFontSize(vg, 100.0f);
         if(seconds < 3){
             sprintf(buf, "%i", 3-seconds);
-            nvgText(vg, 320, 180, buf, NULL);
+            nvgText(vg, 320, 180, buf, nullptr);
         }
         else if(seconds == 3){
-            nvgText(vg, 320, 180, "GO!", NULL);
+            nvgText(vg, 320, 180, "GO!", nullptr);
         }
 
         nvgRestore(vg);

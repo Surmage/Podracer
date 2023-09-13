@@ -19,11 +19,11 @@ namespace Game
         ~PodracerApp();
 
         /// open app
-        bool Open();
+        bool Open() override;
         /// run app
-        void Run();
+        void Run() override;
         /// exit app
-        void Exit();
+        void Exit() override;
 
     private:
         int points = 0; //Points gathered based on time and difficulty
@@ -43,7 +43,7 @@ namespace Game
         void RenderNanoVG(NVGcontext* vg);
 
 
-        Display::Window* window;
+        Display::Window* window = nullptr;
 
 
     };

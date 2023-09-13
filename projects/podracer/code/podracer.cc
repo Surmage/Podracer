@@ -5,7 +5,6 @@
 #include "render/physics.h"
 #include "render/debugrender.h"
 #include "render/particlesystem.h"
-#include <iostream>
 
 using namespace Input;
 using namespace glm;
@@ -13,35 +12,7 @@ using namespace Render;
 
 namespace Game
 {
-Podracer::Podracer()
-{
-    /*uint32_t numParticles = 2048;
-    this->particleEmitterLeft = new ParticleEmitter(numParticles);
-    this->particleEmitterLeft->data = {
-        .origin = glm::vec4(this->racerPos + (vec3(this->transform[2]) * emitterOffset),1),
-        .dir = glm::vec4(glm::vec3(-this->transform[2]), 0),
-        .startColor = glm::vec4(0.38f, 0.76f, 0.95f, 1.0f) * 2.0f,
-        .endColor = glm::vec4(0,0,0,1.0f),
-        .numParticles = numParticles,
-        .theta = glm::radians(0.0f),
-        .startSpeed = 1.2f,
-        .endSpeed = 0.0f,
-        .startScale = 0.025f,
-        .endScale = 0.0f,
-        .decayTime = 2.58f,
-        .randomTimeOffsetDist = 2.58f,
-        .looping = 1,
-        .emitterType = 1,
-        .discRadius = 0.020f
-    };
-    this->particleEmitterRight = new ParticleEmitter(numParticles);
-    this->particleEmitterRight->data = this->particleEmitterLeft->data;
-
-    ParticleSystem::Instance()->AddEmitter(this->particleEmitterLeft);
-    ParticleSystem::Instance()->AddEmitter(this->particleEmitterRight);*/
-
-
-}
+Podracer::Podracer() = default;
 
 int
 Podracer::Update(float dt, std::vector<Tile>& tiles)
@@ -108,7 +79,7 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     desiredVelocity = this->transform * vec4(desiredVelocity, 0.0f);
 
     //Check if 5 tiles ahead is within scope
-    if (movementIndex+5 <= tiles.size()) {
+    if (movementIndex+5 <= static_cast<float>(tiles.size())) {
         //Store the rotation of the current tile
         this->rotationY = tiles[(int)movementIndex].rotationY;
         //Store the rotation of the tile 5 spaces ahead
@@ -116,9 +87,7 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     }
 
     //Adjust camera based on tile rotations
-    if(rotationY == 45 || upcomingRotationY == 45)
-        this->cameraY = 5;
-    else if(rotationY == -45 || upcomingRotationY == -45)
+    if(rotationY == 45 || upcomingRotationY == 45 || rotationY == -45 || upcomingRotationY == -45)
         this->cameraY = 5;
     
     this->positionX += desiredVelocity.x * dt * 10.0f; 
