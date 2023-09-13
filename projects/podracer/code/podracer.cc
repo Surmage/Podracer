@@ -14,6 +14,7 @@ using namespace Render;
 namespace Game
 {
     bool gamepadOn;
+
 void joystick_callback(int jid, int event)
 {
     if (event == GLFW_CONNECTED)
@@ -90,15 +91,28 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
             }
         }
         else{
-            if (gamepadAxis[0] < 0) {
+            if (gamepadAxis[0] < 0 && this->positionX >= -5) {
                 this->currentSideSpeed = 1;
             }
-            else if (gamepadAxis[0] > 0) {
+            else if (gamepadAxis[0] > 0 && this->positionX <= 5) {
                 this->currentSideSpeed = -1;
             }
             else {
                 this->currentSideSpeed = 0;
             }
+            //Toggle side views
+            if(gamepadButtons[4]){
+                cameraX = 5.f;
+            }
+            else if(gamepadButtons[5]){
+                cameraX = -5.f;
+            }
+            else{
+                cameraX = 0.f;
+            }
+            this->currentSpeed = 1.f;
+
+
         }
     } else {
         this->currentSpeed = 0.f;
