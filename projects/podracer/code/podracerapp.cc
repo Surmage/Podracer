@@ -561,7 +561,7 @@ namespace Game {
                 sprintf(buf, "Difficulty: Easy");
         }
         nvgFontSize(vg, 16.0f);
-        nvgText(vg, 80, 10, buf, NULL);
+        nvgText(vg, 80, 10, buf, nullptr);
 
         //Text for game over
         if(!renderCar){
