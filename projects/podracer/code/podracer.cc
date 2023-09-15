@@ -12,65 +12,119 @@ using namespace Render;
 
 namespace Game
 {
-Podracer::Podracer() = default;
+    bool gamepadOn;
+
+void joystick_callback(int jid, int event)
+{
+    if (event == GLFW_CONNECTED)
+    {
+        // The joystick was connected
+        gamepadOn = true;
+    }
+    else if (event == GLFW_DISCONNECTED)
+    {
+        // The joystick was disconnected
+        gamepadOn = false;
+    }
+}
+
+Podracer::Podracer()
+{
+    Gamepad* gamepad = Input::GetGamepad();
+    gamepadOn = bool(glfwJoystickPresent(GLFW_JOYSTICK_1));
+    gamepadAxis = gamepad->getAxis();
+    gamepadButtons = gamepad->getButtons();
+    glfwSetJoystickCallback(joystick_callback);
+
+}
 
 int
 Podracer::Update(float dt, std::vector<Tile>& tiles)
 {
     //Mouse* mouse = Input::GetDefaultMouse();
     Keyboard* kbd = Input::GetDefaultKeyboard();
+
+    Gamepad* gamepad = Input::GetGamepad();
+    gamepad->setAxis();
+    gamepad->setButtons();
+
     Camera* cam = CameraManager::GetCamera(CAMERA_MAIN);
 
     if(movementIndex == 4) //If at start position
-        if(kbd->pressed[Key::R]){
+        if(kbd->pressed[Key::R] || (gamepadOn && gamepadButtons[3])){
             reset();
             return 1;
         }
-    if(!disableControls){ //If controls on
-        if(kbd->pressed[Key::R]){
-            reset();
-            return 1;
-        }
-        //Toggle side views
-        cameraX = kbd->held[Key::Q] ? 5.0f : kbd->held[Key::E] ? -5.0f : 0.0f;
-        cameraY = kbd->held[Key::T] ? 5.0f : 0.0f;
-
-        /*if(kbd->pressed[Key::Space]){
-            automatic = !automatic;
-        }*/
-        
-        if(!automatic){ //If on manual
-            if (kbd->held[Key::W]) //Move forward
-                this->currentSpeed = 1.f;
-
-            else if (kbd->held[Key::S] && movementIndex >= 0){ //Move backwards
-                this->currentSpeed = -1.f;
+    if(!disableControls) { //If controls on
+        if(!gamepadOn){
+            if (kbd->pressed[Key::R]) {
+                reset();
+                return 1;
             }
-            else //Stop forward movement
-                this->currentSpeed = 0;
+            //Toggle side views
+            cameraX = kbd->held[Key::Q] ? 5.0f : kbd->held[Key::E] ? -5.0f : 0.0f;
+            cameraY = kbd->held[Key::T] ? 5.0f : 0.0f;
+
+            /*if(kbd->pressed[Key::Space]){
+                automatic = !automatic;
+            }*/
+            if (!automatic) { //If on manual
+                if (kbd->held[Key::W]) //Move forward
+                    this->currentSpeed = 1.f;
+
+                else if (kbd->held[Key::S] && movementIndex >= 0) { //Move backwards
+                    this->currentSpeed = -1.f;
+                } else //Stop forward movement
+                    this->currentSpeed = 0;
+            }
+            else {
+                this->currentSpeed = 1.f;
+            }
+            if (kbd->held[Key::A] && this->positionX >= -5) { //Move left
+                this->currentSideSpeed = mix(this->currentSideSpeed, this->boostSpeed, std::min(1.0f, dt * 20.0f));
+            } else if (kbd->held[Key::D] && this->positionX <= 5) { //Move right
+                this->currentSideSpeed = mix(this->currentSideSpeed, -this->boostSpeed, std::min(1.0f, dt * 20.0f));
+            } else { //Stop side movement
+                this->currentSideSpeed = 0;
+            }
         }
         else{
+            if (gamepadAxis[0] < -0.1f && this->positionX >= -5) {
+                this->currentSideSpeed = 1;
+            }
+            else if (gamepadAxis[0] > 0.1f && this->positionX <= 5) {
+                this->currentSideSpeed = -1;
+            }
+            else {
+                this->currentSideSpeed = 0;
+            }
+            //Toggle side views
+            if(gamepadButtons[4]){
+                cameraX = 5.f;
+            }
+            else if(gamepadButtons[5]){
+                cameraX = -5.f;
+            }
+            else{
+                cameraX = 0.f;
+            }
+            if(gamepadButtons[3]){
+                reset();
+                return 1;
+            }
+
+            this->cameraY = 0.f;
             this->currentSpeed = 1.f;
         }
-
-        if (kbd->held[Key::A] && this->positionX >= -5) { //Move left
-            this->currentSideSpeed = mix(this->currentSideSpeed, this->boostSpeed, std::min(1.0f, dt * 20.0f));
-        }
-        else if (kbd->held[Key::D] && this->positionX <= 5) { //Move right
-            this->currentSideSpeed = mix(this->currentSideSpeed, -this->boostSpeed, std::min(1.0f, dt * 20.0f));
-        }
-        else { //Stop side movement
-            this->currentSideSpeed = 0;
-        }
-
-    }
-    else{
+    } else {
         this->currentSpeed = 0.f;
         this->currentSideSpeed = 0.f;
     }
-    if(kbd->pressed[Key::C]){
+    if (kbd->pressed[Key::C]) {
         disableCollisions = !disableCollisions;
     }
+
+
 
     //The transform is set to tile[movementIndex]'s later
     this->movementIndex += dt * 10.f * currentSpeed;
@@ -102,21 +156,6 @@ Podracer::Update(float dt, std::vector<Tile>& tiles)
     float eyeZ = this->transform[3].z - 1.5f;
     vec3 eye = vec3(eyeX, eyeY, eyeZ);
     cam->view = lookAt(eye, center, vec3(0, 2, 0));
-
-    /*const float thrusterPosOffset = 0.365f;
-    this->particleEmitterLeft->data.origin = glm::vec4(vec3(this->racerPos + (vec3(this->transform[0]) * -thrusterPosOffset)) + (vec3(this->transform[2]) * emitterOffset), 1);
-    this->particleEmitterLeft->data.dir = glm::vec4(glm::vec3(-this->transform[2]), 0);
-    this->particleEmitterRight->data.origin = glm::vec4(vec3(this->racerPos + (vec3(this->transform[0]) * thrusterPosOffset)) + (vec3(this->transform[2]) * emitterOffset), 1);
-    this->particleEmitterRight->data.dir = glm::vec4(glm::vec3(-this->transform[2]), 0);
-    
-    float t = (currentSpeed / this->normalSpeed);
-    this->particleEmitterLeft->data.startSpeed = 1.2 + (3.0f * t);
-    this->particleEmitterLeft->data.endSpeed = 0.0f  + (3.0f * t);
-    this->particleEmitterRight->data.startSpeed = 1.2 + (3.0f * t);
-    this->particleEmitterRight->data.endSpeed = 0.0f + (3.0f * t);*/
-
-    //this->particleEmitter->data.decayTime = 0.16f;//+ (0.01f  * t);
-    //this->particleEmitter->data.randomTimeOffsetDist = 0.06f;/// +(0.01f * t);
 
     return 0;
 }

@@ -462,7 +462,9 @@ namespace Game {
                 if(renderCar) {
                     RenderDevice::Draw(ship.model, ship.transform);
                     if(ship.automatic) //Change points while podracer is moving
+                    {
                         points = (int)( (100 * (diff.count()-3)) / (span));
+                    }
                 }
             }
             else{
@@ -543,6 +545,23 @@ namespace Game {
         //Text for tile progress
         sprintf(buf, "Progress: %i%%", progress);
         nvgText(vg, 480, 440, buf, nullptr);
+
+        //Text for difficulty
+        switch (difficulty) {
+            case 1:
+                sprintf(buf, "Difficulty: Easy");
+                break;
+            case 2:
+                sprintf(buf, "Difficulty: Medium");
+                break;
+            case 3:
+                sprintf(buf, "Difficulty: Hard");
+                break;
+            default:
+                sprintf(buf, "Difficulty: Easy");
+        }
+        nvgFontSize(vg, 16.0f);
+        nvgText(vg, 60, 10, buf, NULL);
 
         //Text for game over
         if(!renderCar){

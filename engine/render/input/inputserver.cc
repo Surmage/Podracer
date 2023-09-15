@@ -13,7 +13,7 @@ struct HIDState
 {
 	Keyboard keyboard;
 	Mouse mouse;
-	std::vector<Gamepad*> gamepads;
+	Gamepad gamepad;
 };
 
 static HIDState* hid = nullptr;
@@ -158,11 +158,10 @@ GetDefaultMouse()
 /**
 */
 Gamepad*
-GetGamepad(int id)
+GetGamepad()
 {
 	assert(hid != nullptr);
-	assert(id > 0 && id < hid->gamepads.size());
-	return hid->gamepads[id];
+	return &hid->gamepad;
 }
 
 } // namespace Input
