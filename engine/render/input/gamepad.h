@@ -16,7 +16,9 @@ struct Gamepad
     const unsigned char* buttons;
     int axesCount;
     int count;
+    int id;
 
+    int getJoy();
     const float* getAxis();
     const unsigned char* getButtons();
     void setAxis();

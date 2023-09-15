@@ -30,12 +30,13 @@ void joystick_callback(int jid, int event)
 
 Podracer::Podracer()
 {
+
     Gamepad* gamepad = Input::GetGamepad();
-    gamepadOn = bool(glfwJoystickPresent(GLFW_JOYSTICK_1));
+    joyId = gamepad->getJoy();
+    gamepadOn = bool(glfwJoystickPresent(joyId));
     gamepadAxis = gamepad->getAxis();
     gamepadButtons = gamepad->getButtons();
     glfwSetJoystickCallback(joystick_callback);
-
 }
 
 int

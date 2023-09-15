@@ -55,6 +55,7 @@ struct Podracer
     float positionX = 0;
     float cameraX = 0;
     float cameraY = 0;
+    int joyId = -1;
 
     Render::ModelId model{};
 
