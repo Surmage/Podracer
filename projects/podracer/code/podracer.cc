@@ -184,12 +184,12 @@ Podracer::CheckCollisions()
     }
     return hit;
 }
-void Podracer::reset(){
-    cameraY = 0;
-    automatic = false;
-    disableControls = true;
-    movementIndex = 4;
-    positionX = 0;
-    racerPos = glm::vec3(0.f, 1.0f, 4.0f);
-}
+    void Podracer::reset(){
+        cameraY = 0;
+        automatic = false;
+        disableControls = true;
+        movementIndex = 4;
+        positionX = 0;
+        racerPos = glm::vec3(0.f, 1.0f, 4.0f);
+    }
 }
