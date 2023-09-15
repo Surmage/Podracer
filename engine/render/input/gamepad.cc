@@ -16,8 +16,8 @@ namespace Input
                 glfwJoystickPresent(i) && glfwGetJoystickName(i) == std::string("Microsoft X-Box One S pad") ||
                 glfwJoystickPresent(i) && glfwGetJoystickName(i) == std::string("Sony Interactive Entertainment Wireless Controller"))
            {
-               return i;
                id = i;
+               return i;
            }
         }
         return -1;
