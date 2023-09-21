@@ -303,7 +303,7 @@ namespace Game {
             for (int i = 10; i < (int)(amountOfTiles / span); i++)
             {
                 std::tuple<ModelId, Physics::ColliderId, glm::mat4, int> glbModel; //Model to be created
-                int resourceIndex = Core::TrueRandom(0, 3); //Randomizes which model
+                int resourceIndex = Core::TrueRandom(0, 9); //Randomizes which model
                 Physics::ColliderMeshId col = boxMesh;
                 if (resourceIndex == 0) { //if bones
                     xIndex = 0.f; //bones spawn in middle of road
