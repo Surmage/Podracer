@@ -320,28 +320,23 @@ namespace Game {
 
                 std::get<0>(glbModel) = models[resourceIndex]; //Get the model based on number generated
 
-                //Extra is used for if a model spawns at the end of a tile type set
-                //This makes the big models avoid seemingly partially going off the ground
-                int extra = 0;
+                //This makes the big models avoid seemingly partially going off the ground by skipping them
                 auto ii = static_cast<int>(span) * i;
-                if (tiles[ii + 2].rotationY != tiles[ii].rotationY) //if next tile is different
-                    extra = -2;
-                if (tiles[ii - 2].rotationY != tiles[ii].rotationY) //if prev tile is different
-                    extra = 2;
+                if (tiles[ii + 2].rotationY != tiles[ii].rotationY || tiles[ii - 2].rotationY != tiles[ii].rotationY) //if next tile is different
+                    continue;
              
-                int id = ii + extra;
                 glm::vec3 position = glm::vec3(
                     xIndex,
-                    tiles[id].position.y,
-                    tiles[id].position.z
+                    tiles[ii].position.y,
+                    tiles[ii].position.z
                 );
                 
 
                 glm::mat4 transform = translate(position) * tiles[ii].rotation; //Position times rotation
                 //Collider needs to be flipped in its x-axis position
-                std::get<1>(glbModel) = Physics::CreateCollider(col, glm::scale(glm::translate(glm::vec3(-position.x, position.y, position.z)), colScales) * tiles[id].rotation);
+                std::get<1>(glbModel) = Physics::CreateCollider(col, glm::scale(glm::translate(glm::vec3(-position.x, position.y, position.z)), colScales) * tiles[ii].rotation);
                 std::get<2>(glbModel) = glm::scale(transform, scaleBig);
-                std::get<3>(glbModel) = id;
+                std::get<3>(glbModel) = ii;
                 obstacles.push_back(glbModel);
             }
         }
