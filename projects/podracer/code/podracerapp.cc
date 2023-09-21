@@ -303,7 +303,7 @@ namespace Game {
             for (int i = 10; i < (int)(amountOfTiles / span); i++)
             {
                 std::tuple<ModelId, Physics::ColliderId, glm::mat4, int> glbModel; //Model to be created
-                int resourceIndex = Core::TrueRandom(0, 9); //Randomizes which model
+                int resourceIndex = Core::TrueRandom(0, 3); //Randomizes which model
                 Physics::ColliderMeshId col = boxMesh;
                 if (resourceIndex == 0) { //if bones
                     xIndex = 0.f; //bones spawn in middle of road
@@ -329,16 +329,17 @@ namespace Game {
                 if (tiles[ii - 2].rotationY != tiles[ii].rotationY) //if prev tile is different
                     extra = 2;
              
+                int id = ii + extra;
                 glm::vec3 position = glm::vec3(
                     xIndex,
-                    tiles[ii + extra].position.y,
-                    tiles[ii + extra].position.z
+                    tiles[id].position.y,
+                    tiles[id].position.z
                 );
-                int id = ii + extra;
+                
 
                 glm::mat4 transform = translate(position) * tiles[ii].rotation; //Position times rotation
                 //Collider needs to be flipped in its x-axis position
-                std::get<1>(glbModel) = Physics::CreateCollider(col, glm::scale(glm::translate(glm::vec3(-position.x, position.y, position.z)), colScales) * tiles[ii].rotation);
+                std::get<1>(glbModel) = Physics::CreateCollider(col, glm::scale(glm::translate(glm::vec3(-position.x, position.y, position.z)), colScales) * tiles[id].rotation);
                 std::get<2>(glbModel) = glm::scale(transform, scaleBig);
                 std::get<3>(glbModel) = id;
                 obstacles.push_back(glbModel);
